@@ -1,0 +1,19 @@
+# PHP / Backend
+/vendor/
+/.phpunit.result.cache
+/tmp/
+*.log
+.env
+
+# Frontend
+/frontend/node_modules/
+/frontend/dist/
+
+# Docker / DB
+db/data/
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

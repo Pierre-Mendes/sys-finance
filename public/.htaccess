@@ -1,0 +1,13 @@
+# Disable PHP error display to prevent warnings from corrupting JSON API responses
+php_flag display_errors Off
+php_flag display_startup_errors Off
+php_value error_reporting 0
+
+# Enable mod_rewrite
+Options -MultiViews
+RewriteEngine On
+
+# Route all requests through index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [QSA,L]
