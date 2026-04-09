@@ -8,9 +8,11 @@ use Exception;
 
 class AuthService {
     private UserRepository $userRepository;
+    private WorkspaceService $workspaceService;
 
-    public function __construct(UserRepository $userRepository) {
+    public function __construct(UserRepository $userRepository, WorkspaceService $workspaceService) {
         $this->userRepository = $userRepository;
+        $this->workspaceService = $workspaceService;
     }
 
     public function register(array $data): User {
@@ -43,7 +45,12 @@ class AuthService {
             $userCode
         );
 
-        return $this->userRepository->save($user);
+        $user = $this->userRepository->save($user);
+
+        // Ensure a default workspace is created for the new user
+        $this->workspaceService->createDefaultWorkspace($user->getId(), $user->getFirstName());
+
+        return $user;
     }
 
     public function login(string $email, string $password): User {
@@ -55,7 +62,12 @@ class AuthService {
 
         // We check if it matches a hash, or fallback to plain text if dealing with legacy data
         if (password_verify($password, $user->getPassword())) {
-            return $this->ensureUserCode($user);
+            $user = $this->ensureUserCode($user);
+            
+            // Retroactive fix: ensure user has a workspace (for those who signed up without one)
+            $this->workspaceService->ensureHasWorkspace($user->getId(), $user->getFirstName());
+            
+            return $user;
         }
 
         // Fallback for incredibly old plain-text passwords from the legacy app

@@ -34,8 +34,11 @@ $app->add(new \App\Middleware\SecurityHeadersMiddleware());
 
 // Dependency Injection Bootstrap
 $db = Database::getConnection();
+
+$workspaceService = new \App\Services\WorkspaceService($db);
+
 $userRepo = new UserRepository($db);
-$authService = new AuthService($userRepo);
+$authService = new AuthService($userRepo, $workspaceService);
 $authController = new AuthController($authService);
 
 $accountRepo = new \App\Repositories\AccountRepository($db);
@@ -121,7 +124,7 @@ $app->group('/api/investments', function (\Slim\Routing\RouteCollectorProxy $gro
     $group->put('/{id}', [$investmentController, 'manualQuote']);
 })->add(new \App\Middleware\WorkspaceMiddleware($db))->add(new \App\Middleware\AuthMiddleware());
 
-$workspaceController = new App\Controllers\WorkspaceController($db);
+$workspaceController = new App\Controllers\WorkspaceController($db, $workspaceService);
 $inviteController = new App\Controllers\InviteController($db);
 
 $app->group('/api/workspaces', function ($group) use ($workspaceController, $inviteController) {

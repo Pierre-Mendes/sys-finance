@@ -9,10 +9,12 @@ use PDO;
 class WorkspaceController
 {
     private PDO $pdo;
+    private \App\Services\WorkspaceService $workspaceService;
 
-    public function __construct(PDO $pdo)
+    public function __construct(PDO $pdo, \App\Services\WorkspaceService $workspaceService)
     {
         $this->pdo = $pdo;
+        $this->workspaceService = $workspaceService;
     }
 
     public function getMyWorkspaces(Request $request, Response $response): Response
@@ -45,36 +47,27 @@ class WorkspaceController
         }
 
         try {
-            $this->pdo->beginTransaction();
+            $workspaceId = $this->workspaceService->createDefaultWorkspace($userId, $name);
 
-            $ins = $this->pdo->prepare("INSERT INTO workspaces (WorkspaceName, OwnerId) VALUES (?, ?)");
-            $ins->execute([$name, $userId]);
-            $workspaceId = $this->pdo->lastInsertId();
+            // Handle invitations if any
+            if (!empty($invites)) {
+                foreach ($invites as $userCode) {
+                    $userCode = trim($userCode);
+                    if (empty($userCode)) continue;
+                    $stmtU = $this->pdo->prepare("SELECT UserId FROM user WHERE UserCode = ? LIMIT 1");
+                    $stmtU->execute([$userCode]);
+                    $targetUserId = $stmtU->fetchColumn();
 
-            $insUser = $this->pdo->prepare("INSERT INTO workspace_users (WorkspaceId, UserId, Role) VALUES (?, ?, 'owner')");
-            $insUser->execute([$workspaceId, $userId]);
-
-            foreach ($invites as $userCode) {
-                 $userCode = trim($userCode);
-                 if (empty($userCode)) continue;
-                 $stmtU = $this->pdo->prepare("SELECT UserId FROM user WHERE UserCode = ? LIMIT 1");
-                 $stmtU->execute([$userCode]);
-                 $targetUserId = $stmtU->fetchColumn();
-
-                 if ($targetUserId && $targetUserId != $userId) {
-                     $insInv = $this->pdo->prepare("INSERT INTO system_invitations (SenderId, TargetUserId, WorkspaceId, Status) VALUES (?, ?, ?, 'pending')");
-                     $insInv->execute([$userId, $targetUserId, $workspaceId]);
-                 }
+                    if ($targetUserId && $targetUserId != $userId) {
+                        $insInv = $this->pdo->prepare("INSERT INTO system_invitations (SenderId, TargetUserId, WorkspaceId, Status) VALUES (?, ?, ?, 'pending')");
+                        $insInv->execute([$userId, $targetUserId, $workspaceId]);
+                    }
+                }
             }
-
-            $this->pdo->commit();
 
             $response->getBody()->write(json_encode(['message' => 'Workspace criado com sucesso!', 'workspaceId' => $workspaceId]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(201);
         } catch (\Exception $e) {
-            if ($this->pdo->inTransaction()) {
-                 $this->pdo->rollBack();
-            }
             $response->getBody()->write(json_encode(['error' => $e->getMessage()]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(500);
         }
