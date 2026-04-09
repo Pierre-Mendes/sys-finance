@@ -13,8 +13,11 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Configuração do PHP
 COPY opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 
-# Copiar o código da aplicação
+# Copiar o código da aplicação (obedecendo ao .dockerignore)
 COPY . /var/www/html/
+
+# Configurar diretório seguro para o Git (evita erro de 'dubious ownership')
+RUN git config --global --add safe.directory /var/www/html
 
 # Instalar dependências do Composer (sem dev e otimizado)
 RUN composer install --no-interaction --optimize-autoloader --no-dev
