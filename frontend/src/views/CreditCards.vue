@@ -291,14 +291,6 @@ const generateBill = async (id: number) => {
   } catch (e) {}
 }
 
-const getBrandIcon = (brand: string | null) => {
-  if (!brand) return '💳'
-  const b = brand.toLowerCase()
-  if (b.includes('visa')) return '💳 Visa'
-  if (b.includes('master')) return '💳 Mastercard'
-  if (b.includes('amex') || b.includes('express')) return '💳 Amex'
-  return '💳 ' + brand
-}
 
 const getUsagePercentage = (used: number, limit: number) => {
   if (limit <= 0) return 0
