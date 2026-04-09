@@ -4,16 +4,25 @@
 /tmp/
 *.log
 .env
+.env.*
+!.env.example
 
 # Frontend
 /frontend/node_modules/
 /frontend/dist/
+/frontend/.env
+/frontend/.env.*
+/frontend/*.local
 
 # Docker / DB
 db/data/
+db/mysql_logs/
 
 # IDE / OS
 .idea/
 .vscode/
+*.swp
+*.swo
 .DS_Store
 Thumbs.db
+.history/
