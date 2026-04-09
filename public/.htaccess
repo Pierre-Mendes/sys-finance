@@ -1,13 +1,26 @@
-# Disable PHP error display to prevent warnings from corrupting JSON API responses
+# Disable PHP error display
 php_flag display_errors Off
 php_flag display_startup_errors Off
 php_value error_reporting 0
+
+# Set Directory Index to prioritize Vue index.html
+DirectoryIndex index.html index.php
 
 # Enable mod_rewrite
 Options -MultiViews
 RewriteEngine On
 
-# Route all requests through index.php
+# 1. Provide physical files if they exist
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# 2. API Routes -> Handle by Slim (everything starting with /api or any other backend routes)
+# Adjust if your routes don't start with /api
+RewriteCond %{REQUEST_URI} ^/api [OR]
+RewriteCond %{REQUEST_FILENAME} index.php
+RewriteRule ^ index.php [QSA,L]
+
+# 3. Everything else -> Handle by Vue (index.html) for History Mode
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^ index.php [QSA,L]
+RewriteRule ^ index.html [L]
