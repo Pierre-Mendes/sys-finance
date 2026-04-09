@@ -9,10 +9,12 @@ use PDO;
 class WorkspaceMiddleware
 {
     private PDO $pdo;
+    private \App\Services\WorkspaceService $workspaceService;
 
-    public function __construct(PDO $pdo)
+    public function __construct(PDO $pdo, \App\Services\WorkspaceService $workspaceService)
     {
         $this->pdo = $pdo;
+        $this->workspaceService = $workspaceService;
     }
 
     public function __invoke(Request $request, \Psr\Http\Server\RequestHandlerInterface $handler): Response
@@ -34,9 +36,14 @@ class WorkspaceMiddleware
             if ($w) {
                 $workspaceId = $w['WorkspaceId'];
             } else {
-                $response = new \Slim\Psr7\Response();
-                $response->getBody()->write(json_encode(['error' => 'No Workspace available.']));
-                return $response->withHeader('Content-Type', 'application/json')->withStatus(403);
+                // Auto-create workspace if none exists (Safety Net)
+                // We need the user code or name for the default name. 
+                // We'll just fetch the first name from the user table.
+                $stmtUser = $this->pdo->prepare("SELECT FirstName FROM user WHERE UserId = ?");
+                $stmtUser->execute([$userId]);
+                $userName = $stmtUser->fetchColumn() ?: "User";
+                
+                $workspaceId = $this->workspaceService->createDefaultWorkspace($userId, $userName);
             }
         }
 
