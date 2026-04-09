@@ -13,6 +13,12 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Configuração do PHP
 COPY opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 
+# Copiar o código da aplicação
+COPY . /var/www/html/
+
+# Instalar dependências do Composer (sem dev e otimizado)
+RUN composer install --no-interaction --optimize-autoloader --no-dev
+
 # Alterando permissões padrao da pasta web
 RUN chown -R www-data:www-data /var/www/html
 
