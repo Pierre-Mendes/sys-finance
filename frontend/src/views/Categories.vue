@@ -91,7 +91,31 @@
         <h3 class="text-xl font-bold text-gray-800 mb-4">{{ editingCategoryId ? 'Editar Categoria' : 'Adicionar Categoria' }}</h3>
         <form @submit.prevent="saveCategory">
           <label class="block text-sm font-medium text-gray-600 mb-1">Nome da(s) Categoria(s) ({{ activeType === 'expense' ? 'Despesa' : 'Receita' }})</label>
-          <input v-model="newCategoryName" type="text" class="w-full border border-gray-300 rounded-lg p-2.5 mb-5 focus:outline-none focus:ring-2 focus:ring-primary text-gray-900" required placeholder="Para várias, separe por vírgula. Ex: Alimentação, Transporte" />
+          
+          <!-- Modo Edição (Single) -->
+          <input v-if="editingCategoryId" v-model="newCategoryName" type="text" class="w-full border border-gray-300 rounded-lg p-2.5 mb-5 focus:outline-none focus:ring-2 focus:ring-primary text-gray-900" required placeholder="Ex: Alimentação" />
+          
+          <!-- Modo Criação (Bulk/Tags) -->
+          <div v-else class="w-full border border-gray-300 rounded-lg p-2.5 mb-5 focus-within:ring-2 focus-within:ring-primary focus-within:border-primary bg-white transition-shadow flex flex-wrap gap-2 items-center cursor-text" @click="tagInput?.focus()">
+            <!-- Display Tags -->
+            <span v-for="(tag, index) in categoryTags" :key="index" class="bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-1 rounded-md flex items-center gap-1.5 break-all">
+              {{ tag }}
+              <button type="button" @click.stop="removeTag(index)" class="hover:bg-blue-200 text-blue-600 rounded-full p-0.5 transition cursor-pointer" title="Remover">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+              </button>
+            </span>
+            
+            <!-- Input wrapper to handle sizing and key events -->
+            <input 
+              ref="tagInput"
+              v-model="tagInputValue" 
+              @keydown="handleTagKeydown"
+              @blur="addTagFromInput"
+               type="text" 
+              class="flex-1 min-w-[120px] bg-transparent outline-none text-gray-900 placeholder-gray-400 text-sm h-6 m-0.5" 
+              :placeholder="categoryTags.length === 0 ? 'Ex: Uber, Mercado (separe com vírgula ou Enter)' : ''" 
+            />
+          </div>
           <div class="flex justify-end gap-3">
             <button type="button" @click="openModal = false" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition cursor-pointer font-medium">Cancelar</button>
             <button type="submit" class="px-4 py-2 bg-primary hover:bg-blue-600 text-white font-medium rounded-lg shadow transition cursor-pointer">Salvar</button>
@@ -118,6 +142,9 @@ const activeType = ref('expense') // 'expense' or 'income'
 
 const openModal = ref(false)
 const newCategoryName = ref('')
+const tagInputValue = ref('')
+const categoryTags = ref<string[]>([])
+const tagInput = ref<HTMLInputElement | null>(null)
 const editingCategoryId = ref<number | null>(null)
 const searchQuery = ref('')
 const currentPage = ref(1)
@@ -162,6 +189,15 @@ watch([searchQuery, itemsPerPage, activeType, sortOrder], () => {
     currentPage.value = 1
 })
 
+watch(openModal, (isOpen) => {
+    if (isOpen && !editingCategoryId.value) {
+        // Use nextTick via a microtask alternative or just wait for render
+        setTimeout(() => {
+            tagInput.value?.focus();
+        }, 0);
+    }
+}, { flush: 'post' })
+
 const nextPage = () => {
     if (currentPage.value < totalPages.value) currentPage.value++
 }
@@ -192,6 +228,8 @@ onMounted(fetchCategories)
 const openCreateModal = () => {
     editingCategoryId.value = null;
     newCategoryName.value = '';
+    tagInputValue.value = '';
+    categoryTags.value = [];
     openModal.value = true;
 }
 
@@ -201,6 +239,40 @@ const openEditModal = (cat: any) => {
     openModal.value = true;
 }
 
+const addTagFromInput = () => {
+    const val = tagInputValue.value.trim();
+    if (!val) return;
+
+    // Split by common delimiters (comma, newline)
+    const values = val
+        .split(/[,\n\r]+/)
+        .map(v => v.trim())
+        .filter(v => v !== '');
+
+    values.forEach(v => {
+        // Prevent exact duplicates in the UI
+        if (!categoryTags.value.includes(v)) {
+            categoryTags.value.push(v);
+        }
+    });
+
+    tagInputValue.value = '';
+}
+
+const handleTagKeydown = (e: KeyboardEvent) => {
+    if (e.key === ',' || e.key === 'Enter') {
+        e.preventDefault();
+        addTagFromInput();
+    } else if (e.key === 'Backspace' && tagInputValue.value === '' && categoryTags.value.length > 0) {
+        // Remove last tag if backspace pressed on empty input
+        categoryTags.value.pop();
+    }
+}
+
+const removeTag = (index: number) => {
+    categoryTags.value.splice(index, 1);
+}
+
 const saveCategory = async () => {
     try {
         const token = localStorage.getItem('token')
@@ -208,13 +280,24 @@ const saveCategory = async () => {
             await axios.put(`/api/categories/${editingCategoryId.value}`, { name: newCategoryName.value }, { headers: { Authorization: `Bearer ${token}` }})
             toast.success('Categoria atualizada!')
         } else {
-            const response = await axios.post('/api/categories', { name: newCategoryName.value, type: activeType.value }, { headers: { Authorization: `Bearer ${token}` }})
+            // Process tags + any pending input
+            addTagFromInput(); 
+            
+            if (categoryTags.value.length === 0) {
+                toast.warning('Adicione pelo menos uma categoria.');
+                if(tagInput.value) tagInput.value.focus();
+                return;
+            }
+            
+            const payloadArray = categoryTags.value; // Send array directly
+
+            const response = await axios.post('/api/categories', { name: payloadArray, type: activeType.value }, { headers: { Authorization: `Bearer ${token}` }})
             toast.success(response.data.message || 'Categoria(s) adicionada(s)!')
         }
         openModal.value = false
         fetchCategories()
     } catch (e: any) {
-        toast.error(e.response?.data?.error || 'Erro.')
+        toast.error(e.response?.data?.error || 'Erro ao salvar categoria.')
     }
 }
 
