@@ -90,8 +90,8 @@
       <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl">
         <h3 class="text-xl font-bold text-gray-800 mb-4">{{ editingCategoryId ? 'Editar Categoria' : 'Adicionar Categoria' }}</h3>
         <form @submit.prevent="saveCategory">
-          <label class="block text-sm font-medium text-gray-600 mb-1">Nome da Categoria ({{ activeType === 'expense' ? 'Despesa' : 'Receita' }})</label>
-          <input v-model="newCategoryName" type="text" class="w-full border border-gray-300 rounded-lg p-2.5 mb-5 focus:outline-none focus:ring-2 focus:ring-primary text-gray-900" required placeholder="Ex: Alimentação, Salário..." />
+          <label class="block text-sm font-medium text-gray-600 mb-1">Nome da(s) Categoria(s) ({{ activeType === 'expense' ? 'Despesa' : 'Receita' }})</label>
+          <input v-model="newCategoryName" type="text" class="w-full border border-gray-300 rounded-lg p-2.5 mb-5 focus:outline-none focus:ring-2 focus:ring-primary text-gray-900" required placeholder="Para várias, separe por vírgula. Ex: Alimentação, Transporte" />
           <div class="flex justify-end gap-3">
             <button type="button" @click="openModal = false" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition cursor-pointer font-medium">Cancelar</button>
             <button type="submit" class="px-4 py-2 bg-primary hover:bg-blue-600 text-white font-medium rounded-lg shadow transition cursor-pointer">Salvar</button>
@@ -208,8 +208,8 @@ const saveCategory = async () => {
             await axios.put(`/api/categories/${editingCategoryId.value}`, { name: newCategoryName.value }, { headers: { Authorization: `Bearer ${token}` }})
             toast.success('Categoria atualizada!')
         } else {
-            await axios.post('/api/categories', { name: newCategoryName.value, type: activeType.value }, { headers: { Authorization: `Bearer ${token}` }})
-            toast.success('Categoria adicionada!')
+            const response = await axios.post('/api/categories', { name: newCategoryName.value, type: activeType.value }, { headers: { Authorization: `Bearer ${token}` }})
+            toast.success(response.data.message || 'Categoria(s) adicionada(s)!')
         }
         openModal.value = false
         fetchCategories()
