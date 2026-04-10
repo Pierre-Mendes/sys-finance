@@ -29,7 +29,9 @@ class UserRepository implements IUserRepository {
             $data['Password'],
             $data['Currency'],
             $data['UserId'],
-            $data['UserCode'] ?? null
+            $data['UserCode'] ?? null,
+            $data['SecurityQuestion'] ?? null,
+            $data['SecurityAnswer'] ?? null
         );
     }
 
@@ -49,14 +51,16 @@ class UserRepository implements IUserRepository {
             $data['Password'],
             $data['Currency'],
             $data['UserId'],
-            $data['UserCode'] ?? null
+            $data['UserCode'] ?? null,
+            $data['SecurityQuestion'] ?? null,
+            $data['SecurityAnswer'] ?? null
         );
     }
 
     public function save(User $user): User {
         if ($user->getId()) {
             // Update
-            $stmt = $this->db->prepare("UPDATE user SET FirstName = :firstName, LastName = :lastName, Email = :email, Password = :password, Currency = :currency, UserCode = :userCode WHERE UserId = :id");
+            $stmt = $this->db->prepare("UPDATE user SET FirstName = :firstName, LastName = :lastName, Email = :email, Password = :password, Currency = :currency, UserCode = :userCode, SecurityQuestion = :sq, SecurityAnswer = :sa WHERE UserId = :id");
             $stmt->execute([
                 'firstName' => $user->getFirstName(),
                 'lastName' => $user->getLastName(),
@@ -64,20 +68,24 @@ class UserRepository implements IUserRepository {
                 'password' => $user->getPassword(),
                 'currency' => $user->getCurrency(),
                 'userCode' => $user->getUserCode(),
+                'sq' => $user->getSecurityQuestion(),
+                'sa' => $user->getSecurityAnswer(),
                 'id' => $user->getId()
             ]);
             return $user;
         }
 
         // Insert
-        $stmt = $this->db->prepare("INSERT INTO user (FirstName, LastName, Email, Password, Currency, UserCode) VALUES (:firstName, :lastName, :email, :password, :currency, :userCode)");
+        $stmt = $this->db->prepare("INSERT INTO user (FirstName, LastName, Email, Password, Currency, UserCode, SecurityQuestion, SecurityAnswer) VALUES (:firstName, :lastName, :email, :password, :currency, :userCode, :sq, :sa)");
         $stmt->execute([
             'firstName' => $user->getFirstName(),
             'lastName' => $user->getLastName(),
             'email' => $user->getEmail(),
             'password' => $user->getPassword(),
             'currency' => $user->getCurrency(),
-            'userCode' => $user->getUserCode()
+            'userCode' => $user->getUserCode(),
+            'sq' => $user->getSecurityQuestion(),
+            'sa' => $user->getSecurityAnswer()
         ]);
         
         // Return a new instance with the inserted ID
@@ -88,7 +96,9 @@ class UserRepository implements IUserRepository {
             $user->getPassword(),
             $user->getCurrency(),
             (int) $this->db->lastInsertId(),
-            $user->getUserCode()
+            $user->getUserCode(),
+            $user->getSecurityQuestion(),
+            $user->getSecurityAnswer()
         );
     }
 }

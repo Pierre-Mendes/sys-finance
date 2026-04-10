@@ -43,6 +43,29 @@
               <option value="EUR">EUR - Euro</option>
             </select>
           </div>
+
+          <div class="space-y-4 pt-2 border-t border-gray-700">
+             <p class="text-xs font-bold text-indigo-400 uppercase tracking-widest">Segurança de Recuperação</p>
+             <div>
+               <label class="block text-sm font-medium text-gray-300 mb-1">Pergunta de Segurança</label>
+               <input type="text" v-model="form.securityQuestion" required 
+                 list="security-questions"
+                 class="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition" 
+                 placeholder="Crie sua própria pergunta" />
+               <datalist id="security-questions">
+                 <option value="Qual o nome do seu primeiro animal de estimação?" />
+                 <option value="Qual a cidade onde você nasceu?" />
+                 <option value="Qual o nome da sua mãe?" />
+                 <option value="Qual era o nome da sua primeira escola?" />
+               </datalist>
+             </div>
+             <div>
+               <label class="block text-sm font-medium text-gray-300 mb-1">Sua Resposta</label>
+               <input type="text" v-model="form.securityAnswer" required 
+                 class="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition" 
+                 placeholder="Sua resposta secreta" />
+             </div>
+          </div>
           
           <button type="submit" 
             class="w-full bg-primary hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 mt-2">
@@ -74,7 +97,9 @@ const form = reactive({
   lastName: '',
   email: '',
   password: '',
-  currency: 'BRL'
+  currency: 'BRL',
+  securityQuestion: '',
+  securityAnswer: ''
 })
 
 const handleSignup = async () => {
