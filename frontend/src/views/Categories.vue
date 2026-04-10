@@ -96,7 +96,7 @@
           <input v-if="editingCategoryId" v-model="newCategoryName" type="text" class="w-full border border-gray-300 rounded-lg p-2.5 mb-5 focus:outline-none focus:ring-2 focus:ring-primary text-gray-900" required placeholder="Ex: Alimentação" />
           
           <!-- Modo Criação (Bulk/Tags) -->
-          <div v-else class="w-full border border-gray-300 rounded-lg p-2.5 mb-5 focus-within:ring-2 focus-within:ring-primary focus-within:border-primary bg-white transition-shadow flex flex-wrap gap-2 items-center cursor-text" @click="$refs.tagInput?.focus()">
+          <div v-else class="w-full border border-gray-300 rounded-lg p-2.5 mb-5 focus-within:ring-2 focus-within:ring-primary focus-within:border-primary bg-white transition-shadow flex flex-wrap gap-2 items-center cursor-text" @click="tagInput?.focus()">
             <!-- Display Tags -->
             <span v-for="(tag, index) in categoryTags" :key="index" class="bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-1 rounded-md flex items-center gap-1.5 break-all">
               {{ tag }}
@@ -189,6 +189,15 @@ watch([searchQuery, itemsPerPage, activeType, sortOrder], () => {
     currentPage.value = 1
 })
 
+watch(openModal, (isOpen) => {
+    if (isOpen && !editingCategoryId.value) {
+        // Use nextTick via a microtask alternative or just wait for render
+        setTimeout(() => {
+            tagInput.value?.focus();
+        }, 0);
+    }
+}, { flush: 'post' })
+
 const nextPage = () => {
     if (currentPage.value < totalPages.value) currentPage.value++
 }
@@ -222,7 +231,6 @@ const openCreateModal = () => {
     tagInputValue.value = '';
     categoryTags.value = [];
     openModal.value = true;
-    setTimeout(() => { if(tagInput.value) tagInput.value.focus() }, 100);
 }
 
 const openEditModal = (cat: any) => {
@@ -233,15 +241,21 @@ const openEditModal = (cat: any) => {
 
 const addTagFromInput = () => {
     const val = tagInputValue.value.trim();
-    // Allow ending with comma or just blur to add block
-    const cleanedVal = val.replace(/,+$/, '').trim(); 
-    
-    if (cleanedVal) {
+    if (!val) return;
+
+    // Split by common delimiters (comma, newline)
+    const values = val
+        .split(/[,\n\r]+/)
+        .map(v => v.trim())
+        .filter(v => v !== '');
+
+    values.forEach(v => {
         // Prevent exact duplicates in the UI
-        if (!categoryTags.value.includes(cleanedVal)) {
-             categoryTags.value.push(cleanedVal);
+        if (!categoryTags.value.includes(v)) {
+            categoryTags.value.push(v);
         }
-    }
+    });
+
     tagInputValue.value = '';
 }
 
