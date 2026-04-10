@@ -44,11 +44,20 @@ class CategoryController {
         $type = $input['type'] ?? 'income';
 
         try {
-            $cat = $this->categoryService->create($workspaceId, $name, $type);
+            $result = $this->categoryService->create($workspaceId, $name, $type);
+            
+            $data = is_array($result) 
+                ? array_map(fn($cat) => ["id" => $cat->getId(), "name" => $cat->getCategoryName(), "type" => $type], $result)
+                : ["id" => $result->getId(), "name" => $result->getCategoryName(), "type" => $type];
+
+            $message = is_array($result) && count($result) > 1 
+                ? count($result) . " categorias criadas com sucesso." 
+                : "Category created successfully.";
+
             $response->getBody()->write(json_encode([
                 "success" => true, 
-                "message" => "Category created successfully.",
-                "data" => ["id" => $cat->getId(), "name" => $cat->getCategoryName(), "type" => $type]
+                "message" => $message,
+                "data" => $data
             ]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(201);
         } catch (Exception $e) {

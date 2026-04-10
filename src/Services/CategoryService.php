@@ -18,14 +18,43 @@ class CategoryService {
         return $this->categoryRepo->findAllByWorkspaceIdAndLevel($workspaceId, $level);
     }
 
-    public function create(int $workspaceId, string $categoryName, string $type): Category {
-        if (empty(trim($categoryName))) {
-            throw new Exception("Category name cannot be empty.");
-        }
-        
+    /**
+     * @param int $workspaceId
+     * @param string|array $categoryInput
+     * @param string $type
+     * @return Category|Category[]
+     * @throws Exception
+     */
+    public function create(int $workspaceId, $categoryInput, string $type) {
         $level = ($type === 'expense') ? 2 : 1;
-        $cat = new Category($workspaceId, trim($categoryName), $level);
-        return $this->categoryRepo->save($cat);
+        $createdCategories = [];
+
+        // Normalize input into an array of names
+        $names = [];
+        if (is_array($categoryInput)) {
+            $names = $categoryInput;
+        } elseif (is_string($categoryInput)) {
+            $names = explode(',', $categoryInput);
+        }
+
+        foreach ($names as $name) {
+            $trimmedName = trim($name);
+            if (!empty($trimmedName)) {
+                $cat = new Category($workspaceId, $trimmedName, $level);
+                $createdCategories[] = $this->categoryRepo->save($cat);
+            }
+        }
+
+        if (empty($createdCategories)) {
+            throw new Exception("Nenhum nome de categoria válido foi fornecido.");
+        }
+
+        // Se o input foi uma única string sem vírgulas originalmente (compatibilidade com frontend antigo ou APIs restritas), retorna apenas 1 objeto
+        if (is_string($categoryInput) && count($createdCategories) === 1 && strpos($categoryInput, ',') === false) {
+            return $createdCategories[0];
+        }
+
+        return $createdCategories;
     }
 
     public function update(int $id, int $workspaceId, string $categoryName): Category {
