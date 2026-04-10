@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Contracts\ICreditCardRepository;
 use App\Contracts\ICreditCardTransactionRepository;
 use App\Repositories\BillRepository;
+use App\Repositories\CategoryRepository;
+use App\Models\Category;
 use App\Models\CreditCard;
 use App\Models\CreditCardTransaction;
 use App\Models\Transaction;
@@ -16,11 +18,13 @@ class CreditCardService {
     private ICreditCardRepository $cardRepo;
     private ICreditCardTransactionRepository $txRepo;
     private BillRepository $billRepo;
+    private CategoryRepository $categoryRepo;
 
-    public function __construct(ICreditCardRepository $cardRepo, ICreditCardTransactionRepository $txRepo, BillRepository $billRepo) {
+    public function __construct(ICreditCardRepository $cardRepo, ICreditCardTransactionRepository $txRepo, BillRepository $billRepo, CategoryRepository $categoryRepo) {
         $this->cardRepo = $cardRepo;
         $this->txRepo = $txRepo;
         $this->billRepo = $billRepo;
+        $this->categoryRepo = $categoryRepo;
     }
 
     public function getAllCards(int $workspaceId): array {
@@ -134,7 +138,22 @@ class CreditCardService {
             throw new Exception("A fatura deste cartão para {$month}/{$year} já foi gerada.");
         }
 
-        $defaultCategoryId = !empty($allTxs) ? $allTxs[0]->getCategoryId() : 0;
+        // Find or create "Cartão de Crédito" category
+        $ccCategoryName = "Cartão de Crédito";
+        $workspaceCategories = $this->categoryRepo->findAllByWorkspaceIdAndLevel($workspaceId, 2);
+        $foundCat = null;
+        foreach ($workspaceCategories as $cat) {
+            if (strcasecmp($cat->getCategoryName(), $ccCategoryName) === 0) {
+                $foundCat = $cat;
+                break;
+            }
+        }
+        
+        if (!$foundCat) {
+            $newCat = new Category($workspaceId, $ccCategoryName, 2);
+            $foundCat = $this->categoryRepo->save($newCat);
+        }
+        $defaultCategoryId = $foundCat->getId();
 
         $bill = new Transaction(
             $workspaceId,

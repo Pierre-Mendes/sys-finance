@@ -78,7 +78,7 @@ class WorkspaceController
         $workspaceId = $request->getAttribute('workspaceId');
         
         $stmt = $this->pdo->prepare("
-            SELECT u.UserId as id, u.FirstName as firstName, u.LastName as lastName, wu.Role as role, wu.JoinedAt as joinedAt, wu.UsedInviteCode as usedInviteCode 
+            SELECT u.UserId as id, u.FirstName as firstName, u.LastName as lastName, wu.Role as role, wu.Permissions as permissions, wu.JoinedAt as joinedAt, wu.UsedInviteCode as usedInviteCode 
             FROM workspace_users wu 
             INNER JOIN user u ON u.UserId = wu.UserId 
             WHERE wu.WorkspaceId = ?
@@ -114,6 +114,40 @@ class WorkspaceController
         $stmtDel->execute([$workspaceId, $targetUserId]);
 
         return $response->withStatus(204);
+    }
+
+    public function updateMemberPermissions(Request $request, Response $response, array $args): Response
+    {
+        $workspaceId = $request->getAttribute('workspaceId');
+        $role = $request->getAttribute('workspaceRole');
+        $targetUserId = (int) $args['userId'];
+        
+        if ($role !== 'owner') {
+            $response->getBody()->write(json_encode(['error' => 'Apenas o proprietário pode alterar as permissões dos membros.']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(403);
+        }
+
+        $input = (array) $request->getParsedBody();
+        $permissions = $input['permissions'] ?? [];
+        
+        $stmtCheck = $this->pdo->prepare("SELECT Role FROM workspace_users WHERE WorkspaceId = ? AND UserId = ?");
+        $stmtCheck->execute([$workspaceId, $targetUserId]);
+        $targetRole = $stmtCheck->fetchColumn();
+        
+        if (!$targetRole) {
+            $response->getBody()->write(json_encode(['error' => 'Membro não encontrado neste workspace.']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
+        }
+
+        if ($targetRole === 'owner') {
+             $response->getBody()->write(json_encode(['error' => 'Não é possível restringir permissões do root/owner.']));
+             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+
+        $stmt = $this->pdo->prepare("UPDATE workspace_users SET Permissions = ? WHERE WorkspaceId = ? AND UserId = ?");
+        $stmt->execute([json_encode($permissions), $workspaceId, $targetUserId]);
+
+        return $response->withStatus(200);
     }
 
     public function updateWorkspace(Request $request, Response $response, array $args): Response

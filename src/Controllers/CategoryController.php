@@ -20,14 +20,24 @@ class CategoryController {
         $type = $params['type'] ?? 'income';
 
         try {
-            $categories = $this->categoryService->getAllForUser($workspaceId, $type);
-            $data = array_map(function($cat) {
-                return [
-                    "id" => $cat->getId(),
-                    "name" => $cat->getCategoryName(),
-                    "level" => $cat->getLevel()
-                ];
-            }, $categories);
+            if ($type === 'all') {
+                $income = $this->categoryService->getAllForUser($workspaceId, 'income');
+                $bills = $this->categoryService->getAllForUser($workspaceId, 'bill');
+                
+                $data = array_merge(
+                    array_map(fn($cat) => ["id" => $cat->getId(), "name" => $cat->getCategoryName(), "type" => "income"], $income),
+                    array_map(fn($cat) => ["id" => $cat->getId(), "name" => $cat->getCategoryName(), "type" => "bill"], $bills)
+                );
+            } else {
+                $categories = $this->categoryService->getAllForUser($workspaceId, $type);
+                $data = array_map(function($cat) {
+                    return [
+                        "id" => $cat->getId(),
+                        "name" => $cat->getCategoryName(),
+                        "level" => $cat->getLevel()
+                    ];
+                }, $categories);
+            }
 
             $response->getBody()->write(json_encode(["success" => true, "data" => $data]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);

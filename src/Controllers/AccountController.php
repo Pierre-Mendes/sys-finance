@@ -36,15 +36,28 @@ class AccountController {
     public function create(Request $request, Response $response): Response {
         $workspaceId = $request->getAttribute('workspaceId');
         $input = (array) $request->getParsedBody();
-        $name = $input['name'] ?? '';
+        $nameOrNames = $input['name'] ?? '';
 
         try {
-            $account = $this->accountService->create($workspaceId, $name);
-            $response->getBody()->write(json_encode([
-                "success" => true, 
-                "message" => "Account created successfully.",
-                "data" => ["id" => $account->getId(), "name" => $account->getAccountName()]
-            ]));
+            if (is_array($nameOrNames)) {
+                $created = [];
+                foreach ($nameOrNames as $n) {
+                    $acc = $this->accountService->create($workspaceId, $n);
+                    $created[] = ["id" => $acc->getId(), "name" => $acc->getAccountName()];
+                }
+                $response->getBody()->write(json_encode([
+                    "success" => true, 
+                    "message" => count($created) . " conta(s) criada(s) com sucesso.",
+                    "data" => $created
+                ]));
+            } else {
+                $account = $this->accountService->create($workspaceId, $nameOrNames);
+                $response->getBody()->write(json_encode([
+                    "success" => true, 
+                    "message" => "Conta criada com sucesso.",
+                    "data" => ["id" => $account->getId(), "name" => $account->getAccountName()]
+                ]));
+            }
             return $response->withHeader('Content-Type', 'application/json')->withStatus(201);
         } catch (Exception $e) {
             $response->getBody()->write(json_encode(["success" => false, "error" => $e->getMessage()]));
