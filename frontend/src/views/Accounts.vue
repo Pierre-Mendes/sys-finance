@@ -81,8 +81,32 @@
       <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl">
         <h3 class="text-xl font-bold text-gray-800 mb-4">{{ editingAccountId ? 'Editar Conta' : 'Adicionar Conta' }}</h3>
         <form @submit.prevent="saveAccount">
-          <label class="block text-sm font-medium text-gray-600 mb-1">Nome da Conta</label>
-          <input v-model="newAccountName" type="text" class="w-full border border-gray-300 rounded-lg p-2.5 mb-5 focus:outline-none focus:ring-2 focus:ring-primary text-gray-900" required placeholder="NuBank, Itaú, etc..." />
+          <label class="block text-sm font-medium text-gray-600 mb-1">Nome da(s) Conta(s)</label>
+          
+          <!-- Modo Edição (Single) -->
+          <input v-if="editingAccountId" v-model="newAccountName" type="text" class="w-full border border-gray-300 rounded-lg p-2.5 mb-5 focus:outline-none focus:ring-2 focus:ring-primary text-gray-900" required placeholder="NuBank, Itaú, etc..." />
+          
+          <!-- Modo Criação (Bulk/Tags) -->
+          <div v-else class="w-full border border-gray-300 rounded-lg p-2.5 mb-5 focus-within:ring-2 focus-within:ring-primary focus-within:border-primary bg-white transition-shadow flex flex-wrap gap-2 items-center cursor-text" @click="tagInput?.focus()">
+            <!-- Display Tags -->
+            <span v-for="(tag, index) in accountTags" :key="index" class="bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-1 rounded-md flex items-center gap-1.5 break-all">
+              {{ tag }}
+              <button type="button" @click.stop="removeTag(index)" class="hover:bg-blue-200 text-blue-600 rounded-full p-0.5 transition cursor-pointer" title="Remover">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+              </button>
+            </span>
+            
+            <!-- Input wrapper to handle sizing and key events -->
+            <input 
+              ref="tagInput"
+              v-model="tagInputValue" 
+              @keydown="handleTagKeydown"
+              @blur="addTagFromInput"
+               type="text" 
+              class="flex-1 min-w-[120px] bg-transparent outline-none text-gray-900 placeholder-gray-400 text-sm h-6 m-0.5" 
+              :placeholder="accountTags.length === 0 ? 'Ex: NuBank, Itaú (separe c/ vírgula ou Enter)' : ''" 
+            />
+          </div>
           <div class="flex justify-end gap-3">
             <button type="button" @click="openModal = false" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition cursor-pointer font-medium">Cancelar</button>
             <button type="submit" class="px-4 py-2 bg-primary hover:bg-blue-600 text-white font-medium rounded-lg shadow transition cursor-pointer">Salvar</button>
@@ -109,6 +133,10 @@ const openModal = ref(false)
 const newAccountName = ref('')
 const editingAccountId = ref<number | null>(null)
 const searchQuery = ref('')
+
+const tagInputValue = ref('')
+const accountTags = ref<string[]>([])
+const tagInput = ref<HTMLInputElement | null>(null)
 
 const currentPage = ref(1)
 const itemsPerPage = ref(5)
@@ -145,6 +173,12 @@ watch([searchQuery, itemsPerPage, sortOrder], () => {
     currentPage.value = 1
 })
 
+watch(openModal, (isOpen) => {
+    if (isOpen && !editingAccountId.value) {
+        setTimeout(() => { tagInput.value?.focus(); }, 0);
+    }
+}, { flush: 'post' })
+
 const nextPage = () => {
     if (currentPage.value < totalPages.value) currentPage.value++
 }
@@ -175,6 +209,8 @@ onMounted(fetchAccounts)
 const openCreateModal = () => {
     editingAccountId.value = null;
     newAccountName.value = '';
+    tagInputValue.value = '';
+    accountTags.value = [];
     openModal.value = true;
 }
 
@@ -184,6 +220,33 @@ const openEditModal = (acc: any) => {
     openModal.value = true;
 }
 
+const addTagFromInput = () => {
+    const val = tagInputValue.value.trim();
+    if (!val) return;
+    const values = val.split(/[,\n\r]+/).map(v => v.trim()).filter(v => v !== '');
+    values.forEach(v => {
+        if (!accountTags.value.includes(v)) {
+            accountTags.value.push(v);
+        }
+    });
+    tagInputValue.value = '';
+}
+
+const handleTagKeydown = (e: KeyboardEvent) => {
+    if (e.key === ',' || e.key === 'Enter') {
+        e.preventDefault();
+        addTagFromInput();
+    } else if (e.key === 'Backspace' && tagInputValue.value === '' && accountTags.value.length > 0) {
+        accountTags.value.pop();
+    }
+}
+
+const removeTag = (index: number) => {
+    accountTags.value.splice(index, 1);
+}
+
+
+
 const saveAccount = async () => {
     try {
         const token = localStorage.getItem('token')
@@ -191,8 +254,15 @@ const saveAccount = async () => {
             await axios.put(`/api/accounts/${editingAccountId.value}`, { name: newAccountName.value }, { headers: { Authorization: `Bearer ${token}` }})
             toast.success('Conta atualizada com sucesso!')
         } else {
-            await axios.post('/api/accounts', { name: newAccountName.value }, { headers: { Authorization: `Bearer ${token}` }})
-            toast.success('Conta criada com sucesso!')
+            addTagFromInput();
+            if (accountTags.value.length === 0) {
+                toast.warning('Adicione pelo menos uma conta.');
+                if(tagInput.value) tagInput.value.focus();
+                return;
+            }
+            const payloadArray = accountTags.value;
+            await axios.post('/api/accounts', { name: payloadArray }, { headers: { Authorization: `Bearer ${token}` }})
+            toast.success('Conta(s) criada(s) com sucesso!')
         }
         openModal.value = false
         fetchAccounts()
