@@ -26,3 +26,4 @@ db/mysql_logs/
 .DS_Store
 Thumbs.db
 .history/
+database.sqlite
