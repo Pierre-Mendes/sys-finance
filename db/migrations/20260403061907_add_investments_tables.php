@@ -18,9 +18,12 @@ final class AddInvestmentsTables extends AbstractMigration
      */
     public function change(): void
     {
+        $isSqlite = $this->getAdapter()->getAdapterType() === 'sqlite';
+        $enumType = $isSqlite ? 'string' : 'enum';
+
         $investments = $this->table('investments');
         $investments->addColumn('workspaceId', 'integer', ['signed' => false])
-                    ->addColumn('type', 'enum', ['values' => ['ACAO', 'FII', 'CDB', 'TESOURO', 'OUTRO']])
+                    ->addColumn('type', $enumType, ['values' => ['ACAO', 'FII', 'CDB', 'TESOURO', 'OUTRO']])
                     ->addColumn('ticker', 'string', ['limit' => 20, 'null' => true])
                     ->addColumn('name', 'string', ['limit' => 100])
                     ->addColumn('quantity', 'decimal', ['precision' => 15, 'scale' => 4, 'default' => 0.0000])
@@ -34,7 +37,7 @@ final class AddInvestmentsTables extends AbstractMigration
                     
         $transactions = $this->table('investment_transactions');
         $transactions->addColumn('investmentId', 'integer', ['signed' => false])
-                     ->addColumn('action', 'enum', ['values' => ['BUY', 'SELL', 'INCOME']])
+                     ->addColumn('action', $enumType, ['values' => ['BUY', 'SELL', 'INCOME']])
                      ->addColumn('quantity', 'decimal', ['precision' => 15, 'scale' => 4])
                      ->addColumn('price', 'decimal', ['precision' => 15, 'scale' => 4])
                      ->addColumn('date', 'date')

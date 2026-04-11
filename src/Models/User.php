@@ -52,4 +52,5 @@ class User {
         $this->securityQuestion = $q;
         $this->securityAnswer = $a;
     }
+    public function setId(int $id): void { $this->id = $id; }
 }

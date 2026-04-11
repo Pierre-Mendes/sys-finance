@@ -10,8 +10,8 @@ use PDO;
 class GoalRepository implements IGoalRepository {
     private PDO $db;
 
-    public function __construct() {
-        $this->db = Database::getConnection();
+    public function __construct(PDO $db) {
+        $this->db = $db;
     }
 
     public function findByIdAndWorkspaceId(int $id, int $workspaceId): ?Goal {

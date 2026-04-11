@@ -23,10 +23,13 @@ final class AddSlaAndRecurrenceToTransactions extends AbstractMigration
         foreach ($tables as $tableName) {
             $table = $this->table($tableName);
             
+            $isSqlite = $this->getAdapter()->getAdapterType() === 'sqlite';
+            $enumType = $isSqlite ? 'string' : 'enum';
+
             $table->addColumn('due_date', 'date', ['null' => true])
-                  ->addColumn('status', 'enum', ['values' => ['PENDING', 'PAID'], 'default' => 'PAID'])
-                  ->addColumn('priority', 'enum', ['values' => ['LOW', 'NORMAL', 'HIGH'], 'default' => 'NORMAL'])
-                  ->addColumn('recurrence_type', 'enum', ['values' => ['NONE', 'MONTHLY', 'YEARLY'], 'default' => 'NONE'])
+                  ->addColumn('status', $enumType, ['values' => ['PENDING', 'PAID'], 'default' => 'PAID'])
+                  ->addColumn('priority', $enumType, ['values' => ['LOW', 'NORMAL', 'HIGH'], 'default' => 'NORMAL'])
+                  ->addColumn('recurrence_type', $enumType, ['values' => ['NONE', 'MONTHLY', 'YEARLY'], 'default' => 'NONE'])
                   ->update();
         }
     }
