@@ -16,8 +16,15 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd ~/gerenciador-financeiro-pessoal
-            git pull origin main
+            # Entra na pasta do projeto
+            mkdir -p ~/sys-finance
+            cd ~/sys-finance
+            # Se não for um repositório git, tenta inicializar (pode precisar de Deploy Key)
+            if [ ! -d ".git" ]; then
+              git clone https://github.com/Pierre-Mendes/sys-finance.git .
+            else
+              git pull origin main
+            fi
             # Build and up the STAGING environment (Port 8082)
             docker compose -f docker-compose.staging.yml up -d --build
             # Run migrations for staging
