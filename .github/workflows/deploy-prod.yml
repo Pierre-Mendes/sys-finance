@@ -1,0 +1,22 @@
+name: Deploy to Production
+
+on:
+  workflow_dispatch: # Manual trigger only for safety
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to VPS via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/gerenciador-financeiro-pessoal
+            git pull origin main
+            # Build and up the PRODUCTION environment (Port 80)
+            docker compose -f docker-compose.prod.yml up -d --build
+            # Run migrations for production
+            docker exec financas-web-prod php vendor/bin/phinx migrate -e production
