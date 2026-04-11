@@ -132,6 +132,9 @@
                             </td>
                             <td class="p-4 text-right">
                                 <div v-if="m.role !== 'owner' && activeWorkspaceRole === 'owner'" class="flex items-center justify-end gap-2">
+                                    <button @click="openPermissionsModal(m)" class="text-teal-500 hover:text-teal-700 hover:bg-teal-50 p-2 rounded transition" title="Permissões de Acesso (ACL)">
+                                        <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                    </button>
                                     <button @click="transferOwner(m)" class="text-blue-500 hover:text-blue-700 hover:bg-blue-50 p-2 rounded transition" title="Tornar Proprietário (Transferir Liderança)">
                                         <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
                                     </button>
@@ -222,6 +225,41 @@
         </div>
     </div>
     
+    <!-- Permissions Modal -->
+    <div v-if="modals.permissions" class="fixed inset-0 bg-gray-900/50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col max-h-full">
+            <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-teal-50">
+                 <h3 class="text-xl font-bold text-teal-900">Gerenciar Permissões</h3>
+                 <button @click="modals.permissions = false" class="text-teal-600 hover:text-red-500 transition"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+            </div>
+            <div class="p-6 overflow-y-auto">
+                 <div class="mb-4">
+                     <p class="text-sm font-semibold text-gray-700">Membro: <span class="font-normal">{{ selectedMember?.firstName }} {{ selectedMember?.lastName }}</span></p>
+                     <p class="text-xs text-gray-500 mt-1">Configure o nível de acesso que este usuário terá para cada área do sistema dentro deste Workspace.</p>
+                 </div>
+                 
+                 <div class="space-y-4">
+                     <div v-for="mod in permissionModules" :key="mod.key" class="border border-gray-200 rounded-lg p-3 flex justify-between items-center">
+                         <div>
+                             <h4 class="font-semibold text-gray-800 text-sm">{{ mod.label }}</h4>
+                         </div>
+                         <select v-model="draftPermissions[mod.key]" class="text-sm border border-gray-300 rounded outline-none px-2 py-1 bg-white font-medium focus:ring-1 focus:ring-teal-500">
+                             <option value="none">Nenhum</option>
+                             <option value="viewer">Visualizar</option>
+                             <option value="editor">Editar</option>
+                         </select>
+                     </div>
+                 </div>
+            </div>
+            <div class="p-6 border-t border-gray-100 bg-white flex justify-end gap-3">
+                 <button @click="modals.permissions = false" class="px-5 py-2.5 text-gray-600 hover:text-gray-800 font-semibold transition">Cancelar</button>
+                 <button @click="savePermissions" class="px-5 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-lg shadow-sm transition">
+                      Salvar Permissões
+                 </button>
+            </div>
+        </div>
+    </div>
+    
   </MainLayout>
 </template>
 
@@ -252,6 +290,20 @@ const createForm = ref({ name: '', invites: '', withInvites: false })
 
 const inviteForm = ref({ passcode: '', expiresDays: 7 })
 const joinForm = ref({ code: '', passcode: '' })
+
+const modals = ref({ permissions: false })
+const selectedMember = ref<any>(null)
+const draftPermissions = ref<any>({})
+
+const permissionModules = [
+    { key: 'accounts', label: 'Contas Bancárias' },
+    { key: 'categories', label: 'Categorias' },
+    { key: 'transactions', label: 'Lançamentos' },
+    { key: 'budgets', label: 'Orçamentos (Mensal)' },
+    { key: 'goals', label: 'Metas e Objetivos' },
+    { key: 'credit_cards', label: 'Cartões de Crédito' },
+    { key: 'reports', label: 'Relatórios' }
+]
 
 const activeWorkspaceName = computed(() => {
     return workspaceStore.activeWorkspace?.name || 'Desconhecida'
@@ -380,6 +432,38 @@ const transferOwner = async (member: any) => {
         } catch(e: any) {
             toast.error(e.response?.data?.error || 'Ação falhou.')
         }
+    }
+}
+
+const openPermissionsModal = (member: any) => {
+    selectedMember.value = member;
+    
+    let currentPerms = {};
+    if (typeof member.permissions === 'string') {
+        try { currentPerms = JSON.parse(member.permissions) } catch(e) {}
+    } else if (member.permissions) {
+        currentPerms = member.permissions;
+    }
+
+    // Default to viewer for everything if never seeded
+    permissionModules.forEach(m => {
+        draftPermissions.value[m.key] = (currentPerms as any)[m.key] || 'viewer';
+    });
+
+    modals.value.permissions = true;
+}
+
+const savePermissions = async () => {
+    if (!selectedMember.value) return;
+    try {
+        await api.put(`/api/workspaces/members/${selectedMember.value.id}/permissions`, {
+            permissions: draftPermissions.value
+        });
+        toast.success(`Permissões atualizadas para ${selectedMember.value.firstName}.`);
+        modals.value.permissions = false;
+        fetchMembers();
+    } catch (e: any) {
+        toast.error(e.response?.data?.error || 'Não foi possível salvar as permissões.')
     }
 }
 

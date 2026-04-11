@@ -14,10 +14,12 @@ import Workspaces from './views/Workspaces.vue'
 import Investments from './views/Investments.vue'
 import CreditCards from './views/CreditCards.vue'
 import Goals from './views/Goals.vue'
+import ForgotPassword from './views/ForgotPassword.vue'
 
 const routes = [
   { path: '/', component: Login },
   { path: '/signup', component: SignUp },
+  { path: '/forgot-password', component: ForgotPassword },
   { path: '/dashboard', component: Dashboard },
   { path: '/accounts', component: Accounts },
   { path: '/categories', component: Categories },
@@ -29,6 +31,7 @@ const routes = [
   { path: '/investments', component: Investments },
   { path: '/credit-cards', component: CreditCards },
   { path: '/goals', component: Goals },
+  { path: '/statement', component: () => import('./views/Statement.vue') },
   { path: '/help', component: Help },
   { path: '/workspaces', component: Workspaces }
 ]

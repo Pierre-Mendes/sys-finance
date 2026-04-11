@@ -1,0 +1,27 @@
+name: AI Code Review
+
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review, synchronized]
+  issue_comment:
+    types: [created]
+
+jobs:
+  pr_agent:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+      contents: write
+    steps:
+      - name: PR Agent Action
+        uses: Codium-ai/pr-agent@main
+        env:
+          OPENAI_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Configuration: Uncomment these to customize
+          # pr_agent.config: |
+          #   pr_reviewer:
+          #     require_tests_review: true
+          #     inline_code_comments: true

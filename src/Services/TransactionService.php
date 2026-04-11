@@ -31,16 +31,30 @@ class TransactionService {
     }
 
     public function getAllForUser(int $workspaceId): array {
+        return $this->getFilteredForUser($workspaceId, []);
+    }
+
+    public function getFilteredForUser(int $workspaceId, array $filters): array {
         $assets = $this->assetRepo->findAllByWorkspaceId($workspaceId);
         $bills = $this->billRepo->findAllByWorkspaceId($workspaceId);
 
         $transactions = array_merge($assets, $bills);
         
-        usort($transactions, function($a, $b) {
+        // Filter in memory for simplicity given repo structure
+        $filtered = array_filter($transactions, function($t) use ($filters) {
+            if (!empty($filters['from_date']) && $t->getDate() < $filters['from_date']) return false;
+            if (!empty($filters['to_date']) && $t->getDate() > $filters['to_date']) return false;
+            if (!empty($filters['account_id']) && $t->getAccountId() != $filters['account_id']) return false;
+            if (!empty($filters['category_id']) && $t->getCategoryId() != $filters['category_id']) return false;
+            if (!empty($filters['type']) && $t->getType() != $filters['type']) return false;
+            return true;
+        });
+
+        usort($filtered, function($a, $b) {
             return strtotime($b->getDate()) <=> strtotime($a->getDate()); 
         });
 
-        return $transactions;
+        return array_values($filtered);
     }
 
     public function create(int $workspaceId, TransactionDTO $dto): Transaction {

@@ -17,8 +17,17 @@ class ReportController {
 
     public function generatePdf(Request $request, Response $response): Response {
         $workspaceId = $request->getAttribute('workspaceId');
+        $params = $request->getQueryParams();
         
-        $transactions = $this->txService->getAllForUser($workspaceId);
+        $filters = [
+            'from_date' => $params['from_date'] ?? null,
+            'to_date' => $params['to_date'] ?? null,
+            'account_id' => $params['account_id'] ?? null,
+            'category_id' => $params['category_id'] ?? null,
+            'type' => $params['type'] ?? null
+        ];
+
+        $transactions = $this->txService->getFilteredForUser($workspaceId, $filters);
         
         // Dompdf setup
         $options = new Options();
@@ -82,7 +91,17 @@ class ReportController {
 
     public function generateCsv(Request $request, Response $response): Response {
         $workspaceId = $request->getAttribute('workspaceId');
-        $transactions = $this->txService->getAllForUser($workspaceId);
+        $params = $request->getQueryParams();
+        
+        $filters = [
+            'from_date' => $params['from_date'] ?? null,
+            'to_date' => $params['to_date'] ?? null,
+            'account_id' => $params['account_id'] ?? null,
+            'category_id' => $params['category_id'] ?? null,
+            'type' => $params['type'] ?? null
+        ];
+
+        $transactions = $this->txService->getFilteredForUser($workspaceId, $filters);
 
         $out = fopen('php://temp', 'w');
         fputcsv($out, ['Data', 'Tipo', 'Titulo', 'Categoria', 'Conta', 'Valor (R$)']);

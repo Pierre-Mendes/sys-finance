@@ -1,0 +1,36 @@
+services:
+  db-staging:
+    image: mysql:8.0
+    container_name: financas-db-staging
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: money_manager_staging
+    volumes:
+      - db-data-staging:/var/lib/mysql
+    ports:
+      - "3308:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  web-staging:
+    build:
+      context: .
+      args:
+        - VITE_API_BASE_URL=http://localhost:8082
+    container_name: financas-web-staging
+    ports:
+      - "8082:80"
+    environment:
+      - DB_HOST=db-staging
+      - DB_USER=root
+      - DB_PASS=root
+      - DB_NAME=money_manager_staging
+      - APP_ENV=staging
+    depends_on:
+      db-staging:
+        condition: service_healthy
+
+volumes:
+  db-data-staging:

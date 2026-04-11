@@ -25,9 +25,10 @@ class GoalServiceTest extends TestCase
         $contributionRepo = new GoalContributionRepository($this->db);
         $assetRepo = new \App\Repositories\AssetRepository($this->db);
         $billRepo = new \App\Repositories\BillRepository($this->db);
+        $categoryRepo = new \App\Repositories\CategoryRepository($this->db);
         $simulationService = new SimulationService($assetRepo, $billRepo, $goalRepo);
         
-        $this->goalService = new GoalService($goalRepo, $contributionRepo, $simulationService);
+        $this->goalService = new GoalService($goalRepo, $contributionRepo, $simulationService, $billRepo, $categoryRepo);
     }
 
     public function test_create_and_retrieve_goal(): void

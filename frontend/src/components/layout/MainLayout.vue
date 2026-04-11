@@ -27,8 +27,9 @@
             <svg class="w-6 h-6 transform group-hover:scale-110 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
             </svg>
-            <span v-if="sysInvites?.length > 0" class="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full animate-ping"></span>
-            <span v-if="sysInvites?.length > 0" class="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-card"></span>
+            <div v-if="sysInvites?.length > 0 || unreadCount > 0" class="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-card animate-pulse">
+                {{ sysInvites.length + unreadCount }}
+            </div>
         </button>
 
         <div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-2 text-white shadow-md cursor-pointer">
@@ -50,6 +51,12 @@
             <router-link to="/accounts" class="flex items-center gap-3 px-3 py-3 rounded-lg transition-colors hover:bg-gray-800 text-gray-300" active-class="bg-blue-600/20 text-blue-400 font-semibold border border-blue-500/20">
               <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
               <span v-if="!isCollapsed">Contas Bancárias</span>
+            </router-link>
+          </li>
+          <li>
+            <router-link to="/statement" class="flex items-center gap-3 px-3 py-3 rounded-lg transition-colors hover:bg-gray-800 text-gray-300" active-class="bg-blue-600/20 text-blue-400 font-semibold border border-blue-500/20">
+              <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+              <span v-if="!isCollapsed">Extrato Bancário</span>
             </router-link>
           </li>
           <li>
@@ -149,8 +156,9 @@
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
             </svg>
-            <span v-if="sysInvites?.length > 0 || unreadCount > 0" class="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full animate-ping"></span>
-            <span v-if="sysInvites?.length > 0 || unreadCount > 0" class="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
+            <div v-if="sysInvites?.length > 0 || unreadCount > 0" class="absolute top-0 right-0 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-white">
+                {{ sysInvites.length + unreadCount }}
+            </div>
         </button>
       </header>
       
@@ -165,11 +173,24 @@
             <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
                 <h3 class="font-bold text-gray-800 flex items-center gap-2">
                     <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
-                    Central de Notificações
+                    Notificações
                 </h3>
-                <div class="flex items-center gap-3">
-                    <button v-if="unreadCount > 0" @click="readAllNotifications" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800">Marcar lidas</button>
-                    <button @click="invitesModalOpen = false" class="text-gray-400 hover:text-gray-600"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+                <button @click="invitesModalOpen = false" class="p-1 hover:bg-gray-200 rounded-lg transition-colors text-gray-400">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <div class="px-4 pt-4 bg-gray-50/50">
+                <div v-if="generalNotifications.length > 0" class="flex items-center justify-between bg-white p-1.5 rounded-xl border border-gray-200 shadow-sm">
+                    <button @click="readAllNotifications" class="flex-1 flex items-center justify-center gap-1.5 text-[10px] uppercase font-extrabold text-indigo-700 hover:bg-indigo-50 rounded-lg py-2 transition-all">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        Lidas
+                    </button>
+                    <div class="w-px h-4 bg-gray-100 mx-1"></div>
+                    <button @click="deleteAllNotifications" class="flex-1 flex items-center justify-center gap-1.5 text-[10px] uppercase font-extrabold text-red-600 hover:bg-red-50 rounded-lg py-2 transition-all">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        Limpar
+                    </button>
                 </div>
             </div>
             
@@ -189,24 +210,44 @@
                     </div>
                 </div>
 
-                <h4 v-if="generalNotifications?.length > 0" class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 mt-4 block">Alertas</h4>
-                <div v-for="notif in generalNotifications" :key="'notif'+notif.id" :class="['border rounded-lg p-4 mb-3 shadow-sm transition relative', !notif.read_at ? 'bg-orange-50 border-orange-200' : 'bg-white border-gray-200']">
-                    <div v-if="!notif.read_at" class="w-3 h-3 bg-red-500 absolute -top-1 -right-1 rounded-full shadow-sm animate-pulse border border-white"></div>
-                    <div class="flex gap-3">
-                        <div class="mt-1">
-                            <svg v-if="notif.type === 'SLA_WARNING'" class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            <svg v-else class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        </div>
-                        <div class="flex-1">
-                            <h5 :class="['text-sm font-bold', !notif.read_at ? 'text-gray-900' : 'text-gray-600']">{{ notif.title }}</h5>
-                            <p :class="['text-xs mt-1', !notif.read_at ? 'text-gray-800' : 'text-gray-500']">{{ notif.message }}</p>
-                            <div class="flex justify-between items-center mt-3">
-                                <span class="text-[10px] text-gray-400 font-medium">{{ new Date(notif.created_at).toLocaleDateString() }}</span>
-                                <button v-if="!notif.read_at" @click="readNotification(notif.id)" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 transition">Marcar Lido</button>
+                <h4 v-if="generalNotifications?.length > 0" class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 mt-4 block">Alertas</h4>
+                <TransitionGroup name="list" tag="div" class="space-y-3">
+                    <div v-for="notif in generalNotifications" :key="'notif'+notif.id" :class="['border rounded-xl p-4 transition-all duration-300 relative group', !notif.read_at ? 'bg-indigo-50/40 border-indigo-100' : 'bg-white border-gray-100']">
+                        <div v-if="!notif.read_at" class="w-3 h-3 bg-indigo-500 absolute -top-1 -right-1 rounded-full shadow-sm animate-pulse border-2 border-white z-10"></div>
+                        
+                        <!-- Individual Delete Button -->
+                        <button @click.stop="deleteNotification(notif.id)" class="absolute top-2 right-2 p-1 text-gray-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100" title="Excluir">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                        
+                        <div class="flex gap-3">
+                            <div class="mt-1">
+                                <span v-if="notif.type === 'SLA_WARNING'" class="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center text-red-600">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                </span>
+                                <span v-else class="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                </span>
+                            </div>
+                            <div class="flex-1">
+                                <h5 :class="['text-sm font-bold', !notif.read_at ? 'text-gray-900 line-clamp-1' : 'text-gray-600 line-clamp-1']">{{ notif.title }}</h5>
+                                <p :class="['text-xs mt-1 leading-relaxed', !notif.read_at ? 'text-gray-800' : 'text-gray-500']">{{ notif.message }}</p>
+                                
+                                <div v-if="notif.action_url" class="mt-3">
+                                    <button @click="navigateToAction(notif.action_url, notif.id)" class="w-full text-[11px] font-bold uppercase tracking-wider bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-indigo-700 hover:shadow-lg transition-all flex items-center justify-center gap-2 active:scale-95">
+                                        Configurar Agora
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                                    </button>
+                                </div>
+
+                                <div class="flex justify-between items-center mt-3 pt-3 border-t border-gray-100/50">
+                                    <span class="text-[10px] text-gray-400 font-medium">{{ new Date(notif.created_at).toLocaleDateString([], {day:'2-digit', month:'short'}) }}</span>
+                                    <button v-if="!notif.read_at" @click="readNotification(notif.id)" class="text-[10px] font-bold text-gray-400 hover:text-indigo-600 transition tracking-wider uppercase">Lido</button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </TransitionGroup>
             </div>
         </div>
     </div>
@@ -219,6 +260,7 @@ import { useRouter } from 'vue-router'
 import { computed } from 'vue'
 import api from '@/data/api/HttpClient'
 import { toast } from 'vue3-toastify'
+import Swal from 'sweetalert2'
 
 const router = useRouter()
 const sidebarOpen = ref(false)
@@ -262,7 +304,50 @@ const readAllNotifications = async () => {
         generalNotifications.value.forEach(item => {
             if (!item.read_at) item.read_at = new Date().toISOString();
         });
+        toast.info('Tudo marcado como lido.');
     } catch (e) {}
+}
+
+const deleteAllNotifications = async () => {
+    const result = await Swal.fire({
+        title: 'Limpar Notificações?',
+        text: 'Isso apagará permanentemente todo o seu histórico de alertas.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#4f46e5',
+        cancelButtonColor: '#9ca3af',
+        confirmButtonText: 'Sim, limpar tudo!',
+        cancelButtonText: 'Cancelar',
+        background: '#ffffff',
+        customClass: {
+            popup: 'rounded-[2rem]',
+            confirmButton: 'rounded-xl px-6 py-3 font-bold',
+            cancelButton: 'rounded-xl px-6 py-3 font-bold'
+        }
+    });
+
+    if (result.isConfirmed) {
+        try {
+            await api.delete(`/api/notifications`);
+            generalNotifications.value = [];
+            toast.info('Histórico limpo.');
+        } catch (e) {}
+    }
+}
+
+const deleteNotification = async (id: number) => {
+    try {
+        await api.delete(`/api/notifications/${id}`);
+        generalNotifications.value = generalNotifications.value.filter(n => n.id !== id);
+    } catch (e) {
+        toast.error('Erro ao excluir notificação.');
+    }
+}
+
+const navigateToAction = async (url: string, notifId: number) => {
+    await readNotification(notifId);
+    invitesModalOpen.value = false;
+    router.push(url);
 }
 
 const resolveInvite = async (id: number, action: 'accept' | 'reject') => {
@@ -293,6 +378,11 @@ onMounted(() => {
     }
     fetchSysInvites()
     fetchGeneralNotifications()
+    
+    // Retry fetch after a small delay to capture notifications triggered by the initial /me call in active sessions
+    setTimeout(() => {
+        fetchGeneralNotifications()
+    }, 2000)
 })
 
 const logout = () => {
@@ -301,3 +391,23 @@ const logout = () => {
     router.push('/')
 }
 </script>
+<style scoped>
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.4s ease;
+}
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+@keyframes fade-in-down {
+    0% { opacity: 0; transform: translateY(-10px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in-down {
+    animation: fade-in-down 0.3s ease-out;
+}
+</style>

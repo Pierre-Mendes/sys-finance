@@ -1,112 +1,73 @@
-# Gerenciador Financeiro Pessoal (SaaS Multi-Tenant)
+# 🚀 Gerenciador Financeiro Pessoal (SaaS Multi-Tenant)
 
-> Um ecossistema de ponta para gestão financeira arquitetado tanto para o indivíduo cauteloso quanto para controle orçamentário coletivo através de Rateios e Workspaces Seguros.
-
----
-
-## 📌 Visão Geral & Introdução
-Saindo da premissa de um *tracking* simples, esse projeto foi inteiramente reinventado para escalabilidade. Originalmente desenvolvido num contexto simples, todo o sistema foi movido para uma Arquitetura de Software Monolítica Modular, contando agora com painéis em **Vue.js 3** e uma robusta API em **PHP 8.4 Slim Framework**. 
-
-A mágica core do aplicativo é o recurso de **Workspaces (Tenant-Isolation)** atrelado a algoritmos de  **Rateios de Cobrança Recursiva**, propiciando que contas (como de namorados ou repúblicas universitárias) transacionem montantes matematicamente fracionados em espaços separados com permissões de JWT granulares! 
-
-## ✨ Funcionalidades Incríveis (Features)
-1. **Multi-Tenancy Workspaces (Espaços Compartilhados)**:
-   - Os usuários não estão presos numa conta. Eles controlam MÚLTIPLOS baldes/visões isoladas.
-   - Navegue instantaneamente do seu cenário *Pessoal* para *Acompanhamento Conjugal* ou *Controle da Empresa* usando o Dropdown Global. O App altera escopos na API sem a recarga da tela.
-2. **Rateio de Despesas Inter-Espaços Inteligentes**:
-   - Comprou o jantar que deu R$ 500 no seu cartão `Pessoal` e deseja jogar 50% nas costas da gestão conjunta `Familiar`?
-   - Ao injetar as despesas em transações, crie parcelas de separação que geram e injetam "despesas filhas" (*Shadow Records*) magicamente no balanço associado do Tenant recebedor! 
-3. **Visão 360º de Dados Agregados**:
-   - Um interruptor mágico no Dashboard que une o bolo do Multi-Tenancy! Descubra graficamente o total de seu Patrimônio entre todos os seus 20 Workspaces combinados.
-4. **Alocação via Orçamentos e Budgets Diários**:
-   - Determine que em Outubro sua meta para "Passeios" é gastar R$ 800 usando *Budgets Progressivos*. A UI fará cálculos de estouros e indicará criticidade em Barras Termométricas em relação à taxa de queima (Burn).
-5. **Acesso Guiado por Chaves Corporativas**:
-   - Sem envios pesados de *E-mails*. Convide terceiros gerando UUIDs "Tokens e Chaves Aleatórias" para que amigos autentiquem-se ingressando nos seus espaços sob o perfil MATE (`Convidado`). Um sininho e sino de notificações *real-time* de convite o avisará.
-6. **Mecânica de Pagamentos, Vencimentos (SLAs) e Recorrência**:
-   - Controle total do seu fluxo de caixa pendente com o recurso "Baixa na Conta". Defina datas de vencimento, adicione Prioridades Críticas aos gastos e automatize lançamentos de "Contas a Pagar" configurando-os com recorrência Mensal/Anual baseada no ciclo temporal!
-7. **Integração de Módulos de Investimento (Mock APIs B3/Sicoob)**:
-   - Acompanhe variações patrimoniais com um módulo dedicado de Investimentos, buscando cotações diárias via integrações escaláveis com APIs através do padrão Design Patterns `Strategy`.
-8. **Módulo de Controle de Cartões de Crédito**:
-   - Faça a gestão completa de seus cartões, separando o limite total do saldo em conta.
-   - Lance compras parceladas e deixe o sistema gerar automaticamente as faturas (Bills) futuras para que seu fluxo de caixa de longo prazo seja previsível.
-9. **Metas, Conquistas & Engine de Simulação**:
-   - Defina objetivos financeiros (ex: Enxoval, Carro, Reserva).
-   - O sistema utiliza uma engine de simulação que projeta a data exata de conclusão baseada no seu superávit mensal médio e aportes extras.
-   - Compartilhe metas entre Workspaces para sonhos coletivos!
-10. **Exportações Técnicas de Excel & PDFs**, Agendamento Diário, Tabela Rápida e Mapas de Calor em Calendário Gregoriano.
-
-## 🏗️ Stack Técnológica E Arquitetura
-1. **Frontend**: Vite + **Vue 3** (Composition API script setup) guiados por **Clean Architecture** (divisão em `core`, `data` e `presentation`).
-   - O núcleo conta com Repositories que isolam chamadas transientes feitas pelo `Axios`.
-   - Gerenciamento de Caches instantâneos coordenados magicamente pela **Pinia Store**.
-   - Design flexível: TailwindCSS, UI Glassmorphism com SweetAlert2/Vue3-Toastify UX interacional.
-2. **Backend**: C-Like API usando **PHP 8.4 c/ Slim Framework (PSR HTTP Router)** + PDO nativo de banco de dados e PHPUnit para testes orgânicos.
-3. **Persistência**: **MySQL via Docker (`mariadb`)**. Migrações incrementadas seguras via Phinx. As chaves primárias continuam Integer auto-escaláveis, porém expostas através de rotas associativas ou hashes limitados.
+> Um ecossistema de elite para gestão financeira, projetado para o controle absoluto do seu patrimônio, seja ele individual ou compartilhado via visões colaborativas.
 
 ---
 
-## 🚀 Primeiros Passos (Onboarding)
-Se esta é sua primeira vez no sistema, siga este fluxo para uma configuração perfeita:
+## 📌 A Nova Era do Controle Financeiro
+O sistema transcende o simples rastreamento de gastos. Ele é construído sobre uma base de **Soberania de Dados** e **Arquitetura Industrial (Clean Arch)**, unindo a agilidade do **Vue.js 3** com a robustez e segurança de uma API **PHP 8.4 (Slim Framework)**.
 
-1.  **Entenda o Workspace**: Você começa no seu espaço pessoal. Se precisar de um espaço compartilhado (família/empresa), crie um novo em "Workspaces".
-2.  **Cadastre suas Contas**: Vá em `Contas Bancárias` e adicione seus bancos (NuBank, Inter, etc). Sem contas, você não terá saldo para transacionar.
-3.  **Defina Categorias**: Personalize suas categorias em `Categorias` para mapear exatamente para onde seu dinheiro flui.
-4.  **Lance a Primeira Transação**: Adicione uma receita ou despesa. O dashboard ganhará vida instantaneamente!
-5.  **Configure o Crédito**: Adicione seus cartões em `Cartões de Crédito` para começar a provisionar faturas futuras.
+O coração do projeto é o **Cockpit Financeiro**, uma engine inteligente que sintetiza seu fluxo de caixa, investimentos e metas em uma visão 360º unificada por Workspaces.
+
+## ✨ Funcionalidades de Elite (Features)
+
+1.  **Cockpit Inteligente (Dashboard)**:
+    - Visão consolidada de Patrimônio Líquido entre múltiplos ambientes.
+    - Card de "Dinheiro Guardado" dinâmico: Prioriza suas **Metas Favoritas** ou exibe o total acumulado.
+2.  **Extrato Bancário com Saldo Progressivo**:
+    - Timeline detalhada de cada conta bancária.
+    - Cálculo automático de saldo acumulado (Running Balance) para auditoria precisa de fluxos.
+3.  **Multi-Tenancy Workspaces (SaaS Ready)**:
+    - Isole completamente sua vida "Pessoal", "Familiar" e "Profissional".
+    - Navegação instantânea entre visões sem recarga de página.
+4.  **Protocolo de Rateio (Recursive Splitting)**:
+    - Pague no seu cartão pessoal e repasse frações da despesa para o Workspace da empresa ou casal automaticamente via *Shadow Records*.
+5.  **Metas & Simulação de Conquistas**:
+    - Engine de projeção que calcula a data exata da vitória baseada no seu superávit histórico.
+    - Vínculo direto com contas bancárias e histórico de aportes auditável.
+6.  **Gestão de Cartões de Crédito**:
+    - Controle de limites, faturas futuras e parcelamentos inteligentes com interface Mobile-First.
+7.  **Investimentos (Clean Design Patterns)**:
+    - Integração via `Strategy Pattern` para cotações de ativos em tempo real (Brapi/Sicoob).
+8.  **Orçamentos (Budgets Termométricos)**:
+    - Controle de "Burn Rate" com alertas visuais de criticidade em barras termométricas.
+
+## 🏗️ Stack Tecnológica & Arquitetura
+
+### Frontend: Modernidade & Performance
+- **Vite + Vue 3 (Composition API)**: Velocidade extrema de desenvolvimento e execução.
+- **Clean Architecture Frontend**: Divisão rigorosa em `core` (domínio), `data` (repositórios/API) e `presentation` (Vue/Components).
+- **TailwindCSS + UX Premium**: Interface baseada em Glassmorphism, micro-animações e scrollbars customizadas.
+
+### Backend: Segurança & Robustez
+- **PHP 8.4 + Slim 4**: API de alta performance com tipagem estrita.
+- **Security Headers (OWASP)**: Middlewares de segurança ativos (CSP, HSTS, XSS Protection).
+- **Phinx Migrations**: Controle de versão do banco de dados MySQL para escalabilidade segura.
 
 ---
 
-## 🎯 Guia de Core Flows 
-Se precisar expandir o aplicativo, eis fluxos centrais:
+## 🚀 Guia de Onboarding (Quick Start)
 
-### 1. Injeção de Roteamento Multi-Tenant por Cabeçalho (WorkspaceMiddleware)
-Para que o front-end carregue contas do "Casal", todas as conexões Axios enviam um cabeçalho local `X-Workspace-Id: {id}`.
-No backend, o Middleware PSR inspeciona o token `JWT de Sessão`, depois cruza com a tabela MySQL `workspace_users`. Se o elo se confirma, a rota ganha as propriedades `$request->withAttribute('workspaceId', $id)` destravando injeção nos Services Subsequentes. Impedindo vazamento de dados sensíveis entre tenants!
+Se você é novo por aqui, siga a "Trilha do Sucesso":
 
-### 2. O Flúxo Lógico de Divisões em Recursão (The Split Protocol)
-Quando postamos no `TransactionController` enviando a flag `splits: [{}]`, o `TransactionService::create` primeiramente cadastra a Fatura (Bill) Pai.
-Imediatamente, ele captura a ID do Pai. E a iteração sobre 'Splits' gera uma transação idêntica nas Conta/Workspace Destino apontado, associando a coluna `ParentTransactionId = T_PAI`.  
-
-### 3. Lifecycle do Token Interativo
-- O usuário gera um novo Código de Workspace na UI (Passcode é criptografado).
-- O backend injeta registro `system_invitations` com `Status = pendente`.
-- Front-end exibe pingente vermelho (Bells Notifications).
-- Usuário clica => Confirma o request -> Backend faz Update da Role pra Member => Apaga invite provisório => Novo Painel disponível sem f5!
+1.  **Crie suas Contas**: No módulo `Contas Bancárias`, cadastre onde seu dinheiro vive (Ex: Nubank, Investimentos, Espécie).
+2.  **Categorize-se**: Em `Categorias`, defina os baldes onde seu dinheiro flui.
+3.  **Lance o Passado**: Importe ou lance seus últimos gastos para dar vida ao Dashboard.
+4.  **Trace Objetivos**: Crie sua primeira **Meta**, favorite-a e veja o progresso no Cockpit.
 
 ---
 
-## 💻 Instalação & Setup Rápido (Local Development)
+## 💻 Instalação Local (Developer Setup)
 
-Necessário: Docker, Docker Compose, NodeJS v20+
+**Requisitos**: Docker, NodeJS v20+
 
-1. **Suba o Motor de Banco de Dados**
-```bash
-docker compose up -d    # Sobe o MySQL db
-``` 
-2. **Rode as Migrations de Construção (Schema)**
-O banco não tem as tabelas por defautl, construa via Phinx CLI no contêiner do vendor ou via CLI.
-```bash
-vendor/bin/phinx migrate -e development
-```
-3. **Execute o Backend (Servidor Embutido do PHP)**
-```bash
-php -S 0.0.0.0:8081 -t public/
-```
-4. **Levante o SPA Vue (Front)**
-```bash
-cd frontend && npm install && npm run dev
-```
-Inicie no Navegador em `http://localhost:5173`
+1.  **Infraestrutura**: `docker compose up -d` (MySQL/MariaDB).
+2.  **Banco de Dados**: `vendor/bin/phinx migrate -e development`.
+3.  **API**: `php -S 0.0.0.0:8081 -t public/`.
+4.  **Frontend**: `cd frontend && npm install && npm run dev`.
 
-> Se ocorrer problemas de conexão, certifique se no arquivo `frontend/vite.config.ts`, o `server.proxy` base confere com a porta do servidor PHP, por padrão `8081`. 
+Acesse em: `http://localhost:5173`
 
-## 🗺️ Visão Geral das APIs
-`GET/POST` em `/api/auth` (Cadastro e Login)  
-`GET/POST/PUT/DEL` em `/api/accounts` (Carteiras bancárias isoladas no workspace atual)  
-`GET/POST` em `/api/transactions` (CRUD e orquestração de Splitting recursivos)  
-`GET/POST/DEL` em `/api/workspaces` (Troca de dono, exclusões protegidas de ambientes SaaS)  
-`GET/POST` em `/api/credit-cards` (Gestão de plásticos e faturas)  
-`GET/POST` em `/api/goals` (Metas, conquistas e aportes)  
-`GET` em `/api/simulations/forecast` (Engine de projeção de metas)  
+---
 
-*Gerenciador criado sob alta pressão e qualidade. Software Livre. MIT License.*
+*Desenvolvido com foco em precisão matemática e design de alta fidelidade. MIT License.*

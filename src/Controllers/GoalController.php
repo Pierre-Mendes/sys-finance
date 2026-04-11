@@ -34,6 +34,36 @@ class GoalController {
         return $response->withHeader('Content-Type', 'application/json');
     }
 
+    public function update(Request $request, Response $response): Response {
+        $workspaceId = $request->getAttribute('workspaceId');
+        $id = (int) $request->getAttribute('id');
+        $body = $request->getParsedBody();
+        
+        $dto = new GoalDTO($body);
+        try {
+            $goal = $this->goalService->updateGoal($id, $workspaceId, $dto);
+            $response->getBody()->write(json_encode(['success' => true, 'data' => $goal]));
+        } catch (\Exception $e) {
+            $response->getBody()->write(json_encode(['success' => false, 'error' => $e->getMessage()]));
+            return $response->withStatus(400)->withHeader('Content-Type', 'application/json');
+        }
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    public function delete(Request $request, Response $response): Response {
+        $workspaceId = $request->getAttribute('workspaceId');
+        $id = (int) $request->getAttribute('id');
+        
+        try {
+            $this->goalService->deleteGoal($id, $workspaceId);
+            $response->getBody()->write(json_encode(['success' => true]));
+        } catch (\Exception $e) {
+            $response->getBody()->write(json_encode(['success' => false, 'error' => $e->getMessage()]));
+            return $response->withStatus(400)->withHeader('Content-Type', 'application/json');
+        }
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
     public function contribute(Request $request, Response $response): Response {
         $workspaceId = $request->getAttribute('workspaceId');
         $body = $request->getParsedBody();

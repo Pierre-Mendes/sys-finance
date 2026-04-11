@@ -1,0 +1,23 @@
+name: Deploy to Staging (Sandbox)
+
+on:
+  push:
+    branches: [ "main", "sandbox" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to VPS via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/gerenciador-financeiro-pessoal
+            git pull origin main
+            # Build and up the STAGING environment (Port 8082)
+            docker compose -f docker-compose.staging.yml up -d --build
+            # Run migrations for staging
+            docker exec financas-web-staging php vendor/bin/phinx migrate -e staging
