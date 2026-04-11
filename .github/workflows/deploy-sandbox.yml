@@ -3,6 +3,7 @@ name: Deploy to Staging (Sandbox)
 on:
   push:
     branches: [ "main", "sandbox" ]
+  workflow_dispatch:
 
 jobs:
   deploy:
