@@ -21,9 +21,10 @@ class GoalContributionRepository {
     }
 
     public function save(GoalContribution $contribution): GoalContribution {
-        $stmt = $this->db->prepare("INSERT INTO goal_contributions (GoalId, WorkspaceId, Amount, Date, Description) VALUES (?, ?, ?, ?, ?)");
+        $stmt = $this->db->prepare("INSERT INTO goal_contributions (GoalId, AccountId, WorkspaceId, Amount, Date, Description) VALUES (?, ?, ?, ?, ?, ?)");
         $stmt->execute([
             $contribution->getGoalId(),
+            $contribution->getAccountId(),
             $contribution->getWorkspaceId(),
             $contribution->getAmount(),
             $contribution->getDate(),
@@ -41,7 +42,8 @@ class GoalContributionRepository {
             $contribution->getAmount(),
             $contribution->getDate(),
             $contribution->getDescription(),
-            $id
+            $id,
+            $contribution->getAccountId()
         );
     }
 
@@ -52,7 +54,8 @@ class GoalContributionRepository {
             (float) $row['Amount'],
             $row['Date'],
             $row['Description'],
-            (int) $row['Id']
+            (int) $row['Id'],
+            $row['AccountId'] ? (int) $row['AccountId'] : null
         );
     }
 }

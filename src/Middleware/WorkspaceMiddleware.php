@@ -47,7 +47,7 @@ class WorkspaceMiddleware
             }
         }
 
-        $stmt = $this->pdo->prepare("SELECT Role FROM workspace_users WHERE WorkspaceId = ? AND UserId = ?");
+        $stmt = $this->pdo->prepare("SELECT Role, Permissions FROM workspace_users WHERE WorkspaceId = ? AND UserId = ?");
         $stmt->execute([$workspaceId, $userId]);
         $pivot = $stmt->fetch();
 
@@ -59,6 +59,7 @@ class WorkspaceMiddleware
 
         $request = $request->withAttribute('workspaceId', (int)$workspaceId);
         $request = $request->withAttribute('workspaceRole', $pivot['Role']);
+        $request = $request->withAttribute('workspacePermissions', json_decode($pivot['Permissions'] ?? '{}', true));
 
         return $handler->handle($request);
     }

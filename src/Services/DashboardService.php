@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use PDO;
-use Exception;
 
 class DashboardService {
     private PDO $db;
@@ -14,63 +13,206 @@ class DashboardService {
 
     public function getAnalytics(int $workspaceId, bool $is360 = false, ?int $userId = null): array {
         
+        $inQuery = strval($workspaceId);
+        
         if ($is360 && $userId) {
-            // Get all workspaces the user has access to
             $stmtWs = $this->db->prepare("SELECT WorkspaceId FROM workspace_users WHERE UserId = ?");
             $stmtWs->execute([$userId]);
             $wsIds = $stmtWs->fetchAll(PDO::FETCH_COLUMN);
             
-            if (empty($wsIds)) $wsIds = [$workspaceId];
-            $inQuery = implode(',', array_map('intval', $wsIds));
-            
-            $stmtIn = $this->db->query("SELECT SUM(Amount) FROM assets WHERE WorkspaceId IN ($inQuery)");
-            $totalIncome = (float) $stmtIn->fetchColumn();
-
-            $stmtOut = $this->db->query("SELECT SUM(Amount) FROM bills WHERE WorkspaceId IN ($inQuery)");
-            $totalExpense = (float) $stmtOut->fetchColumn();
-
-            $stmtAccounts = $this->db->query("
-                SELECT CONCAT(w.WorkspaceName, ' - ', a.AccountName) as name, COALESCE(t.Totals, 0) as balance 
-                FROM account a
-                INNER JOIN workspaces w ON a.WorkspaceId = w.WorkspaceId
-                LEFT JOIN totals t ON a.AccountId = t.AccountId AND t.WorkspaceId = a.WorkspaceId
-                WHERE a.WorkspaceId IN ($inQuery)
-            ");
-            $accounts = $stmtAccounts->fetchAll(PDO::FETCH_ASSOC);
-            
-        } else {
-            // Query Total Incomes
-            $stmtIn = $this->db->prepare("SELECT SUM(Amount) FROM assets WHERE WorkspaceId = :uid");
-            $stmtIn->execute(['uid' => $workspaceId]);
-            $totalIncome = (float) $stmtIn->fetchColumn();
-
-            // Query Total Expenses
-            $stmtOut = $this->db->prepare("SELECT SUM(Amount) FROM bills WHERE WorkspaceId = :uid");
-            $stmtOut->execute(['uid' => $workspaceId]);
-            $totalExpense = (float) $stmtOut->fetchColumn();
-
-            // Query Balance per Account
-            $stmtAccounts = $this->db->prepare("
-                SELECT a.AccountName as name, COALESCE(t.Totals, 0) as balance 
-                FROM account a
-                LEFT JOIN totals t ON a.AccountId = t.AccountId AND t.WorkspaceId = :u1
-                WHERE a.WorkspaceId = :u2
-            ");
-            $stmtAccounts->execute(['u1' => $workspaceId, 'u2' => $workspaceId]);
-            $accounts = $stmtAccounts->fetchAll(PDO::FETCH_ASSOC);
+            if (!empty($wsIds)) {
+                $inQuery = implode(',', array_map('intval', $wsIds));
+            }
         }
-        
+
+        // Totals
+        $stmtIn = $this->db->query("SELECT SUM(Amount) FROM assets WHERE WorkspaceId IN ($inQuery)");
+        $totalIncome = (float) $stmtIn->fetchColumn();
+
+        $stmtOut = $this->db->query("SELECT SUM(Amount) FROM bills WHERE WorkspaceId IN ($inQuery)");
+        $totalExpense = (float) $stmtOut->fetchColumn();
+
         $balance = $totalIncome - $totalExpense;
-        
+
+        // Breakdown (only for 360 mode)
+        $breakdown = [];
+        if ($is360 && $userId) {
+            $stmtBreakdown = $this->db->query("
+                SELECT w.WorkspaceId as id, w.WorkspaceName as name, w.Type as type,
+                       (COALESCE((SELECT SUM(Amount) FROM assets WHERE WorkspaceId = w.WorkspaceId), 0) - 
+                        COALESCE((SELECT SUM(Amount) FROM bills WHERE WorkspaceId = w.WorkspaceId), 0)) as balance
+                FROM workspaces w
+                WHERE w.WorkspaceId IN ($inQuery)
+                ORDER BY balance DESC
+            ");
+            $breakdown = $stmtBreakdown->fetchAll(PDO::FETCH_ASSOC);
+            foreach ($breakdown as &$b) {
+                $b['balance'] = (float) $b['balance'];
+            }
+        }
+
+        // Accounts list
+        $accountsQuery = $is360 
+            ? "SELECT CONCAT(w.WorkspaceName, ' - ', a.AccountName) as name, COALESCE(t.Totals, 0) as balance 
+               FROM account a
+               INNER JOIN workspaces w ON a.WorkspaceId = w.WorkspaceId
+               LEFT JOIN totals t ON a.AccountId = t.AccountId AND t.WorkspaceId = a.WorkspaceId
+               WHERE a.WorkspaceId IN ($inQuery)"
+            : "SELECT a.AccountName as name, COALESCE(t.Totals, 0) as balance 
+               FROM account a
+               LEFT JOIN totals t ON a.AccountId = t.AccountId AND t.WorkspaceId = a.WorkspaceId
+               WHERE a.WorkspaceId IN ($inQuery)";
+               
+        $stmtAccounts = $this->db->query($accountsQuery);
+        $accounts = $stmtAccounts->fetchAll(PDO::FETCH_ASSOC);
         foreach ($accounts as &$acc) {
             $acc['balance'] = (float) $acc['balance'];
         }
+
+        // Evolution: Last 6 Months
+        $stmtEvoMonthly = $this->db->query("
+            SELECT DATE_FORMAT(Date, '%Y-%m') as period, 
+                   SUM(CASE WHEN type = 'asset' THEN Amount ELSE 0 END) as income,
+                   SUM(CASE WHEN type = 'bill' THEN Amount ELSE 0 END) as expense
+            FROM (
+                SELECT Date, Amount, 'asset' as type FROM assets WHERE WorkspaceId IN ($inQuery) AND Date >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
+                UNION ALL
+                SELECT Dates as Date, Amount, 'bill' as type FROM bills WHERE WorkspaceId IN ($inQuery) AND Dates >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
+            ) as t
+            GROUP BY period ORDER BY period ASC
+        ");
+        $evolutionMonthly = $stmtEvoMonthly->fetchAll(PDO::FETCH_ASSOC);
+
+        // Evolution: Last 30 Days
+        $stmtEvoDaily = $this->db->query("
+            SELECT DATE_FORMAT(Date, '%Y-%m-%d') as period, 
+                   SUM(CASE WHEN type = 'asset' THEN Amount ELSE 0 END) as income,
+                   SUM(CASE WHEN type = 'bill' THEN Amount ELSE 0 END) as expense
+            FROM (
+                SELECT Date, Amount, 'asset' as type FROM assets WHERE WorkspaceId IN ($inQuery) AND Date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+                UNION ALL
+                SELECT Dates as Date, Amount, 'bill' as type FROM bills WHERE WorkspaceId IN ($inQuery) AND Dates >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+            ) as t
+            GROUP BY period ORDER BY period ASC
+        ");
+        $evolutionDaily = $stmtEvoDaily->fetchAll(PDO::FETCH_ASSOC);
+
+        // Category Distribution (General Expenses)
+        $stmtCatGen = $this->db->query("
+            SELECT c.CategoryName as name, SUM(b.Amount) as total
+            FROM bills b
+            JOIN category c ON b.CategoryId = c.CategoryId
+            WHERE b.WorkspaceId IN ($inQuery)
+            GROUP BY b.CategoryId
+            ORDER BY total DESC
+        ");
+        $categoryDistribution = $stmtCatGen->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($categoryDistribution as &$cat) {
+            $cat['total'] = (float) $cat['total'];
+        }
+
+        // Category Distribution (Credit Card only)
+        $stmtCatCard = $this->db->query("
+            SELECT c.CategoryName as name, SUM(ct.Amount) as total
+            FROM credit_card_transactions ct
+            JOIN category c ON ct.CategoryId = c.CategoryId
+            WHERE ct.WorkspaceId IN ($inQuery)
+            GROUP BY ct.CategoryId
+            ORDER BY total DESC
+        ");
+        $creditCardCategoryDistribution = $stmtCatCard->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($creditCardCategoryDistribution as &$cat) {
+            $cat['total'] = (float) $cat['total'];
+        }
+
+
+        // MoM Comparison (Previous Month)
+        $stmtPrevIn = $this->db->query("SELECT SUM(Amount) FROM assets WHERE WorkspaceId IN ($inQuery) AND Date >= DATE_SUB(DATE_FORMAT(CURDATE(), '%Y-%m-01'), INTERVAL 1 MONTH) AND Date < DATE_FORMAT(CURDATE(), '%Y-%m-01')");
+        $prevIncome = (float) $stmtPrevIn->fetchColumn();
+
+        $stmtPrevOut = $this->db->query("SELECT SUM(Amount) FROM bills WHERE WorkspaceId IN ($inQuery) AND Dates >= DATE_SUB(DATE_FORMAT(CURDATE(), '%Y-%m-01'), INTERVAL 1 MONTH) AND Dates < DATE_FORMAT(CURDATE(), '%Y-%m-01')");
+        $prevExpense = (float) $stmtPrevOut->fetchColumn();
+
+        // Projections (Pending for current month)
+        $stmtPendingIn = $this->db->query("SELECT SUM(Amount) FROM assets WHERE WorkspaceId IN ($inQuery) AND status = 'PENDING' AND DATE_FORMAT(Date, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m')");
+        $pendingIncome = (float) $stmtPendingIn->fetchColumn();
+
+        $stmtPendingOut = $this->db->query("SELECT SUM(Amount) FROM bills WHERE WorkspaceId IN ($inQuery) AND status = 'PENDING' AND DATE_FORMAT(Dates, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m')");
+        $pendingExpense = (float) $stmtPendingOut->fetchColumn();
+
+        $projectedBalance = $balance + $pendingIncome - $pendingExpense;
+
+        // Top Category (Villain) for current month
+        $stmtTopCat = $this->db->query("
+            SELECT c.CategoryName as name, SUM(b.Amount) as total
+            FROM bills b
+            JOIN category c ON b.CategoryId = c.CategoryId
+            WHERE b.WorkspaceId IN ($inQuery) AND DATE_FORMAT(b.Dates, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m')
+            GROUP BY b.CategoryId
+            ORDER BY total DESC LIMIT 1
+        ");
+        $villain = $stmtTopCat->fetch(PDO::FETCH_ASSOC);
+
+        // Goal Progress with Favorites Logic
+        $stmtFav = $this->db->query("SELECT GoalId, Title, TargetAmount as target, AccumulatedAmount as current FROM goals WHERE WorkspaceId IN ($inQuery) AND IsFavorite = 1");
+        $favorites = $stmtFav->fetchAll(PDO::FETCH_ASSOC);
+        
+        $label = "Dinheiro Guardado";
+        $target = 0;
+        $current = 0;
+
+        if (count($favorites) === 1) {
+            $label = $favorites[0]['Title'];
+            $target = (float) $favorites[0]['target'];
+            $current = (float) $favorites[0]['current'];
+        } elseif (count($favorites) > 1) {
+            $label = "Metas Favoritas";
+            foreach ($favorites as $f) {
+                $target += (float) $f['target'];
+                $current += (float) $f['current'];
+            }
+        } else {
+            // Fallback: Total sum of all goals
+            $stmtAll = $this->db->query("SELECT SUM(TargetAmount) as target, SUM(AccumulatedAmount) as current FROM goals WHERE WorkspaceId IN ($inQuery)");
+            $all = $stmtAll->fetch(PDO::FETCH_ASSOC);
+            $target = (float) ($all['target'] ?? 0);
+            $current = (float) ($all['current'] ?? 0);
+        }
+
+        $goalsProgress = [
+            'label' => $label,
+            'target' => $target,
+            'current' => $current,
+            'percent' => ($target > 0) ? round(($current / $target) * 100, 1) : 0
+        ];
 
         return [
             'totalIncome' => $totalIncome,
             'totalExpense' => $totalExpense,
             'balance' => $balance,
-            'accounts' => $accounts
+            'prevMonth' => [
+                'income' => $prevIncome,
+                'expense' => $prevExpense
+            ],
+            'projections' => [
+                'pendingIncome' => $pendingIncome,
+                'pendingExpense' => $pendingExpense,
+                'projectedBalance' => $projectedBalance
+            ],
+            'villain' => $villain,
+            'goals' => $goalsProgress,
+            'breakdown' => $breakdown,
+            'accounts' => $accounts,
+            'charts' => [
+                'evolution' => [
+                    'monthly' => $evolutionMonthly,
+                    'daily' => $evolutionDaily
+                ],
+                'categories' => [
+                    'general' => $categoryDistribution,
+                    'creditCard' => $creditCardCategoryDistribution
+                ]
+            ]
         ];
     }
 }

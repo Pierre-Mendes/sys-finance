@@ -31,26 +31,30 @@ class GoalRepository implements IGoalRepository {
 
     public function save(Goal $goal): Goal {
         if ($goal->getId()) {
-            $stmt = $this->db->prepare("UPDATE goals SET Title = ?, TargetAmount = ?, AccumulatedAmount = ?, TargetDate = ?, SharedWithWorkspaceId = ? WHERE GoalId = ? AND WorkspaceId = ?");
+            $stmt = $this->db->prepare("UPDATE goals SET Title = ?, TargetAmount = ?, AccumulatedAmount = ?, TargetDate = ?, SharedWithWorkspaceId = ?, AccountId = ?, IsFavorite = ? WHERE GoalId = ? AND WorkspaceId = ?");
             $stmt->execute([
                 $goal->getTitle(),
                 $goal->getTargetAmount(),
                 $goal->getAccumulatedAmount(),
                 $goal->getTargetDate(),
                 $goal->getSharedWithWorkspaceId(),
+                $goal->getAccountId(),
+                $goal->isFavorite() ? 1 : 0,
                 $goal->getId(),
                 $goal->getWorkspaceId()
             ]);
             return $goal;
         } else {
-            $stmt = $this->db->prepare("INSERT INTO goals (WorkspaceId, Title, TargetAmount, AccumulatedAmount, TargetDate, SharedWithWorkspaceId) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt = $this->db->prepare("INSERT INTO goals (WorkspaceId, Title, TargetAmount, AccumulatedAmount, TargetDate, SharedWithWorkspaceId, AccountId, IsFavorite) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
             $stmt->execute([
                 $goal->getWorkspaceId(),
                 $goal->getTitle(),
                 $goal->getTargetAmount(),
                 $goal->getAccumulatedAmount(),
                 $goal->getTargetDate(),
-                $goal->getSharedWithWorkspaceId()
+                $goal->getSharedWithWorkspaceId(),
+                $goal->getAccountId(),
+                $goal->isFavorite() ? 1 : 0
             ]);
             $id = (int) $this->db->lastInsertId();
             return new Goal(
@@ -60,7 +64,9 @@ class GoalRepository implements IGoalRepository {
                 $goal->getAccumulatedAmount(),
                 $goal->getTargetDate(),
                 $goal->getSharedWithWorkspaceId(),
-                $id
+                $id,
+                $goal->getAccountId(),
+                $goal->isFavorite()
             );
         }
     }
@@ -78,7 +84,9 @@ class GoalRepository implements IGoalRepository {
             (float) $row['AccumulatedAmount'],
             $row['TargetDate'],
             $row['SharedWithWorkspaceId'] ? (int) $row['SharedWithWorkspaceId'] : null,
-            (int) $row['GoalId']
+            (int) $row['GoalId'],
+            $row['AccountId'] ? (int) $row['AccountId'] : null,
+            (bool) $row['IsFavorite']
         );
     }
 }
