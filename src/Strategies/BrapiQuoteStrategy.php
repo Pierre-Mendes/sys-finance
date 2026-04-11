@@ -2,8 +2,16 @@
 
 namespace App\Strategies;
 
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
+
 class BrapiQuoteStrategy implements IQuoteStrategy {
     private const BASE_URL = 'https://brapi.dev/api/quote/';
+    private Client $client;
+
+    public function __construct(?Client $client = null) {
+        $this->client = $client ?: new Client();
+    }
 
     public function supports(string $ticker): bool {
         // Brapi handles standard B3 symbols (mostly ends with number like PETR4, or typical 4-letter + number)
@@ -20,28 +28,31 @@ class BrapiQuoteStrategy implements IQuoteStrategy {
         $symbols = implode(',', $tickers);
         $url = self::BASE_URL . $symbols;
 
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-        
-        $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
+        try {
+            $response = $this->client->get($url, [
+                'timeout' => 10,
+                'http_errors' => false
+            ]);
 
-        $result = [];
-        
-        if ($httpCode === 200 && $response) {
-            $data = json_decode($response, true);
-            if (isset($data['results']) && is_array($data['results'])) {
-                foreach ($data['results'] as $item) {
-                    if (isset($item['symbol']) && isset($item['regularMarketPrice'])) {
-                        $result[$item['symbol']] = (float)$item['regularMarketPrice'];
+            $httpCode = $response->getStatusCode();
+            $body = (string)$response->getBody();
+
+            $result = [];
+            
+            if ($httpCode === 200 && $body) {
+                $data = json_decode($body, true);
+                if (isset($data['results']) && is_array($data['results'])) {
+                    foreach ($data['results'] as $item) {
+                        if (isset($item['symbol']) && isset($item['regularMarketPrice'])) {
+                            $result[$item['symbol']] = (float)$item['regularMarketPrice'];
+                        }
                     }
                 }
             }
-        }
 
-        return $result;
+            return $result;
+        } catch (GuzzleException $e) {
+            return [];
+        }
     }
 }

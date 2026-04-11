@@ -1,0 +1,86 @@
+
+-
+    request:
+        method: GET
+        url: 'https://brapi.dev/api/quote/PETR4,VALE3'
+        headers:
+            Host: brapi.dev
+            Accept-Encoding: ''
+            User-Agent: GuzzleHttp/7
+            Accept: ''
+    response:
+        status:
+            code: 200
+            message: OK
+        headers:
+            Date: 'Fri, 10 Apr 2026 20:50:17 GMT'
+            Content-Type: application/json
+            Transfer-Encoding: chunked
+            Connection: keep-alive
+            Server: cloudflare
+            access-control-allow-origin: '*'
+            access-control-expose-headers: X-Response-Time
+            Cache-Control: 's-maxage=300, stale-while-revalidate=60'
+            Report-To: '{"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=8fjBdPQxx0cn3GjnP2YQ7JJrHtMWweIB7UByMeHujVWjIu79Np3dewyySXRs0QAG10ERMepNy%2F44nRC03yeePu9JSx0CyQE2%2F7SQpMY1qMsG1BORw2ODsCDaZQ8%3D"}]}'
+            cross-origin-resource-policy: same-origin
+            cross-origin-opener-policy: same-origin
+            referrer-policy: no-referrer
+            strict-transport-security: 'max-age=15552000; includeSubDomains'
+            x-content-type-options: nosniff
+            x-dns-prefetch-control: 'off'
+            x-frame-options: SAMEORIGIN
+            x-xss-protection: '0'
+            server-timing: 'total;dur=1485.6;desc="Total Response Time"'
+            Server-Timing: ['cfCacheStatus;desc="DYNAMIC"', 'cfEdge;dur=4,cfOrigin;dur=1961']
+            x-request-id: d7e3136b0089644812ca4a9774486916
+            origin-agent-cluster: '?1'
+            x-download-options: noopen
+            x-permitted-cross-domain-policies: none
+            cf-cache-status: DYNAMIC
+            vary: accept-encoding
+            Nel: '{"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}'
+            CF-RAY: 9ea49f6c5c4a5225-UDI
+            alt-svc: 'h3=":443"; ma=86400'
+        body: '{"results":[{"symbol":"PETR4","shortName":"PETR4","longName":"Petroleo Brasileiro SA Pfd","currency":"BRL","regularMarketPrice":49.03,"regularMarketDayHigh":49.03,"regularMarketDayLow":47.53,"regularMarketDayRange":"47.53 - 49.03","regularMarketChange":1.13,"regularMarketChangePercent":2.36,"regularMarketTime":"2026-04-10T20:50:12.000Z","marketCap":646540990302,"regularMarketVolume":42728400,"regularMarketPreviousClose":48.9,"regularMarketOpen":47.53,"fiftyTwoWeekRange":"28.86 - 50.69","fiftyTwoWeekLow":28.86,"fiftyTwoWeekHigh":50.69,"priceEarnings":5.7381270041897805,"earningsPerShare":8.5445949,"logourl":"https://icons.brapi.dev/icons/PETR4.svg"},{"symbol":"VALE3","shortName":"VALE3","longName":"Vale S.A.","currency":"BRL","regularMarketPrice":85.59,"regularMarketDayHigh":86.39,"regularMarketDayLow":84.58,"regularMarketDayRange":"84.58 - 86.39","regularMarketChange":0.9,"regularMarketChangePercent":1.06,"regularMarketTime":"2026-04-10T20:50:12.000Z","marketCap":361522888738,"regularMarketVolume":23974300,"regularMarketPreviousClose":85.45,"regularMarketOpen":85,"fiftyTwoWeekRange":"49.72 - 91.62","fiftyTwoWeekLow":49.72,"fiftyTwoWeekHigh":91.62,"priceEarnings":26.53953488372093,"earningsPerShare":3.2360644,"logourl":"https://icons.brapi.dev/icons/VALE3.svg"}],"requestedAt":"2026-04-10T20:50:16.934Z","took":1485}'
+        curl_info:
+            url: 'https://brapi.dev/api/quote/PETR4,VALE3'
+            content_type: application/json
+            http_code: 200
+            header_size: 1303
+            request_size: 82
+            filetime: -1
+            ssl_verify_result: 0
+            redirect_count: 0
+            total_time: 2.019372
+            namelookup_time: 0.012308
+            connect_time: 0.017409
+            pretransfer_time: 0.046978
+            size_upload: 0.0
+            size_download: 1335.0
+            speed_download: 661.0
+            speed_upload: 0.0
+            download_content_length: -1.0
+            upload_content_length: 0.0
+            starttransfer_time: 2.019337
+            redirect_time: 0.0
+            redirect_url: ''
+            primary_ip: 172.67.139.140
+            certinfo: {  }
+            primary_port: 443
+            local_ip: 192.168.100.135
+            local_port: 46070
+            http_version: 2
+            protocol: 2
+            ssl_verifyresult: 0
+            scheme: HTTPS
+            appconnect_time_us: 46948
+            connect_time_us: 17409
+            namelookup_time_us: 12308
+            pretransfer_time_us: 46978
+            redirect_time_us: 0
+            starttransfer_time_us: 2019337
+            total_time_us: 2019372
+            effective_method: GET
+            capath: /etc/ssl/certs
+            cainfo: /etc/ssl/certs/ca-certificates.crt
+    index: 0
