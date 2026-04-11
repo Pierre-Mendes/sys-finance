@@ -186,13 +186,51 @@
 
              <!-- Tab: Metas e Sonhos -->
              <div v-show="activeTab === 'goals'" class="animate-fadeIn">
-                 <h3 class="text-2xl font-bold text-gray-900 mb-4 border-b pb-2">Metas e Projetos de Vida</h3>
-                 <p class="text-gray-700 mb-6 leading-relaxed">As metas permitem priorizar seus objetivos financeiros e entender quando eles se tornarão realidade.</p>
+                 <h3 class="text-2xl font-bold text-gray-900 mb-4 border-b pb-2">Metas, Sonhos e Favoritos</h3>
+                 <p class="text-gray-700 mb-6 leading-relaxed">As metas permitem priorizar seus objetivos financeiros e entender quando eles se tornarão realidade. Agora com suporte a destaque e vínculo bancário.</p>
                  
-                 <div class="bg-gray-50 border border-gray-100 p-6 rounded-3xl">
-                    <h4 class="font-bold text-gray-900 mb-4">Acompanhamento e Projeção</h4>
-                    <p class="text-sm text-gray-600 leading-relaxed mb-6">Defina o valor alvo e o sistema indicará, com base no seu saldo atual e aportes previstos, qual a data estimada de conclusão.</p>
-                    <img src="/docs/help_goals_real.png" alt="Simulação de Metas Real" class="w-full rounded-2xl shadow-md" />
+                 <div class="space-y-6">
+                    <div class="bg-gray-50 border border-gray-100 p-6 rounded-3xl">
+                        <h4 class="font-bold text-gray-900 mb-4">Metas Favoritas (Cockpit)</h4>
+                        <p class="text-sm text-gray-600 leading-relaxed mb-4">
+                            Ao favoritar uma meta (usando a estrela), ela ganha prioridade no seu Dashboard principal. Se você tiver apenas uma favorita, o card <strong>"Dinheiro Guardado"</strong> mostrará o progresso dela. Se tiver várias, mostrará o somatório. É a forma perfeita de manter o foco no seu objetivo principal.
+                        </p>
+                    </div>
+
+                    <div class="bg-indigo-50 border border-indigo-100 p-6 rounded-3xl">
+                        <h4 class="font-bold text-gray-900 mb-2">Vínculo com Contas</h4>
+                        <p class="text-sm text-gray-600 leading-relaxed mb-4">
+                            Você pode vincular uma meta a uma conta bancária específica. Ao realizar um aporte, o sistema agora permite escolher de qual conta o dinheiro está saindo, gerando uma despesa automática de "Aporte" para manter seu saldo real sempre atualizado.
+                        </p>
+                        <img src="/docs/help_goals_real.png" alt="Simulação de Metas Real" class="w-full rounded-2xl shadow-md" />
+                    </div>
+                 </div>
+             </div>
+
+             <!-- Tab: Extrato Bancário -->
+             <div v-show="activeTab === 'statement'" class="animate-fadeIn">
+                 <h3 class="text-2xl font-bold text-gray-900 mb-4 border-b pb-2">Extrato Bancário e Saldo Progressivo</h3>
+                 <p class="text-gray-700 mb-6 leading-relaxed">
+                    O módulo de Extrato é sua ferramenta de auditoria. Ele permite uma visão microscópica de cada centavo que entra e sai de suas contas.
+                 </p>
+                 
+                 <div class="space-y-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="p-6 bg-gray-900 text-white rounded-3xl">
+                            <h4 class="font-black text-indigo-400 uppercase text-xs mb-3">Timeline Chronológica</h4>
+                            <p class="text-sm text-gray-300 leading-relaxed">Diferente da tela de Lançamentos que foca no título, o Extrato foca na <strong>Data e Saldo</strong>. Veja exatamente quanto você tinha em conta após cada cafezinho ou depósito de salário.</p>
+                        </div>
+                        <div class="p-6 bg-white border-2 border-indigo-50 rounded-3xl">
+                            <h4 class="font-black text-gray-400 uppercase text-xs mb-3">Saldo Progressivo</h4>
+                            <p class="text-sm text-gray-600 leading-relaxed">O sistema calcula o "Running Balance", permitindo identificar quebras de padrão e entender em qual dia do mês seu saldo costuma ficar mais crítico.</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="text-lg font-bold text-gray-800 mb-3">Histórico de Metas Integrado</h4>
+                        <p class="text-sm text-gray-600 mb-4">Acessando através do atalho <strong>"Ver Histórico"</strong> nas Metas, o extrato é filtrado para mostrar apenas as movimentações da conta vinculada, ajudando você a auditar suas economias.</p>
+                        <img src="/docs/help_dash_real.png" alt="Extrato Bancário Real" class="w-full rounded-3xl shadow-2xl border border-gray-100" />
+                    </div>
                  </div>
              </div>
 
@@ -255,7 +293,8 @@ const guideTabs = [
     { id: 'workspaces', title: 'Espaços e Convites', icon: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>' },
     { id: 'rateios', title: 'Rateios e Divisões', icon: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg>' },
     { id: 'contas', title: 'Vencimentos e SLAs', icon: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>' },
-    { id: 'goals', title: 'Metas e Sonhos', icon: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>' },
+    { id: 'goals', title: 'Metas e Favoritos', icon: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>' },
+    { id: 'statement', title: 'Extrato e Saldo', icon: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>' },
     { id: 'cards', title: 'Cartões de Crédito', icon: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>' },
     { id: 'ferramentas', title: 'Limites e Planilhas', icon: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>' },
 ]
