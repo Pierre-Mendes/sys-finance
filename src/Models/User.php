@@ -32,4 +32,5 @@ class User {
     
     public function setPassword(string $password): void { $this->password = $password; }
     public function setUserCode(string $code): void { $this->userCode = $code; }
+    public function setId(int $id): void { $this->id = $id; }
 }
