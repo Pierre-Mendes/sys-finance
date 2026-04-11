@@ -10,7 +10,7 @@ final class AddAccountToGoalContributions extends AbstractMigration
         $table = $this->table('goal_contributions');
         if (!$table->hasColumn('AccountId')) {
             $table->addColumn('AccountId', 'integer', ['signed' => false, 'null' => true, 'after' => 'GoalId'])
-                  ->addForeignKey('AccountId', 'bank_accounts', 'AccountId', ['delete'=> 'SET_NULL', 'update'=> 'CASCADE']);
+                  ->addForeignKey('AccountId', 'account', 'AccountId', ['delete'=> 'SET_NULL', 'update'=> 'CASCADE']);
         }
         $table->update();
     }
