@@ -28,7 +28,7 @@ final class AddPermissionsAndWorkspaceType extends AbstractMigration
                        ->update();
                        
         // Migrate data: if workspace has only 1 user, it's personal
-        $this->execute("UPDATE workspaces w SET Type = 'personal' WHERE (SELECT COUNT(*) FROM workspace_users wu WHERE wu.WorkspaceId = w.WorkspaceId) = 1");
+        $this->execute("UPDATE workspaces SET Type = 'personal' WHERE (SELECT COUNT(*) FROM workspace_users wu WHERE wu.WorkspaceId = workspaces.WorkspaceId) = 1");
         
         // Let's set default valid permissions depending on role
         $this->execute("
