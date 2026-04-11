@@ -9,10 +9,12 @@ use Exception;
 class AuthService {
     private UserRepository $userRepository;
     private WorkspaceService $workspaceService;
+    private NotificationService $notificationService;
 
-    public function __construct(UserRepository $userRepository, WorkspaceService $workspaceService) {
+    public function __construct(UserRepository $userRepository, WorkspaceService $workspaceService, NotificationService $notificationService) {
         $this->userRepository = $userRepository;
         $this->workspaceService = $workspaceService;
+        $this->notificationService = $notificationService;
     }
 
     public function register(array $data): User {
@@ -30,8 +32,8 @@ class AuthService {
         }
 
         // The old app seemed to probably not hash passwords, but we MUST hash them properly.
-        // We will use password_hash.
         $hashedPassword = password_hash($data['password'], PASSWORD_BCRYPT);
+        $hashedAnswer = !empty($data['securityAnswer']) ? password_hash(strtolower(trim($data['securityAnswer'])), PASSWORD_BCRYPT) : null;
 
         $userCode = 'U-' . strtoupper(substr(base_convert(hash('crc32', uniqid((string)rand(), true)), 16, 36), 0, 6));
 
@@ -42,7 +44,9 @@ class AuthService {
             $hashedPassword,
             $data['currency'] ?? 'BRL',
             null,
-            $userCode
+            $userCode,
+            $data['securityQuestion'] ?? null,
+            $hashedAnswer
         );
 
         $user = $this->userRepository->save($user);
@@ -64,15 +68,17 @@ class AuthService {
         if (password_verify($password, $user->getPassword())) {
             $user = $this->ensureUserCode($user);
             
+            // Trigger security notification if needed
+            $this->triggerSecurityNotification($user);
+
             // Retroactive fix: ensure user has a workspace (for those who signed up without one)
             $this->workspaceService->ensureHasWorkspace($user->getId(), $user->getFirstName());
             
             return $user;
         }
 
-        // Fallback for incredibly old plain-text passwords from the legacy app
+        // Fallback for incredibly old plain-text passwords
         if ($user->getPassword() === $password) {
-            // Re-hash for the future
             $user->setPassword(password_hash($password, PASSWORD_BCRYPT));
             $user = $this->ensureUserCode($user);
             $this->userRepository->save($user);
@@ -82,19 +88,37 @@ class AuthService {
         throw new Exception("Invalid credentials.");
     }
 
-    public function getUser(int $userId): User {
-        $user = $this->userRepository->findById($userId);
-        if (!$user) throw new Exception("User not found");
-        return $this->ensureUserCode($user);
-    }
-    
-    private function ensureUserCode(User $user): User {
-        if (empty($user->getUserCode())) {
-            $userCode = 'U-' . strtoupper(substr(base_convert(hash('crc32', uniqid((string)rand(), true)), 16, 36), 0, 6));
-            $user->setUserCode($userCode);
-            $this->userRepository->save($user);
+    private function triggerSecurityNotification(User $user): void {
+        if (empty($user->getSecurityQuestion()) && !$this->notificationService->hasUnsetSecurityNotification($user->getId())) {
+            $this->notificationService->notify(
+                $user->getId(), 
+                "⚠️ Segurança: Ação Necessária", 
+                "Você ainda não configurou uma pergunta de recuperação. Faça isso em Configurações para poder recuperar sua senha caso a perca.",
+                "SYSTEM",
+                null,
+                "/settings"
+            );
         }
-        return $user;
+    }
+
+    public function getRecoveryQuestion(string $email): string {
+        $user = $this->userRepository->findByEmail($email);
+        if (!$user) throw new Exception("Usuário não encontrado.");
+        if (empty($user->getSecurityQuestion())) throw new Exception("Esse usuário não possui uma pergunta de recuperação configurada. Entre em contato com o administrador.");
+        return $user->getSecurityQuestion();
+    }
+
+    public function resetPassword(string $email, string $answer, string $newPassword): void {
+        $user = $this->userRepository->findByEmail($email);
+        if (!$user) throw new Exception("Usuário não encontrado.");
+        if (empty($user->getSecurityAnswer())) throw new Exception("Redefinição não autorizada.");
+
+        if (!password_verify(strtolower(trim($answer)), $user->getSecurityAnswer())) {
+            throw new Exception("Resposta de segurança incorreta.");
+        }
+
+        $user->setPassword(password_hash($newPassword, PASSWORD_BCRYPT));
+        $this->userRepository->save($user);
     }
 
     public function updateProfile(int $userId, array $data): User {
@@ -115,9 +139,30 @@ class AuthService {
             $password,
             !empty($data['currency']) ? $data['currency'] : $user->getCurrency(),
             $userId,
-            $user->getUserCode()
+            $user->getUserCode(),
+            !empty($data['securityQuestion']) ? $data['securityQuestion'] : $user->getSecurityQuestion(),
+            !empty($data['securityAnswer']) ? password_hash(strtolower(trim($data['securityAnswer'])), PASSWORD_BCRYPT) : $user->getSecurityAnswer()
         );
 
         return $this->userRepository->save($updatedUser);
+    }
+
+    public function getUser(int $userId): User {
+        $user = $this->userRepository->findById($userId);
+        if (!$user) throw new Exception("User not found");
+        
+        $user = $this->ensureUserCode($user);
+        $this->triggerSecurityNotification($user);
+        
+        return $user;
+    }
+    
+    private function ensureUserCode(User $user): User {
+        if (empty($user->getUserCode())) {
+            $userCode = 'U-' . strtoupper(substr(base_convert(hash('crc32', uniqid((string)rand(), true)), 16, 36), 0, 6));
+            $user->setUserCode($userCode);
+            $this->userRepository->save($user);
+        }
+        return $user;
     }
 }

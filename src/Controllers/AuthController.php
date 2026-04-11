@@ -116,4 +116,39 @@ class AuthController {
              return $response->withHeader('Content-Type', 'application/json')->withStatus(400); 
         }
     }
+
+    public function getRecoveryQuestion(Request $request, Response $response): Response {
+        $params = $request->getQueryParams();
+        $email = $params['email'] ?? '';
+        
+        try {
+            $question = $this->authService->getRecoveryQuestion($email);
+            $response->getBody()->write(json_encode(["success" => true, "question" => $question]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        } catch (Exception $e) {
+            $response->getBody()->write(json_encode(["success" => false, "error" => $e->getMessage()]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400); 
+        }
+    }
+
+    public function resetPassword(Request $request, Response $response): Response {
+        $input = (array) $request->getParsedBody();
+        $email = $input['email'] ?? '';
+        $answer = $input['answer'] ?? '';
+        $newPassword = $input['newPassword'] ?? '';
+
+        if (empty($email) || empty($answer) || empty($newPassword)) {
+            $response->getBody()->write(json_encode(["success" => false, "error" => "Dados insuficientes."]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+
+        try {
+            $this->authService->resetPassword($email, $answer, $newPassword);
+            $response->getBody()->write(json_encode(["success" => true, "message" => "Senha redefinida com sucesso!"]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        } catch (Exception $e) {
+            $response->getBody()->write(json_encode(["success" => false, "error" => $e->getMessage()]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400); 
+        }
+    }
 }

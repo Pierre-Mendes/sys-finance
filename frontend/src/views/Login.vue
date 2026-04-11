@@ -13,7 +13,12 @@
               placeholder="seu@email.com" />
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-300 mb-1">Senha</label>
+            <div class="flex items-center justify-between mb-1">
+              <label class="block text-sm font-medium text-gray-300">Senha</label>
+              <router-link to="/forgot-password" class="text-xs text-primary hover:text-blue-400 transition">
+                Esqueci minha senha
+              </router-link>
+            </div>
             <input type="password" v-model="password" required 
               class="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition" 
               placeholder="••••••••" />

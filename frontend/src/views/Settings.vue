@@ -66,8 +66,27 @@
             <hr class="border-gray-200 my-6">
 
             <div class="mb-4">
+                <h4 class="font-bold text-gray-800 mb-1 italic text-indigo-600">Recuperação de Conta</h4>
+                <p class="text-sm text-gray-500">Configure uma pergunta de segurança para recuperar sua senha caso a esqueça.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Pergunta de Segurança</label>
+                    <input v-model="form.securityQuestion" type="text" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition shadow-sm" placeholder="Ex: Qual o nome do meu primeiro pet?" />
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Resposta de Segurança</label>
+                    <input v-model="form.securityAnswer" type="password" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition shadow-sm" placeholder="Sua resposta secreta" />
+                    <p class="text-[10px] text-gray-400 mt-1">Preencha apenas se quiser alterar a resposta atual.</p>
+                </div>
+            </div>
+
+            <hr class="border-gray-200 my-6">
+
+            <div class="mb-4">
                 <h4 class="font-bold text-gray-800 mb-1">Segurança e Senha</h4>
-                <p class="text-sm text-gray-500">Deixe os campos em branco se não quiser alterar a sua senha atual.</p>
+                <p class="text-sm text-gray-500 transition-all" :class="form.password ? 'text-primary' : 'text-gray-500'">Deixe os campos em branco se não quiser alterar a sua senha atual.</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -111,7 +130,9 @@ const form = ref({
     currency: 'R$',
     password: '',
     rpassword: '',
-    userCode: ''
+    userCode: '',
+    securityQuestion: '',
+    securityAnswer: ''
 })
 
 onMounted(async () => {
@@ -124,6 +145,7 @@ onMounted(async () => {
         form.value.email = u.email
         form.value.currency = u.currency || 'R$'
         form.value.userCode = u.userCode
+        form.value.securityQuestion = u.securityQuestion || ''
     } catch (e: any) {
         if (e.response?.status === 401) { 
             toast.error('Sessão expirada.'); router.push('/'); 
@@ -148,7 +170,9 @@ const updateProfile = async () => {
             lastName: form.value.lastName,
             email: form.value.email,
             currency: form.value.currency,
-            password: form.value.password || undefined
+            password: form.value.password || undefined,
+            securityQuestion: form.value.securityQuestion || undefined,
+            securityAnswer: form.value.securityAnswer || undefined
         })
 
         toast.success("Perfil sincronizado com sucesso!")
