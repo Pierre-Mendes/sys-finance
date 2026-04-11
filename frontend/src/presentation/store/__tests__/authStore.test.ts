@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
 import { useAuthStore } from '../authStore'
-import HttpClient from '@/data/api/HttpClient'
+
 
 // Mock HttpClient
 vi.mock('@/data/api/HttpClient', () => ({

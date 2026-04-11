@@ -23,7 +23,7 @@ jobs:
         run: composer install --prefer-dist --no-progress
 
       - name: Run PHPUnit
-        run: ./vendor/bin/phpunit --display-details-on-tests-that-trigger-deprecations --display-details-on-tests-that-trigger-errors
+        run: ./vendor/bin/phpunit --display-deprecations --display-errors
         env:
           APP_ENV: testing
 
