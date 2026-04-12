@@ -29,8 +29,12 @@ class StatementImportController {
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
 
-        // Create a temporary file to work with pdftotext
-        $tempFile = tempnam(sys_get_temp_dir(), 'statement_');
+        // Create a local temporary file to avoid system /tmp permission issues
+        $tempDir = __DIR__ . '/../../storage/temp';
+        if (!file_exists($tempDir)) {
+            mkdir($tempDir, 0777, true);
+        }
+        $tempFile = tempnam($tempDir, 'stmt_');
         $file->moveTo($tempFile);
 
         try {

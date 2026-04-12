@@ -226,8 +226,8 @@
                 </select>
             </div>
             <div class="flex-1 w-full relative">
-                <apexchart v-if="!isRefreshing && evolutionChartSeries[0]?.data?.length > 0" type="area" height="100%" :options="evolutionChartOpts" :series="evolutionChartSeries"></apexchart>
-                <div v-else-if="!isRefreshing" class="flex h-full items-center justify-center text-gray-400 text-sm">Sem dados suficientes.</div>
+                <apexchart v-show="!isRefreshing && evolutionChartSeries[0]?.data?.length > 0" type="area" height="100%" :options="evolutionChartOpts" :series="evolutionChartSeries"></apexchart>
+                <div v-if="!isRefreshing && evolutionChartSeries[0]?.data?.length === 0" class="flex h-full items-center justify-center text-gray-400 text-sm">Sem dados suficientes.</div>
             </div>
         </div>
 
@@ -237,8 +237,8 @@
                 <h3 class="text-lg font-bold text-gray-800">Fluxo de Caixa</h3>
             </div>
             <div class="flex-1 w-full relative">
-                <apexchart v-if="!isRefreshing && flowChartSeries[0]?.data?.length > 0" type="bar" height="100%" :options="flowChartOpts" :series="flowChartSeries"></apexchart>
-                <div v-else-if="!isRefreshing" class="flex h-full items-center justify-center text-gray-400 text-sm">Sem movimentos contabilizados.</div>
+                <apexchart v-show="!isRefreshing && flowChartSeries[0]?.data?.length > 0" type="bar" height="100%" :options="flowChartOpts" :series="flowChartSeries"></apexchart>
+                <div v-if="!isRefreshing && flowChartSeries[0]?.data?.length === 0" class="flex h-full items-center justify-center text-gray-400 text-sm">Sem movimentos contabilizados.</div>
             </div>
         </div>
     </div>

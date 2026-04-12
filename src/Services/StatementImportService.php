@@ -25,10 +25,11 @@ class StatementImportService {
         
         // Escape the file path for security
         $safePath = escapeshellarg($filePath);
-        exec("pdftotext -layout $safePath -", $output, $returnVar);
+        exec("pdftotext -layout $safePath - 2>&1", $output, $returnVar);
 
         if ($returnVar !== 0) {
-            throw new Exception("Error executing pdftotext. Make sure poppler-utils is installed.");
+            $errorOutput = implode("\n", $output);
+            throw new Exception("Error executing pdftotext (Exit Code $returnVar). Output: $errorOutput");
         }
 
         $text = implode("\n", $output);
