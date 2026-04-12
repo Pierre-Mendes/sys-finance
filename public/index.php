@@ -44,11 +44,17 @@ use Monolog\Formatter\JsonFormatter;
 $logger = new Logger('financas-api');
 $logDir = __DIR__ . '/../logs';
 if (!file_exists($logDir)) {
-    mkdir($logDir, 0777, true);
+    @mkdir($logDir, 0777, true);
 }
-$fileHandler = new RotatingFileHandler($logDir . '/app.log', 14, $isProd ? Logger::WARNING : Logger::DEBUG);
-$fileHandler->setFormatter(new JsonFormatter());
-$logger->pushHandler($fileHandler);
+
+if (!is_writable($logDir)) {
+    // Fallback if logs are not writable to avoid app crash
+    $logger->pushHandler(new \Monolog\Handler\ErrorLogHandler());
+} else {
+    $fileHandler = new RotatingFileHandler($logDir . '/app.log', 14, $isProd ? Logger::WARNING : Logger::DEBUG);
+    $fileHandler->setFormatter(new JsonFormatter());
+    $logger->pushHandler($fileHandler);
+}
 
 $app = AppFactory::create();
 

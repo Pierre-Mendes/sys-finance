@@ -38,8 +38,8 @@ RUN git config --global --add safe.directory /var/www/html
 # Instalar dependências do Composer (sem dev e otimizado)
 RUN composer install --no-interaction --optimize-autoloader --no-dev
 
-# Alterando permissões padrao da pasta web
-RUN chown -R www-data:www-data /var/www/html
+# Criar pasta de logs e ajustar permissões
+RUN mkdir -p logs && chown -R www-data:www-data /var/www/html && chmod -R 775 /var/www/html/logs
 
 # Update apache document root para a pasta "public"
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
