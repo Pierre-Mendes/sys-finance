@@ -8,6 +8,10 @@
              Filtros {{ (filterType || filterStatus || searchQuery) ? '(Ativos)' : '' }}
           </button>
           
+          <button @click="openImportModal" class="w-full sm:w-auto bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 px-5 py-2.5 rounded-lg font-medium shadow-sm transition cursor-pointer flex items-center justify-center gap-2 whitespace-nowrap">
+            <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>Importar PDF
+          </button>
+
           <button @click="openCreateModal" class="w-full sm:w-auto bg-primary hover:bg-blue-600 px-5 py-2.5 rounded-lg text-white font-medium shadow transition cursor-pointer flex items-center justify-center gap-2 whitespace-nowrap">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>Novo Lançamento
           </button>
@@ -149,6 +153,12 @@
         </div>
       </div>
 
+    <!-- Modal de Importação PDF -->
+    <StatementImportModal 
+      v-model="openImportModalState"
+      @imported="fetchData"
+    />
+
     <!-- Modal Modularizado (Clean Arch) -->
     <TransactionModal 
       v-model="openModal" 
@@ -166,6 +176,7 @@ import Swal from 'sweetalert2'
 import MainLayout from '@/components/layout/MainLayout.vue'
 import TableLoader from '@/components/ui/TableLoader.vue'
 import TransactionModal from '@/presentation/components/domain/TransactionModal.vue'
+import StatementImportModal from '@/presentation/components/domain/StatementImportModal.vue'
 import { transactionRepository } from '@/data/repositories/TransactionRepositoryImpl'
 
 const router = useRouter()
@@ -174,6 +185,7 @@ const transactions = ref<any[]>([])
 const isLoading = ref(true)
 
 const openModal = ref(false)
+const openImportModalState = ref(false)
 const transactionToEdit = ref<any>(null)
 
 const showFilters = ref(false)
@@ -284,6 +296,10 @@ onMounted(fetchData)
 const openCreateModal = () => {
     transactionToEdit.value = null;
     openModal.value = true;
+}
+
+const openImportModal = () => {
+    openImportModalState.value = true;
 }
 
 const openEditModal = (t: any) => {

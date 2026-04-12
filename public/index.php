@@ -95,6 +95,9 @@ $categoryRepo = new \App\Repositories\CategoryRepository($db);
 $categoryService = new \App\Services\CategoryService($categoryRepo);
 $categoryController = new App\Controllers\CategoryController($categoryService);
 
+$importService = new \App\Services\StatementImportService();
+$importController = new \App\Controllers\StatementImportController($importService);
+
 // Middleware Instances
 $authMiddleware = new \App\Middleware\AuthMiddleware();
 $workspaceMiddleware = new \App\Middleware\WorkspaceMiddleware($db, $workspaceService);
@@ -232,6 +235,10 @@ $app->group('/api/notifications', function ($group) use ($notificationController
     $group->delete('', [$notificationController, 'deleteAll']);
     $group->delete('/{id}', [$notificationController, 'delete']);
 })->add($authMiddleware);
+
+$app->group('/api/statements', function (\Slim\Routing\RouteCollectorProxy $group) use ($importController) {
+    $group->post('/upload', [$importController, 'upload']);
+})->add($workspaceMiddleware)->add($authMiddleware);
 
 $goalRepo = new \App\Repositories\GoalRepository($db);
 $goalContributionRepo = new \App\Repositories\GoalContributionRepository($db);
