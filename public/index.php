@@ -1,5 +1,25 @@
 <?php
 
+$isProd = (getenv('APP_ENV') === 'production');
+if (!$isProd) {
+    ini_set('display_errors', '1');
+    ini_set('display_startup_errors', '1');
+    error_reporting(E_ALL);
+    
+    // Custom error handler to output JSON instead of HTML for API errors during bootstrap
+    set_exception_handler(function (\Throwable $e) {
+        http_response_code(500);
+        header('Content-Type: application/json');
+        echo json_encode([
+            'error' => 'Fatal Bootstrap Error',
+            'message' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine()
+        ]);
+        exit;
+    });
+}
+
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use App\Database;
