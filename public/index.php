@@ -208,8 +208,8 @@ $app->group('/api/notifications', function ($group) use ($notificationController
     $group->delete('/{id}', [$notificationController, 'delete']);
 })->add($authMiddleware);
 
-$goalRepo = new \App\Repositories\GoalRepository();
-$goalContributionRepo = new \App\Repositories\GoalContributionRepository();
+$goalRepo = new \App\Repositories\GoalRepository($db);
+$goalContributionRepo = new \App\Repositories\GoalContributionRepository($db);
 $simulationService = new \App\Services\SimulationService($assetRepo, $billRepo, $goalRepo);
 $goalService = new \App\Services\GoalService($goalRepo, $goalContributionRepo, $simulationService, $billRepo, $categoryRepo);
 $goalController = new \App\Controllers\GoalController($goalService);
