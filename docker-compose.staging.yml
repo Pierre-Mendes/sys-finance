@@ -32,5 +32,18 @@ services:
       db-staging:
         condition: service_healthy
 
+  phpmyadmin-staging:
+    image: phpmyadmin/phpmyadmin
+    container_name: financas-pma-staging
+    environment:
+      PMA_HOST: db-staging
+      PMA_USER: root
+      PMA_PASSWORD: root
+    ports:
+      - "8083:80"
+    depends_on:
+      db-staging:
+        condition: service_healthy
+
 volumes:
   db-data-staging:

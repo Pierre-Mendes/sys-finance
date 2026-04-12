@@ -33,5 +33,19 @@ services:
       db:
         condition: service_healthy
 
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: financas-pma-prod
+    restart: always
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: ${DB_ROOT_PASSWORD}
+    ports:
+      - "8084:80"
+    depends_on:
+      db:
+        condition: service_healthy
+
 volumes:
   db-data-prod:
