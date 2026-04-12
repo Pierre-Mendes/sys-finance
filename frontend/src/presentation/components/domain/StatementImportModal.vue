@@ -15,7 +15,7 @@
           @dragleave.prevent="dragOver = false" 
           @drop.prevent="handleDrop"
           :class="['border-2 border-dashed rounded-xl p-12 text-center transition cursor-pointer', dragOver ? 'border-primary bg-blue-50' : 'border-gray-300 hover:border-primary hover:bg-gray-50']"
-          @click="$refs.fileInput.click()"
+          @click="fileInput?.click()"
         >
           <input type="file" ref="fileInput" class="hidden" accept="application/pdf" @change="handleFileSelect" />
           <svg class="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
@@ -132,6 +132,7 @@ const step = ref<'upload' | 'review'>('upload')
 const dragOver = ref(false)
 const uploading = ref(false)
 const saving = ref(false)
+const fileInput = ref<HTMLInputElement | null>(null)
 const transactions = ref<any[]>([])
 const selectedAccountId = ref('')
 const defaultCategoryId = ref('')
@@ -216,8 +217,8 @@ const confirmImport = async () => {
         title: tx.description,
         amount: tx.amount,
         date: tx.date,
-        accountId: selectedAccountId.value,
-        categoryId: defaultCategoryId.value || 1, // Fallback to 1 if no category
+        accountId: Number(selectedAccountId.value),
+        categoryId: defaultCategoryId.value ? Number(defaultCategoryId.value) : 1, // Fallback to 1 if no category
         status: 'PAID', // Imported items are usually already paid
         description: 'Importado via Extrato PDF'
       })
