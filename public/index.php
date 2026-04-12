@@ -22,11 +22,33 @@ if (!$isProd) {
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
+$sentryDsn = getenv('SENTRY_DSN');
+if ($sentryDsn) {
+    \Sentry\init([
+        'dsn' => $sentryDsn,
+        'environment' => getenv('APP_ENV') ?: 'production',
+        'traces_sample_rate' => 1.0,
+    ]);
+}
+
 use App\Database;
 use App\Repositories\UserRepository;
 use App\Services\AuthService;
 use App\Controllers\AuthController;
 use Slim\Factory\AppFactory;
+use Monolog\Logger;
+use Monolog\Handler\RotatingFileHandler;
+use Monolog\Formatter\JsonFormatter;
+
+// Monolog Setup
+$logger = new Logger('financas-api');
+$logDir = __DIR__ . '/../logs';
+if (!file_exists($logDir)) {
+    mkdir($logDir, 0777, true);
+}
+$fileHandler = new RotatingFileHandler($logDir . '/app.log', 14, $isProd ? Logger::WARNING : Logger::DEBUG);
+$fileHandler->setFormatter(new JsonFormatter());
+$logger->pushHandler($fileHandler);
 
 $app = AppFactory::create();
 
@@ -82,6 +104,9 @@ $app->get('/api/health', function ($request, $response) {
     $response->getBody()->write(json_encode(["status" => "ok", "message" => "O Gerenciador Financeiro Pessoal API está online."]));
     return $response->withHeader('Content-Type', 'application/json');
 });
+
+$healthController = new \App\Controllers\HealthController($db);
+$app->get('/api/metrics', [$healthController, 'metrics']);
 
 $app->post('/api/auth/signup', [$authController, 'signup'])->add(new \App\Middleware\RateLimiterMiddleware($db, 10, 15));
 $app->post('/api/auth/login', [$authController, 'login'])->add(new \App\Middleware\RateLimiterMiddleware($db, 5, 10));
@@ -224,6 +249,6 @@ $app->group('/api/goals', function (\Slim\Routing\RouteCollectorProxy $group) us
 })->add($workspaceMiddleware)->add($authMiddleware);
 
 // Add Error Middleware last
-$app->addErrorMiddleware(true, true, true);
+$errorMiddleware = $app->addErrorMiddleware(!$isProd, true, true, $logger);
 
 $app->run();
