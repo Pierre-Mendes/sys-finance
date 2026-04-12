@@ -11,6 +11,7 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@sentry/vue": "^10.48.0",
     "apexcharts": "^5.10.5",
     "pinia": "^3.0.4",
     "sweetalert2": "^11.26.24",

@@ -8,7 +8,9 @@
         "slim/psr7": "^1.6",
         "dompdf/dompdf": "^3.1",
         "robmorgan/phinx": "^0.14.0",
-        "guzzlehttp/guzzle": "^7.10"
+        "guzzlehttp/guzzle": "^7.10",
+        "monolog/monolog": "^3.10",
+        "sentry/sentry": "^4.24"
     },
     "require-dev": {
         "phpunit/phpunit": "^10.0",
