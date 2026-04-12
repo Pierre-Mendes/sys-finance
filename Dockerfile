@@ -45,3 +45,7 @@ RUN chown -R www-data:www-data /var/www/html
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+
+# Configurar Apache para não remover variáveis de ambiente
+RUN echo "PassEnv DB_HOST DB_USER DB_PASS DB_NAME APP_ENV" > /etc/apache2/conf-available/passenv.conf \
+    && a2enconf passenv
