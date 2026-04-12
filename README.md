@@ -9,51 +9,120 @@ O sistema transcende o simples rastreamento de gastos. Ele é construído sobre 
 
 O coração do projeto é o **Cockpit Financeiro**, uma engine inteligente que sintetiza seu fluxo de caixa, investimentos e metas em uma visão 360º unificada por Workspaces.
 
-## ✨ Funcionalidades de Elite (Features)
+---
 
-1.  **Cockpit Inteligente (Dashboard)**:
-    - Visão consolidada de Patrimônio Líquido entre múltiplos ambientes.
-    - Card de "Dinheiro Guardado" dinâmico: Prioriza suas **Metas Favoritas** ou exibe o total acumulado.
-2.  **Extrato Bancário com Saldo Progressivo**:
-    - Timeline detalhada de cada conta bancária.
-    - Cálculo automático de saldo acumulado (Running Balance) para auditoria precisa de fluxos.
-3.  **Multi-Tenancy Workspaces (SaaS Ready)**:
-    - Isole completamente sua vida "Pessoal", "Familiar" e "Profissional".
-    - Navegação instantânea entre visões sem recarga de página.
-4.  **Protocolo de Rateio (Recursive Splitting)**:
-    - Pague no seu cartão pessoal e repasse frações da despesa para o Workspace da empresa ou casal automaticamente via *Shadow Records*.
-5.  **Metas & Simulação de Conquistas**:
-    - Engine de projeção que calcula a data exata da vitória baseada no seu superávit histórico.
-    - Vínculo direto com contas bancárias e histórico de aportes auditável.
-6.  **Gestão de Cartões de Crédito**:
-    - Controle de limites, faturas futuras e parcelamentos inteligentes com interface Mobile-First.
-7.  **Investimentos (Clean Design Patterns)**:
-    - Integração via `Strategy Pattern` para cotações de ativos em tempo real (Brapi/Sicoob).
-8.  **Orçamentos (Budgets Termométricos)**:
-    - Controle de "Burn Rate" com alertas visuais de criticidade em barras termométricas.
+## 🏗️ Arquitetura do Projeto
 
-## 🏗️ Stack Tecnológica & Arquitetura
+### 🖥️ Arquitetura Frontend
+Construído com foco em fluidez de estado e tipagem, o frontend utiliza o padrão **Clean Architecture**, isolando as lógicas de negócio dos componentes visuais.
+*   **Core / Engine**: Vue 3 (Composition API) orquestrado pelo Vite, entregando Hot-Module-Replacement quase instantâneo na fase de desenvolvimento.
+*   **Data & API Layer**: `axios` configurado como HTTP Client (no `HttpClient.ts`) que atua através de Interceptors injetando o JWT (Token) e identificador do Workspace atual (`X-Workspace-Id`) em absolutamente cada requisição. O roteamento de erros também é unificado nesta camada, escrevendo falhas globais direto no Console do DevTools para monitoria constante.
+*   **Presentation / UI**: Formulada em **Tailwind CSS**, abraçando um modelo `Mobile-First` responsivo total. Padrões de Micro-animações enriquecem as transições de Dashboard e navegações entre os Workspaces; renderização de gráficos complexos a cargo do **ApexCharts**.
 
-### Frontend: Modernidade & Performance
-- **Vite + Vue 3 (Composition API)**: Velocidade extrema de desenvolvimento e execução.
-- **Clean Architecture Frontend**: Divisão rigorosa em `core` (domínio), `data` (repositórios/API) e `presentation` (Vue/Components).
-- **TailwindCSS + UX Premium**: Interface baseada em Glassmorphism, micro-animações e scrollbars customizadas.
-
-### Backend: Segurança & Robustez
-- **PHP 8.4 + Slim 4**: API de alta performance com tipagem estrita.
-- **Security Headers (OWASP)**: Middlewares de segurança ativos (CSP, HSTS, XSS Protection).
-- **Phinx Migrations**: Controle de versão do banco de dados MySQL para escalabilidade segura.
+### ⚙️ Arquitetura Backend
+O Backend é uma API RESTful de alta resposta orientada a Injeção de Dependências.
+*   **Server & Router**: PHP 8.4 impulsionando o microframework **Slim 4**. A API abraça um ecossistema estrito através de "RouteCollectorProxy", centralizando checagens de autorização.
+*   **Fluxo de Requisitos (Pattern)**: O fluxo obedece à tríade de Separação de Preocupações (`Controllers` -> `Services` -> `Repositories`).
+    *   **Controllers** blindam a borda, validando parâmetros HTTP.
+    *   **Services** comportam todas as regras financeiras complexas (Ex: Recalcular `projectedBalance` no Dashboard).
+    *   **Repositories** executam a persistência isolando a conexão PDO, permitindo facilmente a adoção de mockups nos Testes.
+*   **Gatekeepers / Segurança**: Middlewares (`AuthMiddleware`, `WorkspaceMiddleware`) filtram acessos baseados na força do Token JWT.
+*   **Migrations**: A estrutura evolutiva do banco está sob custódia oficial do **Phinx**, garantindo integridade das mutações do DB da Produção sem perigo de quebra (Idempotência nativa aplicada nas últimas versões).
 
 ---
 
-## 🚀 Guia de Onboarding (Quick Start)
+## 🗄️ Estrutura do Banco de Dados (DER)
 
-Se você é novo por aqui, siga a "Trilha do Sucesso":
+Este projeto opera um ecossistema SQL baseamente desenhado num modelo estrela focado na entidade **Workspace** (`SaaS / Multi-Tenant`). Isso garante que dados Pessoais sejam física e logicamente separados de dados Famliares/Conta Conjunta, bastando apenas uma troca de contexto na sessão.
 
-1.  **Crie suas Contas**: No módulo `Contas Bancárias`, cadastre onde seu dinheiro vive (Ex: Nubank, Investimentos, Espécie).
-2.  **Categorize-se**: Em `Categorias`, defina os baldes onde seu dinheiro flui.
-3.  **Lance o Passado**: Importe ou lance seus últimos gastos para dar vida ao Dashboard.
-4.  **Trace Objetivos**: Crie sua primeira **Meta**, favorite-a e veja o progresso no Cockpit.
+### 📝 Dicionário de Tabelas (O que cada uma faz?)
+1.  **`user`**: Detém as chaves da vida do cliente (Autenticação via senha e Perguntas de Recuperação de segurança isoladas).
+2.  **`workspaces`**: Núcleo isolador do SaaS. Representa uma "bolha financeira" autônoma (Pode ser do tipo *Pessoal*, *Empresa*, *Casal*). Em volta dele transitam quase todos os registros.
+3.  **`workspace_users`**: Tabela pivô de Relação que define *quem* pode entrar nos Workspaces e com *qual poder* (`owner`, `editor`, `viewer`).
+4.  **`account` / `bank_accounts`**: Suas caixas-fortes. Contas Correntes, Carteira Pessoal, Contas Digitais dentro de um determinado Workspace.
+5.  **`category`**: Classificador universal termométrico da saúde financeira (Alimentação, Lazer, etc).
+6.  **`assets`**: Representa todas as **Receitas / Entradas** de fluxo financeiro vinculadas ou não a categorias e contas (Também usado em investimentos).
+7.  **`bills`**: Representa todas as **Despesas / Saídas** de fluxo de caixa (incluindo status dinâmico entre Pendente ou Paga).
+8.  **`budget`**: O Limitador termométrico. Atribui teto de gastos (`amount`) estrito a categorias num dado mês.
+9.  **`credit_cards`**: Entidade matriz para abstrair cartões plásticos de faturas fechadas (Dias de Fechamento/Vencimento e Limite de Crédito).
+10. **`credit_card_transactions`**: Compras efetuadas no crédito, segmentadas por cartões, podendo calcular recursivamente projeções de *parcelamentos* em faturas virtuais através dos anos.
+11. **`goals`**: Suas Metas de Vida. Uma poupança paralela travada ("Comprar Carro", "Viagem Europa") com `TargetAmount` (Alvo) a ser alcançado e vinculação possível à sua conta corrente preferida.
+12. **`goal_contributions`**: "Pingos d'água" de investimentos mensais e discretos sendo alocados contra a Tabela `goals` para avanço quantificado de progresso.
+13. **`notifications`**: Ponto central de alarme multi-serviços assíncrono (Aceites de Convites, Lembretes automáticos agendados) possuindo "URLs de Ação" caso o alerta requeira cliques ativos.
+14. **`totals`**: Um snapshot computado local que mantém o saldo cacheado da conta para aliviar agregações imensas e leituras do Cockpit.
+
+### 📊 Diagrama Entidade-Relacionamento (Mermaid ERD)
+
+```mermaid
+erDiagram
+    user ||--o{ workspace_users : "ingressa em"
+    workspaces ||--o{ workspace_users : "comporta"
+    user ||--o{ notifications : "recebe"
+    workspaces ||--o{ account : "agrega"
+    workspaces ||--o{ category : "consolida"
+    workspaces ||--o{ assets : "abrange (receitas)"
+    workspaces ||--o{ bills : "abrange (despesas)"
+    workspaces ||--o{ goals : "possui"
+    workspaces ||--o{ credit_cards : "detem"
+
+    account ||--o{ assets : "recebe depósitos"
+    account ||--o{ bills : "paga contas"
+    account ||--o{ goals : "ampara progresso"
+    account ||--o{ goal_contributions : "lastreia"
+
+    category ||--o{ assets : "classifica (+)"
+    category ||--o{ bills : "classifica (-)"
+    category ||--o{ budget : "recebe teto"
+    
+    credit_cards ||--o{ credit_card_transactions : "processa compra"
+    
+    goals ||--o{ goal_contributions : "é alimentada por"
+
+    user {
+        int UserId PK
+        string FirstName
+        string Email
+        string recovery_question
+    }
+    workspaces {
+        int WorkspaceId PK
+        string WorkspaceName
+    }
+    account {
+        int AccountId PK
+        string AccountName
+    }
+    assets {
+        int AssetsId PK
+        double Amount
+        date Date
+        string status
+    }
+    bills {
+        int BillsId PK
+        double Amount
+        date Dates
+        string status
+    }
+    goals {
+        int GoalId PK
+        double TargetAmount
+        double AccumulatedAmount
+        boolean IsFavorite
+    }
+    credit_cards {
+        int CreditCardId PK
+        string Name
+        int Limit
+    }
+```
+
+---
+
+## 🚀 Pipeline Automatizada de Deploy (CI/CD)
+O ecossistema é mantido vivo de forma automática através das `GitHub Actions`:
+*   **Workflow Staging (Sandbox)**: Gatilho automático ou manual focado na porta SSH, espelha para o provedor Hostinger e reergue o container Sandbox (`porta 8082`), rodando também a injeção do `PHPMyAdmin (8083)` para debug manual interno.
+*   **Workflow Produção**: Uma rotina controlada manualmente que refaz o espelhamento mas de forma sólida isolando para o tráfego da rede (`porta 80` padrão).
 
 ---
 
@@ -63,7 +132,7 @@ Se você é novo por aqui, siga a "Trilha do Sucesso":
 
 1.  **Infraestrutura**: `docker compose up -d` (MySQL/MariaDB).
 2.  **Banco de Dados**: `vendor/bin/phinx migrate -e development`.
-3.  **API**: `php -S 0.0.0.0:8081 -t public/`.
+3.  **API**: `php -S 0.0.0.0:8000 -t public/`.
 4.  **Frontend**: `cd frontend && npm install && npm run dev`.
 
 Acesse em: `http://localhost:5173`
