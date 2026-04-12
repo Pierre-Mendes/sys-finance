@@ -46,11 +46,6 @@
             </div>
             <p class="text-xl font-bold text-gray-800">Selecione seu arquivo PDF</p>
             <p class="text-gray-500 mt-2 max-w-xs mx-auto">Solte o arquivo aqui para começar o processamento inteligente.</p>
-            <div class="mt-8 flex flex-wrap justify-center gap-2">
-              <span class="px-3 py-1 bg-white border border-gray-100 rounded-full text-[10px] uppercase font-bold text-gray-400 shadow-sm">Itaú</span>
-              <span class="px-3 py-1 bg-white border border-gray-100 rounded-full text-[10px] uppercase font-bold text-gray-400 shadow-sm">Sicoob</span>
-              <span class="px-3 py-1 bg-white border border-gray-100 rounded-full text-[10px] uppercase font-bold text-gray-400 shadow-sm">Nubank (Beta)</span>
-            </div>
           </div>
 
           <div v-if="uploading" class="mt-8 flex flex-col items-center gap-4 text-primary animate-pulse">
@@ -59,68 +54,91 @@
               <div class="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:-.3s]"></div>
               <div class="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:-.5s]"></div>
             </div>
-            <span class="text-sm font-bold uppercase tracking-widest">Analisando Inteligência Financeira...</span>
+            <span class="text-sm font-bold uppercase tracking-widest">IA Analisando Estrutura do Banco...</span>
           </div>
         </div>
 
         <!-- Step 2: Review -->
         <div v-if="step === 'review'" class="space-y-8 pb-32">
-          <!-- Quick Config -->
-          <div class="grid grid-cols-2 gap-4">
-            <div class="relative group">
-              <label class="block text-[10px] font-black uppercase text-gray-400 mb-2 ml-1">Conta Destino</label>
-              <select v-model="selectedAccountId" class="w-full h-12 px-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary/20 appearance-none font-medium text-gray-700 transition-all cursor-pointer">
-                <option value="" disabled>Onde o dinheiro entrou?</option>
-                <option v-for="acc in accountStore.accounts" :key="acc.id" :value="acc.id">{{ acc.name }}</option>
-              </select>
-              <div class="absolute right-4 top-9 pointer-events-none text-gray-400"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div>
-            </div>
-            <div class="relative group">
-              <label class="block text-[10px] font-black uppercase text-gray-400 mb-2 ml-1">Categoria Sugerida</label>
-              <select v-model="defaultCategoryId" class="w-full h-12 px-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary/20 appearance-none font-medium text-gray-700 transition-all cursor-pointer">
-                <option value="">Automático</option>
-                <option v-for="cat in categoryStore.categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
-              </select>
-              <div class="absolute right-4 top-9 pointer-events-none text-gray-400"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div>
+          <!-- Filters & Global Tools -->
+          <div class="bg-gray-50/50 border border-gray-100 p-5 rounded-3xl space-y-4">
+            <div class="flex flex-col md:flex-row gap-4">
+                <div class="flex-1">
+                    <label class="block text-[10px] font-black uppercase text-gray-400 mb-2 ml-1">Filtrar por Período</label>
+                    <div class="flex items-center gap-2">
+                        <input type="date" v-model="filterStartDate" class="flex-1 h-10 px-3 bg-white border border-gray-200 rounded-xl text-xs focus:ring-2 focus:ring-primary/20 outline-none" />
+                        <span class="text-gray-400">até</span>
+                        <input type="date" v-model="filterEndDate" class="flex-1 h-10 px-3 bg-white border border-gray-200 rounded-xl text-xs focus:ring-2 focus:ring-primary/20 outline-none" />
+                    </div>
+                </div>
+                <div class="flex-1">
+                    <label class="block text-[10px] font-black uppercase text-gray-400 mb-2 ml-1">Ação em Massa (Selecionados)</label>
+                    <div class="flex gap-2">
+                        <select v-model="bulkAccountId" class="flex-1 h-10 px-3 bg-white border border-gray-200 rounded-xl text-xs focus:ring-2 focus:ring-primary/20 outline-none">
+                            <option value="">Aplicar Conta...</option>
+                            <option v-for="acc in accountStore.accounts" :key="acc.id" :value="acc.id">{{ acc.name }}</option>
+                        </select>
+                        <button @click="applyBulk" class="px-4 bg-gray-800 text-white rounded-xl text-xs font-bold hover:bg-black transition">Aplicar</button>
+                    </div>
+                </div>
             </div>
           </div>
 
           <!-- Transaction Table UI Refined -->
           <div class="space-y-3">
             <div class="flex items-center justify-between px-2">
-                <h4 class="text-sm font-bold text-gray-500 uppercase">Transações Detectadas</h4>
+                <div class="flex flex-col">
+                    <h4 class="text-sm font-bold text-gray-800 uppercase">Transações Detectadas</h4>
+                    <span class="text-[10px] text-gray-400 font-medium">Exibindo {{ filteredTransactions.length }} lançamentos</span>
+                </div>
                 <div class="flex items-center gap-2">
                     <span class="text-[10px] font-bold text-gray-400">Selecionar Tudo</span>
                     <input type="checkbox" v-model="selectAll" @change="toggleSelectAll" class="w-4 h-4 rounded-md border-gray-300 text-primary focus:ring-primary" />
                 </div>
             </div>
 
-            <div v-for="(tx, idx) in transactions" :key="idx" 
-                 class="group bg-white border border-gray-100 p-4 rounded-2xl hover:border-primary/20 transition-all hover:shadow-lg hover:shadow-gray-200/50 flex items-center gap-4">
+            <div v-for="(tx, idx) in filteredTransactions" :key="idx" 
+                 class="group bg-white border border-gray-100 p-4 rounded-2xl hover:border-primary/20 transition-all hover:shadow-lg hover:shadow-gray-200/50 flex flex-col gap-4">
               
-              <div class="relative">
-                <input type="checkbox" v-model="tx.selected" class="w-5 h-5 rounded-lg border-gray-200 text-primary focus:ring-0 cursor-pointer" />
-              </div>
-
-              <div class="flex-1 min-w-0">
-                <div class="flex items-center gap-2 mb-1">
-                    <span class="text-[10px] font-mono bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded leading-none">{{ formatDate(tx.date) }}</span>
-                    <span :class="tx.type === 'asset' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'" class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full tracking-tighter">
-                        {{ tx.type === 'asset' ? 'Crédito' : 'Débito' }}
-                    </span>
+              <div class="flex items-center gap-4">
+                <div class="relative">
+                    <input type="checkbox" v-model="tx.selected" class="w-5 h-5 rounded-lg border-gray-200 text-primary focus:ring-0 cursor-pointer" />
                 </div>
-                <input v-model="tx.description" 
-                       class="w-full bg-transparent border-none p-0 font-bold text-sm text-gray-800 focus:ring-0 placeholder-gray-300 truncate" />
+
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="text-[10px] font-mono bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded leading-none">{{ formatDate(tx.date) }}</span>
+                        <span :class="tx.type === 'asset' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'" class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full tracking-tighter">
+                            {{ tx.type === 'asset' ? 'Crédito' : 'Débito' }}
+                        </span>
+                    </div>
+                    <input v-model="tx.description" 
+                        class="w-full bg-transparent border-none p-0 font-bold text-sm text-gray-800 focus:ring-0 placeholder-gray-300 truncate" />
+                </div>
+
+                <div class="text-right">
+                    <p :class="tx.type === 'asset' ? 'text-green-600' : 'text-red-500'" class="font-black text-sm">
+                    {{ tx.type === 'asset' ? '+' : '-' }} R$ {{ tx.amount.toLocaleString('pt-BR', {minimumFractionDigits: 2}) }}
+                    </p>
+                    <button @click="removeTransaction(tx)" class="text-xs font-bold text-red-300 hover:text-red-500 transition flex items-center gap-1 ml-auto mt-1">
+                        Remover
+                    </button>
+                </div>
               </div>
 
-              <div class="text-right">
-                <p :class="tx.type === 'asset' ? 'text-green-600' : 'text-red-500'" class="font-black text-sm">
-                  {{ tx.type === 'asset' ? '+' : '-' }} R$ {{ tx.amount.toLocaleString('pt-BR', {minimumFractionDigits: 2}) }}
-                </p>
-                <button @click="transactions.splice(idx, 1)" class="text-xs font-bold text-gray-300 hover:text-red-400 transition ml-auto flex items-center gap-1 mt-1">
-                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                    Remover
-                </button>
+              <!-- Individual Controls -->
+              <div class="grid grid-cols-2 gap-3 pt-3 border-t border-gray-50">
+                  <div class="relative">
+                      <select v-model="tx.accountId" class="w-full h-8 px-2 bg-gray-50 border-none rounded-lg text-[11px] focus:ring-1 focus:ring-primary/20 appearance-none font-medium text-gray-600">
+                        <option value="">Selecione a Conta...</option>
+                        <option v-for="acc in accountStore.accounts" :key="acc.id" :value="acc.id">{{ acc.name }}</option>
+                      </select>
+                  </div>
+                  <div class="relative">
+                      <select v-model="tx.categoryId" class="w-full h-8 px-2 bg-gray-50 border-none rounded-lg text-[11px] focus:ring-1 focus:ring-primary/20 appearance-none font-medium text-gray-600">
+                        <option v-for="cat in categoryStore.categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
+                      </select>
+                  </div>
               </div>
             </div>
           </div>
@@ -137,14 +155,12 @@
                 </div>
                 <div>
                     <p class="font-black text-gray-800 leading-none">{{ selectedCount }}</p>
-                    <p class="text-[10px] uppercase font-bold text-gray-400">Selecionados</p>
+                    <p class="text-[10px] uppercase font-bold text-gray-400">Prontos p/ Importar</p>
                 </div>
             </div>
-            <div class="flex items-center gap-2 bg-blue-50/50 px-4 py-2 rounded-2xl border border-blue-100/30">
-                <div class="text-right">
-                    <p class="text-[9px] uppercase font-black text-blue-400">Total no PDF</p>
-                    <p class="font-black text-primary leading-none">{{ transactions.length }} Lançamentos</p>
-                </div>
+            <div class="text-right">
+                <p class="text-[9px] uppercase font-black text-blue-400">Total Selecionado</p>
+                <p class="font-black text-primary leading-none">R$ {{ formatCurrency(totalSelectedAmount) }}</p>
             </div>
         </div>
 
@@ -152,7 +168,7 @@
           <button @click="step = 'upload'" class="flex-1 h-14 text-sm font-bold text-gray-500 hover:text-gray-800 bg-gray-100 hover:bg-gray-200 rounded-3xl transition">Reiniciar</button>
           <button 
             @click="confirmImport" 
-            :disabled="selectedCount === 0 || !selectedAccountId || saving"
+            :disabled="selectedCount === 0 || !allSelectedHaveAccount || saving"
             class="flex-[2] h-14 bg-primary hover:bg-blue-600 text-white font-black text-sm rounded-3xl shadow-xl shadow-blue-500/20 transition disabled:opacity-50 flex items-center justify-center gap-2"
           >
             <template v-if="saving">
@@ -196,11 +212,35 @@ const uploading = ref(false)
 const saving = ref(false)
 const fileInput = ref<HTMLInputElement | null>(null)
 const transactions = ref<any[]>([])
-const selectedAccountId = ref('')
-const defaultCategoryId = ref('')
+
+// Filter States
+const filterStartDate = ref('')
+const filterEndDate = ref('')
+const bulkAccountId = ref('')
+
 const selectAll = ref(true)
 
-const selectedCount = computed(() => transactions.value.filter(t => t.selected).length)
+const filteredTransactions = computed(() => {
+  return transactions.value.filter(t => {
+    if (filterStartDate.value && t.date < filterStartDate.value) return false
+    if (filterEndDate.value && t.date > filterEndDate.value) return false
+    return true
+  })
+})
+
+const selectedCount = computed(() => filteredTransactions.value.filter(t => t.selected).length)
+
+const totalSelectedAmount = computed(() => {
+    return filteredTransactions.value
+        .filter(t => t.selected)
+        .reduce((acc, t) => acc + (t.type === 'asset' ? t.amount : -t.amount), 0)
+})
+
+const allSelectedHaveAccount = computed(() => {
+    return filteredTransactions.value
+        .filter(t => t.selected)
+        .every(t => t.accountId !== '')
+})
 
 watch(() => props.modelValue, (val) => {
   if (val) {
@@ -209,6 +249,9 @@ watch(() => props.modelValue, (val) => {
     uploading.value = false
     saving.value = false
     selectAll.value = true
+    filterStartDate.value = ''
+    filterEndDate.value = ''
+    bulkAccountId.value = ''
     if (accountStore.accounts.length === 0) accountStore.fetchAccounts()
     if (categoryStore.categories.length === 0) categoryStore.fetchCategories()
   }
@@ -244,7 +287,9 @@ const uploadFile = async (file: File) => {
     transactions.value = data.transactions.map((t: any) => ({
       ...t,
       selected: true,
-      title: t.description // For creation
+      title: t.description,
+      accountId: '',
+      categoryId: 1 // General category by default
     }))
     step.value = 'review'
   } catch (e: any) {
@@ -255,7 +300,23 @@ const uploadFile = async (file: File) => {
 }
 
 const toggleSelectAll = () => {
-  transactions.value.forEach(t => t.selected = selectAll.value)
+  filteredTransactions.value.forEach(t => t.selected = selectAll.value)
+}
+
+const applyBulk = () => {
+    if (!bulkAccountId.value) {
+        toast.warning('Selecione uma conta para aplicar.')
+        return
+    }
+    filteredTransactions.value.forEach(t => {
+        if (t.selected) t.accountId = bulkAccountId.value
+    })
+    toast.info('Conta aplicada aos selecionados.')
+}
+
+const removeTransaction = (tx: any) => {
+    const idx = transactions.value.indexOf(tx)
+    if (idx !== -1) transactions.value.splice(idx, 1)
 }
 
 const formatDate = (dateStr: string) => {
@@ -263,14 +324,16 @@ const formatDate = (dateStr: string) => {
   return `${day}/${month}/${year}`
 }
 
+const formatCurrency = (val: number) => {
+    return Number(val || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+}
+
 const confirmImport = async () => {
-  if (!selectedAccountId.value) return
-  
   saving.value = true
   let successCount = 0
   let errorCount = 0
 
-  const toImport = transactions.value.filter(t => t.selected)
+  const toImport = filteredTransactions.value.filter(t => t.selected)
 
   for (const tx of toImport) {
     try {
@@ -279,10 +342,10 @@ const confirmImport = async () => {
         title: tx.description,
         amount: tx.amount,
         date: tx.date,
-        accountId: Number(selectedAccountId.value),
-        categoryId: defaultCategoryId.value ? Number(defaultCategoryId.value) : 1, // Fallback to 1 if no category
-        status: 'PAID', // Imported items are usually already paid
-        description: 'Importado via Extrato PDF'
+        accountId: Number(tx.accountId),
+        categoryId: Number(tx.categoryId),
+        status: 'PAID',
+        description: 'Importado via Extrato PDF (IA Hybrid Engine)'
       })
       successCount++
     } catch (e) {
@@ -301,3 +364,4 @@ const confirmImport = async () => {
   saving.value = false
 }
 </script>
+

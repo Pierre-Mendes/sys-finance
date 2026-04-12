@@ -44,7 +44,15 @@ class StatementImportService {
         }
 
         if (!$selectedAdapterClass) {
-            throw new Exception("Bank layout not recognized. We currently support Itaú and Sicoob.");
+            // Se nenhum adapter fixo bater, recorre ao Motor Híbrido (Heurística + Templates Aprendidos)
+            $engine = new HybridAIEngine();
+            $transactions = $engine->analyze($text);
+            
+            if (empty($transactions)) {
+                throw new Exception("Layout do banco não reconhecido e a Heurística não conseguiu extrair dados seguros.");
+            }
+            
+            return $transactions;
         }
 
         $adapter = new $selectedAdapterClass();

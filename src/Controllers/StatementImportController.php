@@ -43,13 +43,18 @@ class StatementImportController {
             $response->getBody()->write(json_encode([
                 'success' => true,
                 'count' => count($transactions),
-                'transactions' => $transactions
+                'transactions' => $transactions,
+                'source' => 'hybrid_engine' // Indica que passou pelo motor inteligente
             ]));
             
             return $response->withHeader('Content-Type', 'application/json');
             
         } catch (\Exception $e) {
-            $response->getBody()->write(json_encode(['error' => $e->getMessage()]));
+            // Se falhou mesmo com a heurística, retorna um erro amigável para a IA aprender
+            $response->getBody()->write(json_encode([
+                'error' => $e->getMessage(),
+                'needs_ai_learning' => true // Flag para o frontend mostrar tela de aprendizado
+            ]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(422);
         } finally {
             if (file_exists($tempFile)) {
