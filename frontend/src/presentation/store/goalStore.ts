@@ -74,10 +74,10 @@ export const useGoalStore = defineStore('goal', () => {
     }
   }
 
-  async function addContribution(goalId: number, amount: number, accountId?: number | null, description?: string) {
+  async function addContribution(goalId: number, amount: number, accountId?: number | null, description?: string, date?: string) {
     isLoading.value = true
     try {
-      await api.post('/api/goals/contributions', { goalId, amount, accountId, description })
+      await api.post('/api/goals/contributions', { goalId, amount, accountId, description, date })
       await fetchGoals()
       return true
     } catch (error) {

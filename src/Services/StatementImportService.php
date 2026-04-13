@@ -10,7 +10,9 @@ class StatementImportService {
     
     private array $adapters = [
         ItauPDFAdapter::class,
-        SicoobPDFAdapter::class
+        SicoobPDFAdapter::class,
+        CSVStatementAdapter::class,
+        OFXStatementAdapter::class
     ];
 
     /**
@@ -19,20 +21,27 @@ class StatementImportService {
      * @throws Exception
      */
     public function extractFromPdf(string $filePath): array {
-        // Run pdftotext -layout to preserve column alignment
-        $output = [];
-        $returnVar = 0;
-        
-        // Escape the file path for security
-        $safePath = escapeshellarg($filePath);
-        exec("pdftotext -layout $safePath - 2>&1", $output, $returnVar);
+        $extension = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
 
-        if ($returnVar !== 0) {
-            $errorOutput = implode("\n", $output);
-            throw new Exception("Error executing pdftotext (Exit Code $returnVar). Output: $errorOutput");
+        if ($extension === 'pdf') {
+            // Run pdftotext -layout to preserve column alignment
+            $output = [];
+            $returnVar = 0;
+            $safePath = escapeshellarg($filePath);
+            exec("pdftotext -layout $safePath - 2>&1", $output, $returnVar);
+
+            if ($returnVar !== 0) {
+                $errorOutput = implode("\n", $output);
+                throw new Exception("Error executing pdftotext (Exit Code $returnVar). Output: $errorOutput");
+            }
+            $text = implode("\n", $output);
+        } else {
+            // Plain text formats (CSV, OFX)
+            $text = file_get_contents($filePath);
+            if ($text === false) {
+                throw new Exception("Unable to read file contents.");
+            }
         }
-
-        $text = implode("\n", $output);
         
         // Select adapter
         $selectedAdapterClass = null;

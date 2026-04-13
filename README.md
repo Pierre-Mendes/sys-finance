@@ -7,7 +7,7 @@
 ## 📌 A Nova Era do Controle Financeiro
 O sistema transcende o simples rastreamento de gastos. Ele é construído sobre uma base de **Soberania de Dados** e **Arquitetura Industrial (Clean Arch)**, unindo a agilidade do **Vue.js 3** com a robustez e segurança de uma API **PHP 8.4 (Slim Framework)**.
 
-O coração do projeto é o **Cockpit Financeiro**, uma engine inteligente que sintetiza seu fluxo de caixa, investimentos e metas em uma visão 360º unificada por Workspaces.
+O coração do projeto é o **Cockpit Financeiro**, uma engine inteligente que sintetiza seu fluxo de caixa, investimentos e metas em uma visão 360º unificada por Workspaces. O sistema conta ainda com um **Módulo de Conciliação Bancária (BETA)** robusto, capaz de processar PDF, CSV e OFX com aprendizado contínuo de layouts.
 
 ---
 
@@ -48,8 +48,10 @@ Este projeto opera um ecossistema SQL baseamente desenhado num modelo estrela fo
 10. **`credit_card_transactions`**: Compras efetuadas no crédito, segmentadas por cartões, podendo calcular recursivamente projeções de *parcelamentos* em faturas virtuais através dos anos.
 11. **`goals`**: Suas Metas de Vida. Uma poupança paralela travada ("Comprar Carro", "Viagem Europa") com `TargetAmount` (Alvo) a ser alcançado e vinculação possível à sua conta corrente preferida.
 12. **`goal_contributions`**: "Pingos d'água" de investimentos mensais e discretos sendo alocados contra a Tabela `goals` para avanço quantificado de progresso.
-13. **`notifications`**: Ponto central de alarme multi-serviços assíncrono (Aceites de Convites, Lembretes automáticos agendados) possuindo "URLs de Ação" caso o alerta requeira cliques ativos.
+13. **`notifications`**: Ponto central de alarme multi-serviços assíncrono.
 14. **`totals`**: Um snapshot computado local que mantém o saldo cacheado da conta para aliviar agregações imensas e leituras do Cockpit.
+15. **`bank_statement_templates`**: Cérebro da engine de importação. Armazena padrões de Regex e mapeamentos de colunas aprendidos pela IA para automatizar a leitura de extratos de novos bancos.
+
 
 ### 📊 Diagrama Entidade-Relacionamento (Mermaid ERD)
 

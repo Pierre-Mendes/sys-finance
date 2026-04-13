@@ -34,7 +34,11 @@ class StatementImportController {
         if (!file_exists($tempDir)) {
             mkdir($tempDir, 0777, true);
         }
-        $tempFile = tempnam($tempDir, 'stmt_');
+        
+        $originalName = $file->getClientFilename();
+        $extension = pathinfo($originalName, PATHINFO_EXTENSION);
+        $tempFile = $tempDir . '/stmt_' . uniqid() . '.' . $extension;
+        
         $file->moveTo($tempFile);
 
         try {

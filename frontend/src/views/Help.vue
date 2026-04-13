@@ -258,7 +258,7 @@
                  </div>
              </div>
 
-             <!-- Tab: Ferramentas e Exportações -->
+              <!-- Tab: Ferramentas e Orçamentos -->
              <div v-show="activeTab === 'ferramentas'" class="animate-fadeIn">
                  <h3 class="text-2xl font-bold text-gray-900 mb-4 border-b pb-2">Ferramentas e Orçamentos</h3>
                  
@@ -272,6 +272,61 @@
                         <h4 class="font-bold text-gray-800 mb-2">Relatórios CSV/XLS</h4>
                         <p class="text-sm text-gray-600 mb-4">Extraia seus dados para auditoria externa em planilhas Excel sempre que desejar, mantendo o controle total da sua soberania de dados.</p>
                         <img src="/docs/help_reports_real.png" alt="Relatórios Real" class="w-full rounded-2xl shadow-lg" />
+                    </div>
+                 </div>
+             </div>
+
+             <!-- Tab: Conciliação Bancária (BETA) -->
+             <div v-show="activeTab === 'import'" class="animate-fadeIn">
+                 <h3 class="text-2xl font-bold text-gray-900 mb-6 border-b pb-2 flex items-center gap-3">
+                    <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    Conciliação e Importação (BETA)
+                 </h3>
+
+                 <div class="space-y-8">
+                    <p class="text-gray-700 leading-relaxed">
+                        Esqueça a digitação manual. Nosso motor de conciliação permite que você suba arquivos diretamente dos aplicativos dos seus bancos.
+                    </p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="p-4 bg-indigo-50 rounded-2xl border border-indigo-100 text-center">
+                            <span class="block text-2xl mb-1">📄</span>
+                            <span class="text-xs font-black uppercase text-indigo-700">PDF Nativo</span>
+                        </div>
+                        <div class="p-4 bg-indigo-50 rounded-2xl border border-indigo-100 text-center">
+                            <span class="block text-2xl mb-1">📊</span>
+                            <span class="text-xs font-black uppercase text-indigo-700">CSV Comum</span>
+                        </div>
+                        <div class="p-4 bg-indigo-50 rounded-2xl border border-indigo-100 text-center">
+                            <span class="block text-2xl mb-1">🏦</span>
+                            <span class="text-xs font-black uppercase text-indigo-700">OFX Padrão</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <h4 class="font-bold text-gray-900">Como Funciona a Engine?</h4>
+                        <div class="flex gap-4 items-start">
+                            <div class="p-2 bg-gray-100 rounded-lg text-gray-500">1</div>
+                            <p class="text-sm text-gray-600"><strong>Detecção Automática:</strong> A IA analisa o texto do arquivo e identifica datas, descrições e valores automaticamente, mesmo em bancos desconhecidos via modo Heurístico.</p>
+                        </div>
+                        <div class="flex gap-4 items-start">
+                            <div class="p-2 bg-gray-100 rounded-lg text-gray-500">2</div>
+                            <p class="text-sm text-gray-600"><strong>Refino Manual:</strong> Antes de salvar, você pode editar qualquer campo na tabela de revisão. Se um valor veio errado ou a descrição está confusa, ajuste na hora.</p>
+                        </div>
+                        <div class="flex gap-4 items-start">
+                            <div class="p-2 bg-gray-100 rounded-lg text-gray-500">3</div>
+                            <p class="text-sm text-gray-600"><strong>Classificação Avançada:</strong> Você pode marcar itens como <em>Transferência</em> (entre suas contas), <em>Aporte em Meta</em> ou <em>Investimento</em>. O sistema cuidará da lógica contábil por trás.</p>
+                        </div>
+                    </div>
+
+                    <div class="p-5 bg-amber-50 rounded-3xl border border-amber-100">
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="text-amber-600">⚠️</span>
+                            <h5 class="font-bold text-amber-800 text-sm italic">Status: BETA em Refinamento</h5>
+                        </div>
+                        <p class="text-xs text-amber-700 leading-relaxed font-medium">
+                            Estamos aprimorando a engine constantemente. Se algum arquivo não for reconhecido, tente usar o formato <strong>CSV</strong> ou peça ajuda no suporte para que possamos "ensinar" o layout do seu banco para a IA.
+                        </p>
                     </div>
                  </div>
              </div>
@@ -296,6 +351,7 @@ const guideTabs = [
     { id: 'goals', title: 'Metas e Favoritos', icon: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>' },
     { id: 'statement', title: 'Extrato e Saldo', icon: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>' },
     { id: 'cards', title: 'Cartões de Crédito', icon: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>' },
+    { id: 'import', title: 'Conciliação (BETA)', icon: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>' },
     { id: 'ferramentas', title: 'Limites e Planilhas', icon: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>' },
 ]
 </script>
