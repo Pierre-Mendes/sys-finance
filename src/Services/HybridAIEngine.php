@@ -57,31 +57,69 @@ class HybridAIEngine {
      */
     private function heuristicsAnalysis(string $text): array {
         $transactions = [];
-        
-        // Padrão genérico: Data (DD/MM ou DD/MM/AAAA) + Descrição + Valor (R$ 0,00 ou -0,00)
-        // Este é um motor simplificado que busca linhas que começam com data e terminam com valor
         $lines = explode("\n", $text);
         
+        $datePattern = '/^\s*(\d{2}[\/\-]\d{2}(?:[\/\-]\d{2,4})?)\b/';
+        $amountPattern = '/(?:R\$\s*)?\(?(-?[\d\.]+,\d{2})\)?\s*([CD])?\b/i';
+        
+        $currentTx = null;
+
         foreach ($lines as $line) {
-            // Tenta capturar: Data | Descrição | Valor
-            // Ex: 10/04/2026 PIX RECEBIDO 150,00
-            if (preg_match('/^(\d{2}[\/\-]\d{2}(?:[\/\-]\d{2,4})?)\s+(.+?)\s+(-?[\d\.]+,\d{2})$/', trim($line), $m)) {
-                $transactions[] = [
-                    'date' => $this->normalizeDate($m[1], 'd/m/Y'), // Detectado via Regex
-                    'description' => trim($m[2]),
-                    'amount' => $this->parseAmount($m[3]),
-                    'type' => $this->detectType($m[3])
+            $line = trim($line);
+            if (empty($line)) continue;
+
+            if (preg_match($datePattern, $line, $matches)) {
+                // Save previous if valid
+                if ($currentTx && $currentTx['amount'] !== 0.0) {
+                    $transactions[] = $currentTx;
+                }
+
+                $rawDate = $matches[1];
+                $remaining = trim(str_replace($rawDate, '', $line));
+
+                $currentTx = [
+                    'date' => $this->normalizeDate($rawDate, 'd/m/Y'),
+                    'description' => '',
+                    'amount' => 0.0,
+                    'type' => 'liability'
                 ];
+
+                // Check for amount on the same line
+                if (preg_match($amountPattern, $remaining, $vMatches)) {
+                    $currentTx['amount'] = $this->parseAmount($vMatches[0]);
+                    $currentTx['type'] = $this->detectType($vMatches[0]);
+                    $currentTx['description'] = trim(str_replace($vMatches[0], '', $remaining));
+                } else {
+                    $currentTx['description'] = $remaining;
+                }
+            } else if ($currentTx) {
+                // Look for amount or append to description
+                if (preg_match($amountPattern, $line, $vMatches)) {
+                    $currentTx['amount'] = $this->parseAmount($vMatches[0]);
+                    $currentTx['type'] = $this->detectType($vMatches[0]);
+                    $descPart = trim(str_replace($vMatches[0], '', $line));
+                    if (!empty($descPart)) {
+                        $currentTx['description'] .= ' ' . $descPart;
+                    }
+                } else {
+                    if (!preg_match('/SALDO|EXTRATO|PÁGINA|CONTA/i', $line)) {
+                        $currentTx['description'] .= ' ' . $line;
+                    }
+                }
             }
+        }
+
+        if ($currentTx && $currentTx['amount'] !== 0.0) {
+            $transactions[] = $currentTx;
         }
 
         return $transactions;
     }
 
     private function normalizeDate(string $dateStr, string $format): string {
+        $dateStr = str_replace('-', '/', $dateStr);
         $d = \DateTime::createFromFormat($format, $dateStr);
         if (!$d) {
-            // Fallback para datas curtas (DD/MM) assumindo o ano atual
             $d = \DateTime::createFromFormat('d/m', $dateStr);
             if (!$d) return date('Y-m-d');
         }
@@ -89,12 +127,14 @@ class HybridAIEngine {
     }
 
     private function parseAmount(string $val): float {
-        $val = str_replace(['R$', ' ', '.'], '', $val);
-        $val = str_replace(',', '.', $val);
-        return (float) $val;
+        $isNegative = (strpos($val, '-') !== false || strpos($val, '(') !== false || stripos($val, 'D') !== false);
+        $cleanVal = preg_replace('/[^\d,]/', '', $val);
+        $floatVal = (float) str_replace(',', '.', $cleanVal);
+        return $isNegative ? -$floatVal : $floatVal;
     }
 
     private function detectType(string $val): string {
-        return (strpos($val, '-') !== false) ? 'liability' : 'asset';
+        $isIncome = (stripos($val, 'C') !== false || (strpos($val, '-') === false && strpos($val, '(') === false));
+        return $isIncome ? 'asset' : 'liability';
     }
 }

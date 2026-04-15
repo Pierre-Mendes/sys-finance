@@ -189,7 +189,7 @@
                       </select>
                       <select v-else-if="tx.classification === 'goal'" v-model="tx.goalId" class="w-full h-9 px-3 bg-white border border-gray-100 rounded-xl text-[11px] focus:ring-2 focus:ring-primary/10 appearance-none font-bold text-green-700 shadow-sm transition-all shadow-gray-200/20">
                         <option value="">Meta de Destino...</option>
-                        <option v-for="g in goalStore.goals" :key="g.id" :value="g.id">{{ g.name }}</option>
+                        <option v-for="g in goalStore.goals" :key="g.id" :value="g.id">{{ g.title }}</option>
                       </select>
                   </div>
               </div>

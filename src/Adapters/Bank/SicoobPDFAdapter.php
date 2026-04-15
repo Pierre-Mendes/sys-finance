@@ -23,62 +23,67 @@ class SicoobPDFAdapter implements BankStatementAdapterInterface {
             }
         }
 
-        // Patterns:
-        // DD/MM   DESCRIPTION                                  VALUE
-        // (Next line might have C or D)
-        $datePattern = '/^(\d{2}\/\d{2})\s+(.+?)\s+([\d\.]+,\d{2})?$/';
+        $datePattern = '/^\s*(\d{2}\/\d{2})\b/';
+        $valuePattern = '/([\d\.]+,\d{2})\s*([CD])?/';
+        
+        $currentTx = null;
 
-        for ($i = 0; $i < count($lines); $i++) {
-            $line = trim($lines[$i]);
+        foreach ($lines as $line) {
+            $line = trim($line);
             if (empty($line)) continue;
 
+            // Check if line starts with a date
             if (preg_match($datePattern, $line, $matches)) {
-                $rawDate = $matches[1]; // DD/MM
-                $description = trim($matches[2]);
-                $valueStr = isset($matches[3]) ? $matches[3] : '';
-
-                // Look ahead for C or D
-                $type = 'bill'; // Default
-                $foundType = false;
-                
-                // Sometimes the value or C/D is on the next line or indented
-                $lookahead = $i + 1;
-                while ($lookahead < count($lines) && $lookahead < $i + 5) {
-                    $nextLine = trim($lines[$lookahead]);
-                    if (empty($nextLine)) {
-                        $lookahead++;
-                        continue;
-                    }
-                    
-                    // If next line starts with a date, we stop looking
-                    if (preg_match('/^\d{2}\/\d{2}\s+/', $nextLine)) break;
-
-                    if (preg_match('/\b([CD])\b/', $nextLine, $typeMatches)) {
-                        $type = ($typeMatches[1] === 'C') ? 'asset' : 'bill';
-                        $foundType = true;
-                        
-                        // If value was missing in first line, maybe it's here
-                        if (empty($valueStr) && preg_match('/([\d\.]+,\d{2})/', $nextLine, $vMatches)) {
-                            $valueStr = $vMatches[1];
-                        }
-                        break;
-                    }
-                    $lookahead++;
+                // Save previous transaction if valid
+                if ($currentTx && $currentTx['amount'] > 0) {
+                    $transactions[] = $currentTx;
                 }
 
-                if (empty($valueStr)) continue; // Can't find value
-
-                // Skip summary lines
-                if (stripos($description, 'SALDO') !== false) continue;
-
-                $amount = (float) str_replace(['.', ','], ['', '.'], $valueStr);
-
-                $transactions[] = [
+                $rawDate = $matches[1];
+                $remaining = trim(str_replace($rawDate, '', $line));
+                
+                $currentTx = [
                     'date' => \DateTime::createFromFormat('d/m/Y', "$rawDate/$year")->format('Y-m-d'),
-                    'description' => $description,
-                    'amount' => abs($amount),
-                    'type' => $type
+                    'description' => '',
+                    'amount' => 0,
+                    'type' => 'bill'
                 ];
+
+                // Check if value is on the same line
+                if (preg_match($valuePattern, $remaining, $vMatches)) {
+                    $currentTx['amount'] = (float) str_replace(['.', ','], ['', '.'], $vMatches[1]);
+                    if (isset($vMatches[2])) {
+                        $currentTx['type'] = ($vMatches[2] === 'C') ? 'asset' : 'bill';
+                    }
+                    $currentTx['description'] = trim(str_replace($vMatches[0], '', $remaining));
+                } else {
+                    $currentTx['description'] = $remaining;
+                }
+            } else if ($currentTx) {
+                // Multiline logic: check for value/type or just append description
+                if (preg_match($valuePattern, $line, $vMatches)) {
+                    $currentTx['amount'] = (float) str_replace(['.', ','], ['', '.'], $vMatches[1]);
+                    if (isset($vMatches[2])) {
+                        $currentTx['type'] = ($vMatches[2] === 'C') ? 'asset' : 'bill';
+                    }
+                    $descPart = trim(str_replace($vMatches[0], '', $line));
+                    if (!empty($descPart)) {
+                        $currentTx['description'] .= ' ' . $descPart;
+                    }
+                } else {
+                    // Just more description text
+                    if (!preg_match('/SALDO|EXTRATO|PÁGINA/i', $line)) {
+                        $currentTx['description'] .= ' ' . trim($line);
+                    }
+                }
+            }
+        }
+
+        // Add last transaction
+        if ($currentTx && $currentTx['amount'] > 0) {
+            // Final check to filter out non-transaction items
+            if (stripos($currentTx['description'], 'SALDO') === false) {
+                $transactions[] = $currentTx;
             }
         }
 
