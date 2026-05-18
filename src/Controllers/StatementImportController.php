@@ -41,8 +41,10 @@ class StatementImportController {
         
         $file->moveTo($tempFile);
 
+        $workspaceId = $request->getAttribute('workspaceId');
+
         try {
-            $transactions = $this->importService->extractFromPdf($tempFile);
+            $transactions = $this->importService->extractFromPdf($tempFile, $workspaceId);
             
             $response->getBody()->write(json_encode([
                 'success' => true,

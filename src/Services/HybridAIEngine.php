@@ -6,6 +6,10 @@ use App\Database;
 use PDO;
 use Exception;
 
+use App\Domain\DTO\IAContext;
+use App\Domain\Enums\TransactionType;
+use App\Domain\Enums\TransactionStatus;
+
 class HybridAIEngine {
     
     private PDO $db;
@@ -17,9 +21,9 @@ class HybridAIEngine {
     /**
      * Tenta identificar o banco e extrair dados usando templates aprendidos ou heurística.
      */
-    public function analyze(string $text): ?array {
+    public function analyze(string $text, ?IAContext $context = null): ?array {
         // 1. Tenta encontrar um template já "aprendido" no banco de dados
-        $templates = $this->db->query("SELECT * FROM bank_statement_templates")->fetchAll();
+        $templates = $context ? $context->bankTemplates : $this->db->query("SELECT * FROM bank_statement_templates")->fetchAll();
         
         foreach ($templates as $template) {
             if (preg_match("/" . $template['detection_pattern'] . "/i", $text)) {
@@ -27,8 +31,8 @@ class HybridAIEngine {
             }
         }
 
-        // 2. Se não encontrou template, tenta Heurística Genérica (Regex inteligente)
-        return $this->heuristicsAnalysis($text);
+        // 2. Se não encontrou template, tenta Heurística Genérica com Contexto
+        return $this->heuristicsAnalysis($text, $context);
     }
 
     /**
@@ -44,7 +48,7 @@ class HybridAIEngine {
                     'date' => $this->normalizeDate($match[$columnMap['date']], $template['date_format']),
                     'description' => trim($match[$columnMap['description']]),
                     'amount' => $this->parseAmount($match[$columnMap['amount']]),
-                    'type' => $this->detectType($match[$columnMap['amount']])
+                    'type' => $this->detectType($match[$columnMap['amount']])->value
                 ];
             }
         }
@@ -53,9 +57,9 @@ class HybridAIEngine {
     }
 
     /**
-     * Motor de heurística para detectar padrões de transações em textos desconhecidos.
+     * Motor de heurística enriquecido com Contexto de Hydration.
      */
-    private function heuristicsAnalysis(string $text): array {
+    private function heuristicsAnalysis(string $text, ?IAContext $context = null): array {
         $transactions = [];
         $lines = explode("\n", $text);
         
@@ -69,9 +73,8 @@ class HybridAIEngine {
             if (empty($line)) continue;
 
             if (preg_match($datePattern, $line, $matches)) {
-                // Save previous if valid
                 if ($currentTx && $currentTx['amount'] !== 0.0) {
-                    $transactions[] = $currentTx;
+                    $transactions[] = $this->enrichWithContext($currentTx, $context);
                 }
 
                 $rawDate = $matches[1];
@@ -81,22 +84,21 @@ class HybridAIEngine {
                     'date' => $this->normalizeDate($rawDate, 'd/m/Y'),
                     'description' => '',
                     'amount' => 0.0,
-                    'type' => 'liability'
+                    'type' => TransactionType::BILL->value,
+                    'categoryId' => null
                 ];
 
-                // Check for amount on the same line
                 if (preg_match($amountPattern, $remaining, $vMatches)) {
                     $currentTx['amount'] = $this->parseAmount($vMatches[0]);
-                    $currentTx['type'] = $this->detectType($vMatches[0]);
+                    $currentTx['type'] = $this->detectType($vMatches[0])->value;
                     $currentTx['description'] = trim(str_replace($vMatches[0], '', $remaining));
                 } else {
                     $currentTx['description'] = $remaining;
                 }
             } else if ($currentTx) {
-                // Look for amount or append to description
                 if (preg_match($amountPattern, $line, $vMatches)) {
                     $currentTx['amount'] = $this->parseAmount($vMatches[0]);
-                    $currentTx['type'] = $this->detectType($vMatches[0]);
+                    $currentTx['type'] = $this->detectType($vMatches[0])->value;
                     $descPart = trim(str_replace($vMatches[0], '', $line));
                     if (!empty($descPart)) {
                         $currentTx['description'] .= ' ' . $descPart;
@@ -110,10 +112,27 @@ class HybridAIEngine {
         }
 
         if ($currentTx && $currentTx['amount'] !== 0.0) {
-            $transactions[] = $currentTx;
+            $transactions[] = $this->enrichWithContext($currentTx, $context);
         }
 
         return $transactions;
+    }
+
+    /**
+     * Usa o contexto para prever categoria baseada em descrições frequentes.
+     */
+    private function enrichWithContext(array $tx, ?IAContext $context): array {
+        if (!$context) return $tx;
+
+        foreach ($context->frequentCategories as $freq) {
+            if (stripos($tx['description'], $freq['description']) !== false) {
+                $tx['categoryId'] = (int) $freq['CategoryId'];
+                $tx['confidence'] = 'high';
+                break;
+            }
+        }
+        
+        return $tx;
     }
 
     private function normalizeDate(string $dateStr, string $format): string {
@@ -133,8 +152,9 @@ class HybridAIEngine {
         return $isNegative ? -$floatVal : $floatVal;
     }
 
-    private function detectType(string $val): string {
+    private function detectType(string $val): TransactionType {
         $isIncome = (stripos($val, 'C') !== false || (strpos($val, '-') === false && strpos($val, '(') === false));
-        return $isIncome ? 'asset' : 'liability';
+        return $isIncome ? TransactionType::ASSET : TransactionType::BILL;
     }
+}
 }

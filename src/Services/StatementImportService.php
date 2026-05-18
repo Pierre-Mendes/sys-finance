@@ -17,10 +17,11 @@ class StatementImportService {
 
     /**
      * @param string $filePath Path to the PDF file
+     * @param int|null $workspaceId Current workspace context for AI hydration
      * @return array
      * @throws Exception
      */
-    public function extractFromPdf(string $filePath): array {
+    public function extractFromPdf(string $filePath, ?int $workspaceId = null): array {
         $extension = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
 
         if ($extension === 'pdf') {
@@ -55,7 +56,14 @@ class StatementImportService {
         if (!$selectedAdapterClass) {
             // Se nenhum adapter fixo bater, recorre ao Motor Híbrido (Heurística + Templates Aprendidos)
             $engine = new HybridAIEngine();
-            $transactions = $engine->analyze($text);
+            $context = null;
+
+            if ($workspaceId) {
+                $hydrator = new \App\Services\Hydration\ContextHydrator();
+                $context = $hydrator->hydrateForWorkspace($workspaceId);
+            }
+
+            $transactions = $engine->analyze($text, $context);
             
             if (empty($transactions)) {
                 throw new Exception("Layout do banco não reconhecido e a Heurística não conseguiu extrair dados seguros.");
