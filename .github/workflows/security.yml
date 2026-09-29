@@ -1,0 +1,262 @@
+name: Security & Quality Gate
+
+# Pipeline de segurança (OWASP) com SAST, SCA, Secrets e DAST, consolidada em um Quality Gate.
+# - SAST:    Semgrep (OWASP Top 10 / PHP / JS / TS / secrets) + CodeQL (JavaScript/TypeScript)
+# - SCA:     composer audit + npm audit (High/Critical bloqueiam) + OWASP Dependency-Check (semanal)
+# - Secrets: Gitleaks
+# - DAST:    OWASP ZAP baseline contra a aplicação rodando em Docker (API + SPA)
+# - Sonar:   SonarCloud com Quality Gate (opcional, só roda se o secret SONAR_TOKEN existir)
+# - Gate:    job final "Quality Gate" que reprova o PR se qualquer verificação bloqueante falhar.
+#            Configure-o como "required status check" na proteção da branch main.
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  schedule:
+    - cron: '17 6 * * 1' # toda segunda: pega CVEs novas em dependências que não mudaram
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  SEMGREP_RULES: >-
+    --config p/owasp-top-ten
+    --config p/php
+    --config p/javascript
+    --config p/typescript
+    --config p/secrets
+
+jobs:
+  # ------------------------------------------------------------------ SAST
+  sast-semgrep:
+    name: SAST · Semgrep
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    container:
+      image: semgrep/semgrep:latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Semgrep (relatório completo em SARIF)
+        run: semgrep scan $SEMGREP_RULES --sarif --output semgrep.sarif --metrics off || true
+
+      - name: Publicar SARIF em Security › Code scanning
+        uses: github/codeql-action/upload-sarif@v3
+        continue-on-error: true # repositórios privados sem GitHub Advanced Security não aceitam SARIF
+        with:
+          sarif_file: semgrep.sarif
+          category: semgrep
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: semgrep-sarif
+          path: semgrep.sarif
+
+      - name: Gate · nenhum achado de severidade ERROR
+        run: semgrep scan $SEMGREP_RULES --severity ERROR --error --metrics off
+
+  sast-codeql:
+    name: SAST · CodeQL (JS/TS)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+          queries: security-extended
+
+      - uses: github/codeql-action/analyze@v3
+        continue-on-error: true # requer GitHub Advanced Security em repositórios privados
+        with:
+          category: codeql-js
+
+  # ------------------------------------------------------------------ SCA
+  sca-audit:
+    name: SCA · composer audit + npm audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          tools: composer:v2
+
+      - name: composer audit (PHP)
+        run: composer audit --locked --no-dev --abandoned=report
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: npm audit (High/Critical bloqueiam)
+        working-directory: frontend
+        run: npm audit --audit-level=high
+
+  sca-dependency-check:
+    name: SCA · OWASP Dependency-Check
+    # A base NVD é grande e lenta sem API key: roda só no agendamento semanal / manualmente.
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Instalar dependências (para o analisador resolver as árvores)
+        run: |
+          composer install --no-dev --no-interaction --no-progress --prefer-dist --ignore-platform-reqs
+          npm ci --prefix frontend --no-audit --no-fund
+
+      - name: OWASP Dependency-Check
+        uses: dependency-check/Dependency-Check_Action@main
+        env:
+          JAVA_HOME: /opt/jdk
+        with:
+          project: sys-finance
+          path: '.'
+          format: 'HTML'
+          out: 'reports'
+          args: >
+            --failOnCVSS 7
+            --enableExperimental
+            --exclude "**/node_modules/**/test/**"
+            ${{ secrets.NVD_API_KEY != '' && format('--nvdApiKey {0}', secrets.NVD_API_KEY) || '' }}
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: dependency-check-report
+          path: reports
+
+  # ------------------------------------------------------------------ Secrets
+  secrets-gitleaks:
+    name: Secrets · Gitleaks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_ENABLE_COMMENTS: false
+          # Só é necessário para repositórios de organizações:
+          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+
+  # ------------------------------------------------------------------ DAST
+  dast-zap:
+    name: DAST · OWASP ZAP
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write # em push para main o ZAP abre/atualiza uma issue com o relatório
+    env:
+      COMPOSE_FILE: .github/dast/docker-compose.dast.yml
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Subir aplicação (MySQL + API + SPA)
+        run: docker compose up -d --build --wait --wait-timeout 300
+
+      - name: Rodar migrations
+        run: docker compose exec -T web php vendor/bin/phinx migrate -e production
+
+      - name: Smoke test
+        run: curl --fail --retry 10 --retry-delay 3 --retry-all-errors http://localhost:8080/api/health
+
+      - name: ZAP baseline (SPA + API)
+        uses: zaproxy/action-baseline@v0.14.0
+        with:
+          target: 'http://localhost:8080'
+          rules_file_name: '.zap/rules.tsv'
+          cmd_options: '-a -j -m 3 -I' # -I: só alertas marcados como FAIL em .zap/rules.tsv reprovam; WARN vira relatório
+          allow_issue_writing: ${{ github.event_name == 'push' }}
+          fail_action: true
+          artifact_name: zap-baseline-report
+
+      - name: Logs da aplicação em caso de falha
+        if: failure()
+        run: docker compose logs --no-color web | tail -200
+
+      - name: Derrubar ambiente
+        if: always()
+        run: docker compose down -v
+
+  # ------------------------------------------------------------------ SonarCloud (opcional)
+  sonarcloud:
+    name: Quality · SonarCloud
+    runs-on: ubuntu-latest
+    env:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    steps:
+      - name: SonarCloud não configurado
+        if: env.SONAR_TOKEN == ''
+        run: echo "::notice::Defina o secret SONAR_TOKEN (e SONAR_ORGANIZATION em vars) para habilitar o Quality Gate do SonarCloud."
+
+      - uses: actions/checkout@v4
+        if: env.SONAR_TOKEN != ''
+        with:
+          fetch-depth: 0
+
+      - name: SonarCloud scan + Quality Gate
+        if: env.SONAR_TOKEN != ''
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          SONAR_HOST_URL: https://sonarcloud.io
+        with:
+          args: >
+            -Dsonar.organization=${{ vars.SONAR_ORGANIZATION }}
+            -Dsonar.qualitygate.wait=true
+
+  # ------------------------------------------------------------------ Gate
+  quality-gate:
+    name: Quality Gate
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [sast-semgrep, sast-codeql, sca-audit, sca-dependency-check, secrets-gitleaks, dast-zap, sonarcloud]
+    steps:
+      - name: Consolidar resultados
+        env:
+          RESULTS: ${{ toJSON(needs) }}
+        run: |
+          {
+            echo "## 🛡️ Security & Quality Gate"
+            echo ""
+            echo "| Verificação | Resultado |"
+            echo "|---|---|"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          failed=0
+          for job in $(echo "$RESULTS" | jq -r 'keys[]'); do
+            result=$(echo "$RESULTS" | jq -r --arg j "$job" '.[$j].result')
+            case "$result" in
+              success) icon="✅" ;;
+              skipped) icon="⏭️" ;;
+              *)       icon="❌"; failed=1 ;;
+            esac
+            echo "| \`$job\` | $icon $result |" >> "$GITHUB_STEP_SUMMARY"
+          done
+
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          if [ "$failed" = "1" ]; then
+            echo "**Quality Gate reprovado.** Corrija os itens com ❌ antes do merge." >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+          echo "**Quality Gate aprovado.**" >> "$GITHUB_STEP_SUMMARY"

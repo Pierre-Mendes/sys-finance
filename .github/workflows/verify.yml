@@ -7,6 +7,9 @@ on:
     branches: [ "main" ]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   backend-tests:
     runs-on: ubuntu-latest
@@ -18,15 +21,22 @@ jobs:
         with:
           php-version: '8.4'
           extensions: pdo_sqlite, mbstring, curl
+          coverage: pcov
           tools: composer:v2
 
       - name: Install Dependencies
         run: composer install --prefer-dist --no-progress
 
       - name: Run PHPUnit
-        run: ./vendor/bin/phpunit --display-deprecations --display-errors
+        run: ./vendor/bin/phpunit --display-deprecations --display-errors --coverage-clover coverage/php-clover.xml
         env:
           APP_ENV: testing
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: php-coverage
+          path: coverage/php-clover.xml
 
   frontend-tests:
     runs-on: ubuntu-latest
@@ -42,12 +52,11 @@ jobs:
 
       - name: Install Dependencies
         working-directory: frontend
-        run: npm install
+        run: npm ci
 
       - name: Run Vitest
         working-directory: frontend
-        run: npm run test:unit
-        continue-on-error: true # Allow during setup if no tests exist yet
+        run: npx vitest run
 
       - name: Build Check
         working-directory: frontend
