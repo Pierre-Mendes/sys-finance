@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Adapters\Bank\ItauPDFAdapter;
 use App\Adapters\Bank\SicoobPDFAdapter;
+use App\Adapters\Bank\CSVStatementAdapter;
+use App\Adapters\Bank\OFXStatementAdapter;
 use Exception;
 
 class StatementImportService {

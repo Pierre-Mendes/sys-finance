@@ -25,7 +25,7 @@ class CSVStatementAdapter implements BankStatementAdapterInterface {
         $delimiter = $this->detectDelimiter($lines[0]);
 
         foreach ($lines as $i => $line) {
-            $data = str_getcsv($line, $delimiter);
+            $data = str_getcsv($line, $delimiter, "\"", "");
             
             // Skip header if it contains non-numeric values in common amount columns
             if ($i === 0 && !preg_match('/\d/', $line)) continue;

@@ -181,7 +181,8 @@
                       <label class="block text-[9px] font-black uppercase text-gray-400 mb-1 ml-1">Categoria / Destino</label>
                       <!-- Conditional Category / Goal Selector -->
                       <select v-if="tx.classification === 'standard' || tx.classification === 'investment'" v-model="tx.categoryId" class="w-full h-9 px-3 bg-white border border-gray-100 rounded-xl text-[11px] focus:ring-2 focus:ring-primary/10 appearance-none font-bold text-gray-700 shadow-sm transition-all shadow-gray-200/20">
-                        <option v-for="cat in categoryStore.categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
+                        <option value="">Outros (criada automaticamente)</option>
+                        <option v-for="cat in categoryStore.categories.filter(c => (tx.type === 'asset') === (c.type === 'income' || c.type === 'asset'))" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
                       </select>
                       <select v-else-if="tx.classification === 'transfer'" v-model="tx.targetAccountId" class="w-full h-9 px-3 bg-white border border-gray-100 rounded-xl text-[11px] focus:ring-2 focus:ring-primary/10 appearance-none font-bold text-blue-700 shadow-sm transition-all shadow-gray-200/20">
                         <option value="">Conta Destino...</option>

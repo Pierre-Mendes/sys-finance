@@ -113,7 +113,7 @@ class ReportController {
         $transactions = $this->txService->getFilteredForUser($workspaceId, $filters);
 
         $out = fopen('php://temp', 'w');
-        fputcsv($out, ['Data', 'Tipo', 'Titulo', 'Categoria', 'Conta', 'Valor (R$)']);
+        fputcsv($out, ['Data', 'Tipo', 'Titulo', 'Categoria', 'Conta', 'Valor (R$)'], ',', '"', '');
 
         foreach ($transactions as $tx) {
             fputcsv($out, [
@@ -123,7 +123,7 @@ class ReportController {
                 self::csvCell($tx->getCategoryName()),
                 self::csvCell($tx->getAccountName()),
                 number_format($tx->getAmount(), 2, ',', '')
-            ]);
+            ], ',', '"', '');
         }
 
         rewind($out);
