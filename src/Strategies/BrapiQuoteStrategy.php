@@ -25,7 +25,16 @@ class BrapiQuoteStrategy implements IQuoteStrategy {
             return [];
         }
 
-        $symbols = implode(',', $tickers);
+        // Tickers vêm do usuário: só símbolos válidos e codificados vão para a URL externa (evita path/query injection).
+        $tickers = array_values(array_filter(
+            array_map(fn($t) => strtoupper(trim((string) $t)), $tickers),
+            fn($t) => preg_match('/^[A-Z0-9.]{1,15}$/', $t) === 1
+        ));
+        if (empty($tickers)) {
+            return [];
+        }
+
+        $symbols = implode(',', array_map('rawurlencode', $tickers));
         $url = self::BASE_URL . $symbols;
 
         try {

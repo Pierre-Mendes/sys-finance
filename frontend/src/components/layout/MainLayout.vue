@@ -347,7 +347,10 @@ const deleteNotification = async (id: number) => {
 const navigateToAction = async (url: string, notifId: number) => {
     await readNotification(notifId);
     invitesModalOpen.value = false;
-    router.push(url);
+    // Só navega para rotas internas (evita open redirect / esquemas como javascript:).
+    if (typeof url === 'string' && url.startsWith('/') && !url.startsWith('//')) {
+        router.push(url);
+    }
 }
 
 const resolveInvite = async (id: number, action: 'accept' | 'reject') => {

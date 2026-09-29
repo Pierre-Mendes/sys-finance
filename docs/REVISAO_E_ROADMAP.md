@@ -45,11 +45,20 @@ Agora cada formulário valida se o registro já existe e, se não existir, cria 
 | 6 | CSP com `unsafe-eval`, CORS `*` fixo, `X-Powered-By`/versão do Apache expostos, estáticos sem headers | Médio (A05) | Headers endurecidos na API e no `.htaccess`; CORS via `CORS_ALLOWED_ORIGINS`; `ServerTokens Prod`, `expose_php=Off` |
 | 7 | Dependências vulneráveis (guzzle, psr7, slim, dompdf, cakephp/database, vite, axios…) | Alto (A06) | `composer update`/lockfile do npm regenerado: `composer audit` e `npm audit` zerados |
 | 8 | Senha legada comparada com `===` | Baixo (timing) | `hash_equals` |
+| 9 | Relatório PDF (dompdf) inseria título/categoria/conta sem escape | Médio (A03). Injeção de HTML no PDF | Saída escapada; dompdf com `isRemoteEnabled`/`isPhpEnabled`/`isJavascriptEnabled` desligados e `chroot` |
+| 10 | Exportação CSV sem tratamento de fórmulas | Médio (A03). CSV/Formula Injection no Excel | Células iniciadas por `= + - @ TAB CR` recebem `'` |
+| 11 | SweetAlert do convite usava `onclick` inline e interpolava HTML | Baixo (XSS / quebrava com o CSP) | Código inserido via `textContent` e evento via `addEventListener` |
+| 12 | Nomes de categoria iam crus para o ApexCharts (tooltip usa `innerHTML`) | Médio (A03). XSS armazenado | `escapeHtml` nos labels do gráfico |
+| 13 | `IN (...)` montado por concatenação no Dashboard e em Investimentos | Baixo (só inteiros), mas frágil | Placeholders `?` com parâmetros ligados |
+| 14 | Ticker do usuário ia direto na URL da Brapi | Baixo (A10, injeção de path/query) | Validação `^[A-Z0-9.]{1,15}$` + `rawurlencode` |
+| 15 | Notificações navegavam para qualquer `action_url` | Baixo (open redirect) | Só rotas internas iniciadas por `/` |
 
 ### 1.3 Bugs funcionais
 
 - **Categorias de despesa nunca apareciam no modal de lançamento**: `type=bill` era mapeado para nível 1 (receita) e o store buscava só receitas. Agora `bill`/`expense` → nível 2 e o store usa `?type=all`.
 - `axios` e `vue-router` estavam em `devDependencies`, mas vão no bundle de produção: movidos para `dependencies`.
+- Relatório PDF somava receitas como despesas (comparava o tipo com `income` em vez de `asset`).
+- Importação de extrato usava `categoryId: 1` fixo em transferências/metas (agora categorias "Transferências", "Metas" e "Outros" por nome).
 - `ai-review.yml` usava o evento inexistente `synchronized` (o correto é `synchronize`).
 - CI rodava o Vitest com `continue-on-error: true`, então teste quebrado nunca reprovava o PR.
 

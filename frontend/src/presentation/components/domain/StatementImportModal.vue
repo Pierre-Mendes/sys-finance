@@ -349,7 +349,7 @@ const uploadFile = async (file: File) => {
       selected: true,
       title: t.description,
       accountId: '',
-      categoryId: 1,
+      categoryId: '',
       classification: 'standard',
       targetAccountId: '',
       goalId: ''
@@ -404,7 +404,7 @@ const confirmImport = async () => {
             amount: tx.amount,
             date: tx.date,
             accountId: Number(tx.accountId),
-            categoryId: 1, // Transfer category
+            categoryName: 'Transferências', // buscar ou criar no workspace (nunca um ID fixo)
             status: 'PAID',
             description: `Transferência para ${tx.targetAccountId}`
           })
@@ -415,7 +415,7 @@ const confirmImport = async () => {
             amount: tx.amount,
             date: tx.date,
             accountId: Number(tx.targetAccountId),
-            categoryId: 1,
+            categoryName: 'Transferências',
             status: 'PAID',
             description: `Transferência de ${tx.accountId}`
           })
@@ -427,7 +427,7 @@ const confirmImport = async () => {
             amount: tx.amount,
             date: tx.date,
             accountId: Number(tx.accountId),
-            categoryId: 1,
+            categoryName: 'Metas',
             status: 'PAID',
             description: `Aporte na meta ID ${tx.goalId}`
           })
@@ -446,7 +446,7 @@ const confirmImport = async () => {
             amount: tx.amount,
             date: tx.date,
             accountId: Number(tx.accountId),
-            categoryId: Number(tx.categoryId),
+            ...(tx.categoryId ? { categoryId: Number(tx.categoryId) } : { categoryName: 'Outros' }),
             status: 'PAID',
             description: 'Importação Avançada (BETA)'
           })

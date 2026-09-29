@@ -16,4 +16,7 @@ export interface Transaction {
     description?: string;
     categoryId?: number;
     accountId?: number;
+    /** Alternativa ao ID: o backend busca a categoria/conta pelo nome ou cria se não existir. */
+    categoryName?: string;
+    accountName?: string;
 }
