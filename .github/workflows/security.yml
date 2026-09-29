@@ -148,6 +148,9 @@ jobs:
   secrets-gitleaks:
     name: Secrets · Gitleaks
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read # a action lista os commits da PR pela API
     steps:
       - uses: actions/checkout@v4
         with:
