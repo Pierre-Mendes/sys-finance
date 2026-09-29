@@ -14,9 +14,12 @@ FROM php:8.4-apache
 WORKDIR /var/www/html
 
 # Habilitando modulo de reescrita do apache (mod_rewrite)
+# O security.conf do Debian (ServerTokens OS) é carregado depois de confs com nome "menor",
+# então ajustamos o próprio arquivo e ainda garantimos um override que carrega por último (zz-).
 RUN a2enmod rewrite headers \
-    && printf 'ServerTokens Prod\nServerSignature Off\nTraceEnable Off\n' > /etc/apache2/conf-available/security-hardening.conf \
-    && a2enconf security-hardening
+    && sed -ri 's/^\s*ServerTokens\s+.*/ServerTokens Prod/; s/^\s*ServerSignature\s+.*/ServerSignature Off/; s/^\s*TraceEnable\s+.*/TraceEnable Off/' /etc/apache2/conf-available/security.conf \
+    && printf 'ServerTokens Prod\nServerSignature Off\nTraceEnable Off\n' > /etc/apache2/conf-available/zz-security-hardening.conf \
+    && a2enconf zz-security-hardening
 
 # Instalando as dependencias do sistema necessarias para o Composer
 RUN apt-get update && apt-get install -y git zip unzip poppler-utils \
