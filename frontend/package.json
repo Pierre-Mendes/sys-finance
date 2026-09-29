@@ -27,14 +27,14 @@
     "@vue/test-utils": "^2.4.6",
     "@vue/tsconfig": "^0.9.0",
     "autoprefixer": "^10.4.27",
-    "axios": "^1.14.0",
+    "axios": "^1.20.0",
     "jsdom": "^29.0.2",
     "postcss": "^8.5.8",
     "tailwindcss": "^4.2.2",
     "typescript": "~5.9.3",
     "vite": "^8.0.1",
     "vitest": "^4.1.4",
-    "vue-router": "^5.0.4",
+    "vue-router": "^5.3.1",
     "vue-tsc": "^3.2.5"
   }
 }

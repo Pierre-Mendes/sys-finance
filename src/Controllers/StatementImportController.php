@@ -7,6 +7,8 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 class StatementImportController {
+    private const ALLOWED_EXTENSIONS = ['pdf', 'csv', 'ofx', 'txt'];
+    private const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
     
     private StatementImportService $importService;
 
@@ -32,12 +34,22 @@ class StatementImportController {
         // Create a local temporary file to avoid system /tmp permission issues
         $tempDir = __DIR__ . '/../../storage/temp';
         if (!file_exists($tempDir)) {
-            mkdir($tempDir, 0777, true);
+            mkdir($tempDir, 0770, true);
         }
         
-        $originalName = $file->getClientFilename();
-        $extension = pathinfo($originalName, PATHINFO_EXTENSION);
-        $tempFile = $tempDir . '/stmt_' . uniqid() . '.' . $extension;
+        // Nunca confiar no nome/extensão enviados pelo cliente (OWASP A04/A08: upload irrestrito).
+        $originalName = (string) $file->getClientFilename();
+        $extension = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
+        if (!in_array($extension, self::ALLOWED_EXTENSIONS, true)) {
+            $response->getBody()->write(json_encode(['error' => 'Formato não suportado. Envie PDF, CSV, OFX ou TXT.']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(415);
+        }
+        if ((int) $file->getSize() > self::MAX_UPLOAD_BYTES) {
+            $response->getBody()->write(json_encode(['error' => 'Arquivo muito grande (máx. 10 MB).']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(413);
+        }
+
+        $tempFile = $tempDir . '/stmt_' . bin2hex(random_bytes(16)) . '.' . $extension;
         
         $file->moveTo($tempFile);
 

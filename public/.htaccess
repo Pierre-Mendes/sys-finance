@@ -3,6 +3,22 @@ php_flag display_errors Off
 php_flag display_startup_errors Off
 php_value error_reporting 0
 
+# Cabeçalhos de segurança para os arquivos estáticos da SPA (a API recebe os seus via SecurityHeadersMiddleware).
+# "Header set" (sem always) substitui o valor vindo do PHP em vez de duplicá-lo nas respostas da API.
+# CSP_CONNECT_SRC (env, repassado via PassEnv) libera origens extras para XHR/fetch, ex.: Sentry ou API em outro host.
+<IfModule mod_headers.c>
+    Header set X-Frame-Options "DENY"
+    Header set X-Content-Type-Options "nosniff"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+    Header set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+    Header set Cross-Origin-Opener-Policy "same-origin"
+    Header unset X-Powered-By
+    Header set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' %{CSP_CONNECT_SRC}e; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'" "expr=-z resp('Content-Security-Policy')"
+    <FilesMatch "\.(html)$">
+        Header set Cache-Control "no-cache"
+    </FilesMatch>
+</IfModule>
+
 # Set Directory Index to prioritize Vue index.html
 DirectoryIndex index.html index.php
 

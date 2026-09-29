@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Services\AuthService;
+use App\Security\TokenService;
 use App\DTO\AuthDTO;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -10,8 +11,10 @@ use Exception;
 
 class AuthController {
     private AuthService $authService;
+    private TokenService $tokenService;
 
-    public function __construct(AuthService $authService) {
+    public function __construct(AuthService $authService, ?TokenService $tokenService = null) {
+        $this->tokenService = $tokenService ?? new TokenService();
         $this->authService = $authService;
     }
 
@@ -66,7 +69,7 @@ class AuthController {
             $response->getBody()->write(json_encode([
                 "success" => true,
                 "message" => "Login successful.",
-                "token" => base64_encode($user->getId() . ':' . $user->getEmail()),
+                "token" => $this->tokenService->issue($user->getId(), $user->getEmail()),
                 "user" => [
                     "id" => $user->getId(),
                     "email" => $user->getEmail(),

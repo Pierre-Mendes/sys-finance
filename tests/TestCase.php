@@ -39,7 +39,9 @@ abstract class TestCase extends BaseTestCase
 
         // Setup VCR for external API recording
         if (class_exists('VCR\VCR')) {
-            \VCR\VCR::configure()->setCassettePath(__DIR__ . '/fixtures/vcr');
+            \VCR\VCR::configure()
+                ->setCassettePath(__DIR__ . '/fixtures/vcr')
+                ->enableLibraryHooks(['stream_wrapper', 'curl']);
             \VCR\VCR::turnOn();
         }
     }

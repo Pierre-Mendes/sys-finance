@@ -27,6 +27,13 @@ api.interceptors.response.use(
         if (error.response && error.response.data) {
             console.error('[API Error Detected]:', JSON.stringify(error.response.data, null, 2))
         }
+        // Token inválido/expirado (ex.: tokens antigos pré-JWT): encerra a sessão e volta ao login.
+        if (error.response?.status === 401 && localStorage.getItem('token')) {
+            localStorage.removeItem('token')
+            localStorage.removeItem('user')
+            localStorage.removeItem('workspaceId')
+            if (window.location.pathname !== '/') window.location.assign('/')
+        }
         return Promise.reject(error)
     }
 )

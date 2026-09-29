@@ -14,7 +14,9 @@ FROM php:8.4-apache
 WORKDIR /var/www/html
 
 # Habilitando modulo de reescrita do apache (mod_rewrite)
-RUN a2enmod rewrite
+RUN a2enmod rewrite headers \
+    && printf 'ServerTokens Prod\nServerSignature Off\nTraceEnable Off\n' > /etc/apache2/conf-available/security-hardening.conf \
+    && a2enconf security-hardening
 
 # Instalando as dependencias do sistema necessarias para o Composer
 RUN apt-get update && apt-get install -y git zip unzip poppler-utils \
@@ -25,6 +27,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Configuração do PHP
 COPY opcache.ini /usr/local/etc/php/conf.d/opcache.ini
+RUN printf 'expose_php = Off\n' > /usr/local/etc/php/conf.d/security.ini
 
 # Copiar o código do Backend
 COPY . .
@@ -49,5 +52,7 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-av
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
 # Configurar Apache para não remover variáveis de ambiente
-RUN echo "PassEnv DB_HOST DB_USER DB_PASS DB_NAME APP_ENV" > /etc/apache2/conf-available/passenv.conf \
+# CSP_CONNECT_SRC precisa de um valor padrão: o Apache escreve "(null)" no CSP se a variável não existir.
+ENV CSP_CONNECT_SRC="https://*.sentry.io"
+RUN echo "PassEnv DB_HOST DB_USER DB_PASS DB_NAME APP_ENV JWT_SECRET JWT_TTL SENTRY_DSN CORS_ALLOWED_ORIGINS CSP_CONNECT_SRC" > /etc/apache2/conf-available/passenv.conf \
     && a2enconf passenv
