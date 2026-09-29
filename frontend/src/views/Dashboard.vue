@@ -59,6 +59,8 @@
       </div>
     </div>
 
+    <SetupChecklist ref="setupChecklist" @new-transaction="openModal = true" />
+
     <!-- Alerta de Saúde Financeira -->
     <div v-if="healthStatus === 'critical'" class="mb-8 bg-red-50 border-l-4 border-red-500 p-4 rounded-xl flex items-center justify-between shadow-sm animate-pulse">
         <div class="flex items-center gap-3">
@@ -289,7 +291,7 @@
     <TransactionModal 
         v-model="openModal" 
         :transaction-to-edit="null" 
-        @saved="fetchAnalytics" 
+        @saved="onTransactionSaved" 
     />
   </MainLayout>
 </template>
@@ -300,6 +302,7 @@ import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
 import MainLayout from '@/components/layout/MainLayout.vue'
 import TransactionModal from '@/presentation/components/domain/TransactionModal.vue'
+import SetupChecklist from '@/presentation/components/domain/SetupChecklist.vue'
 import api from '@/data/api/HttpClient'
 import { useWorkspaceStore } from '@/presentation/store/workspaceStore'
 
@@ -446,6 +449,13 @@ const fetchAnalytics = async () => {
     } finally {
         setTimeout(() => isRefreshing.value = false, 500);
     }
+}
+
+const setupChecklist = ref<InstanceType<typeof SetupChecklist> | null>(null)
+
+const onTransactionSaved = () => {
+    fetchAnalytics()
+    setupChecklist.value?.refresh()
 }
 
 onMounted(() => {

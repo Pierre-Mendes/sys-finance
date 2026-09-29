@@ -4,7 +4,8 @@ import api from '@/data/api/HttpClient'
 
 export class CategoryRepositoryImpl implements ICategoryRepository {
     async getCategories(): Promise<Category[]> {
-        const response = await api.get('/api/categories')
+        // type=all devolve receitas ('income') e despesas ('bill') com o campo `type` preenchido.
+        const response = await api.get('/api/categories?type=all')
         return response.data.data
     }
 

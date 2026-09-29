@@ -9,6 +9,8 @@ class TransactionDTO
     public string $date;
     public int $categoryId;
     public int $accountId;
+    public ?string $categoryName;
+    public ?string $accountName;
     public float $amount;
     public string $description;
     public array $splits;
@@ -24,6 +26,8 @@ class TransactionDTO
         $this->date = htmlspecialchars(strip_tags($data['date'] ?? date('Y-m-d')));
         $this->categoryId = (int)($data['categoryId'] ?? 0);
         $this->accountId = (int)($data['accountId'] ?? 0);
+        $this->categoryName = !empty($data['categoryName']) ? strip_tags((string) $data['categoryName']) : null;
+        $this->accountName = !empty($data['accountName']) ? strip_tags((string) $data['accountName']) : null;
         $this->amount = (float)($data['amount'] ?? 0.0);
         $this->description = htmlspecialchars(strip_tags($data['description'] ?? ''));
         $this->splits = isset($data['splits']) && is_array($data['splits']) ? $data['splits'] : [];
@@ -36,6 +40,8 @@ class TransactionDTO
 
     public function isValid(): bool
     {
-        return !empty($this->title) && !empty($this->date) && $this->categoryId > 0 && $this->accountId > 0;
+        return !empty($this->title) && !empty($this->date)
+            && ($this->categoryId > 0 || !empty($this->categoryName))
+            && ($this->accountId > 0 || !empty($this->accountName));
     }
 }

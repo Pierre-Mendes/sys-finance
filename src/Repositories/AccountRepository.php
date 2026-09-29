@@ -32,6 +32,21 @@ class AccountRepository {
         return new Account($row['WorkspaceId'], $row['AccountName'], $row['AccountId']);
     }
 
+    public function findByNameAndWorkspaceId(string $name, int $workspaceId): ?Account {
+        $stmt = $this->db->prepare("SELECT * FROM account WHERE WorkspaceId = :userId AND LOWER(AccountName) = LOWER(:name) LIMIT 1");
+        $stmt->execute(['userId' => $workspaceId, 'name' => trim($name)]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$row) return null;
+        return new Account($row['WorkspaceId'], $row['AccountName'], $row['AccountId']);
+    }
+
+    public function countByWorkspaceId(int $workspaceId): int {
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM account WHERE WorkspaceId = :userId");
+        $stmt->execute(['userId' => $workspaceId]);
+        return (int) $stmt->fetchColumn();
+    }
+
     public function save(Account $account): Account {
         if ($account->getId()) {
             $stmt = $this->db->prepare("UPDATE account SET AccountName = :name WHERE AccountId = :id AND WorkspaceId = :userId");

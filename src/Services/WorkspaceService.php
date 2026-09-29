@@ -61,4 +61,19 @@ class WorkspaceService {
             $this->createDefaultWorkspace($userId, $userName);
         }
     }
+
+    /**
+     * Verifica se o usuário pode editar um módulo no workspace (mesma regra do GatekeeperMiddleware).
+     */
+    public function canEdit(int $userId, int $workspaceId, string $module): bool {
+        $stmt = $this->db->prepare("SELECT Role, Permissions FROM workspace_users WHERE WorkspaceId = ? AND UserId = ?");
+        $stmt->execute([$workspaceId, $userId]);
+        $pivot = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$pivot) return false;
+        if ($pivot['Role'] === 'owner') return true;
+
+        $permissions = json_decode($pivot['Permissions'] ?? '{}', true) ?: [];
+        return ($permissions[$module] ?? 'viewer') === 'editor';
+    }
 }

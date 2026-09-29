@@ -19,12 +19,14 @@ class CreditCardService {
     private ICreditCardTransactionRepository $txRepo;
     private BillRepository $billRepo;
     private CategoryRepository $categoryRepo;
+    private ReferenceResolver $resolver;
 
-    public function __construct(ICreditCardRepository $cardRepo, ICreditCardTransactionRepository $txRepo, BillRepository $billRepo, CategoryRepository $categoryRepo) {
+    public function __construct(ICreditCardRepository $cardRepo, ICreditCardTransactionRepository $txRepo, BillRepository $billRepo, CategoryRepository $categoryRepo, ReferenceResolver $resolver) {
         $this->cardRepo = $cardRepo;
         $this->txRepo = $txRepo;
         $this->billRepo = $billRepo;
         $this->categoryRepo = $categoryRepo;
+        $this->resolver = $resolver;
     }
 
     public function getAllCards(int $workspaceId): array {
@@ -47,8 +49,11 @@ class CreditCardService {
     }
 
     public function createCard(int $workspaceId, CreditCardDTO $dto): CreditCard {
+        // Vincula a uma conta existente ou cria a conta na hora (ex.: "Nubank").
+        $account = $this->resolver->resolveAccount($workspaceId, $dto->accountId, $dto->accountName);
+
         $card = new CreditCard(
-            $workspaceId, $dto->accountId, $dto->name, $dto->limitAmount, 
+            $workspaceId, (int) $account->getId(), $dto->name, $dto->limitAmount, 
             $dto->closingDay, $dto->dueDay, $dto->brand, $dto->color
         );
         return $this->cardRepo->save($card);
@@ -63,9 +68,15 @@ class CreditCardService {
         $card = $this->cardRepo->findByIdAndWorkspaceId($id, $workspaceId);
         if (!$card) throw new Exception("Credit card not found.");
 
+        $account = $this->resolver->resolveAccount(
+            $workspaceId,
+            (int) ($data['accountId'] ?? 0) ?: (empty($data['accountName']) ? $card->getAccountId() : 0),
+            $data['accountName'] ?? null
+        );
+
         $updated = new CreditCard(
             $workspaceId,
-            (int) ($data['accountId'] ?? $card->getAccountId()),
+            (int) $account->getId(),
             $data['name'] ?? $card->getName(),
             (float) ($data['limitAmount'] ?? $card->getLimitAmount()),
             (int) ($data['closingDay'] ?? $card->getClosingDay()),
@@ -82,6 +93,9 @@ class CreditCardService {
         if (!$card) {
             throw new Exception("Credit card not found.");
         }
+
+        $category = $this->resolver->resolveCategory($workspaceId, $dto->categoryId, $dto->categoryName, 2);
+        $dto->categoryId = (int) $category->getId();
 
         $dateObj = new \DateTime($dto->date);
         $amountPerInstallment = $dto->amount / $dto->installments;
@@ -194,10 +208,17 @@ class CreditCardService {
         $tx = $this->txRepo->findByIdAndWorkspaceId($txId, $workspaceId);
         if (!$tx) throw new Exception("Transaction not found.");
 
+        $category = $this->resolver->resolveCategory(
+            $workspaceId,
+            (int) ($data['categoryId'] ?? 0) ?: (empty($data['categoryName']) ? $tx->getCategoryId() : 0),
+            $data['categoryName'] ?? null,
+            2
+        );
+
         $updated = new CreditCardTransaction(
             $tx->getCardId(),
             $workspaceId,
-            (int) ($data['categoryId'] ?? $tx->getCategoryId()),
+            (int) $category->getId(),
             $data['title'] ?? $tx->getTitle(),
             (float) ($data['amount'] ?? $tx->getAmount()),
             $data['date'] ?? $tx->getDate(),

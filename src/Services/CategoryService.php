@@ -13,8 +13,15 @@ class CategoryService {
         $this->categoryRepo = $categoryRepo;
     }
 
+    /**
+     * 1 = Receita (income/asset), 2 = Despesa (expense/bill).
+     */
+    public static function levelForType(string $type): int {
+        return in_array($type, ['expense', 'bill'], true) ? 2 : 1;
+    }
+
     public function getAllForUser(int $workspaceId, string $type): array {
-        $level = ($type === 'expense') ? 2 : 1;
+        $level = self::levelForType($type);
         return $this->categoryRepo->findAllByWorkspaceIdAndLevel($workspaceId, $level);
     }
 
@@ -26,7 +33,7 @@ class CategoryService {
      * @throws Exception
      */
     public function create(int $workspaceId, $categoryInput, string $type) {
-        $level = ($type === 'expense') ? 2 : 1;
+        $level = self::levelForType($type);
         $createdCategories = [];
 
         // Normalize input into an array of names

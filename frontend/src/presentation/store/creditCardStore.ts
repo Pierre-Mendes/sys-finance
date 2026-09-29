@@ -69,7 +69,7 @@ export const useCreditCardStore = defineStore('creditCard', () => {
     }
   }
 
-  async function createCard(payload: Partial<CreditCard>) {
+  async function createCard(payload: Omit<Partial<CreditCard>, 'accountId'> & { accountId?: number | string, accountName?: string }) {
     isLoading.value = true
     try {
       await api.post('/api/credit-cards', payload)
@@ -84,7 +84,7 @@ export const useCreditCardStore = defineStore('creditCard', () => {
     }
   }
 
-  async function updateCard(id: number, payload: Partial<CreditCard>) {
+  async function updateCard(id: number, payload: Omit<Partial<CreditCard>, 'accountId'> & { accountId?: number | string, accountName?: string }) {
     try {
       await api.put(`/api/credit-cards/${id}`, payload)
       toast.success('Cartão atualizado com sucesso!')
