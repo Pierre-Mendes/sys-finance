@@ -180,11 +180,11 @@ $investmentController = new \App\Controllers\InvestmentController($db, $quoteSer
 
 $app->group('/api/investments', function (\Slim\Routing\RouteCollectorProxy $group) use ($investmentController) {
     $group->get('', [$investmentController, 'index']);
-    $group->post('', [$investmentController, 'create']);
-    $group->delete('/{id}', [$investmentController, 'destroy']);
-    $group->post('/quotes/sync', [$investmentController, 'syncQuotes']);
-    $group->post('/{id}/transactions', [$investmentController, 'addTransaction']);
-    $group->put('/{id}', [$investmentController, 'manualQuote']);
+    $group->post('', [$investmentController, 'create'])->add(\App\Middleware\GatekeeperMiddleware::requireEditor('investments'));
+    $group->delete('/{id}', [$investmentController, 'destroy'])->add(\App\Middleware\GatekeeperMiddleware::requireEditor('investments'));
+    $group->post('/quotes/sync', [$investmentController, 'syncQuotes'])->add(\App\Middleware\GatekeeperMiddleware::requireEditor('investments'));
+    $group->post('/{id}/transactions', [$investmentController, 'addTransaction'])->add(\App\Middleware\GatekeeperMiddleware::requireEditor('investments'));
+    $group->put('/{id}', [$investmentController, 'manualQuote'])->add(\App\Middleware\GatekeeperMiddleware::requireEditor('investments'));
 })->add($workspaceMiddleware)->add($authMiddleware);
 
 $workspaceController = new App\Controllers\WorkspaceController($db, $workspaceService);

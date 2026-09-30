@@ -10,7 +10,7 @@ class GatekeeperMiddleware
     /**
      * Retorna um middleware que valida se o usuário tem permissão para editar um módulo.
      * 
-     * @param string $module (accounts, categories, transactions, budgets, goals, credit_cards, reports)
+     * @param string $module (accounts, categories, transactions, budgets, goals, credit_cards, investments, reports)
      */
     public static function requireEditor(string $module)
     {
