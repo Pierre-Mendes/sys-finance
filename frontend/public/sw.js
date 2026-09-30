@@ -41,8 +41,8 @@ self.addEventListener('push', (event) => {
   event.waitUntil(
     self.registration.showNotification(data.title || 'Banco Digital', {
       body: data.body || '',
-      icon: '/icons/icon-192.png',
-      badge: '/icons/icon-192.png',
+      icon: '/app-icons/icon-192.png',
+      badge: '/app-icons/icon-192.png',
       tag: data.tag,
       renotify: Boolean(data.tag),
       data: { url },
