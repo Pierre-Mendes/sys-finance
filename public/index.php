@@ -234,6 +234,23 @@ $app->group('/api/system-invites', function ($group) use ($inviteController) {
     $group->post('/{id}/resolve', [$inviteController, 'resolveSystemInvite']);
 })->add($authMiddleware);
 
+$pushSender = new \App\Notifications\WebPushSender(new \App\Security\SecretStore($db));
+$notificationSettingsRepo = new \App\Repositories\NotificationSettingsRepository($db);
+$pushSubscriptionRepo = new \App\Repositories\PushSubscriptionRepository($db);
+$billReminderService = new \App\Services\BillReminderService(
+    new \App\Repositories\BillReminderRepository($db), $notificationSettingsRepo, $pushSubscriptionRepo, $notificationService, $pushSender
+);
+$reminderController = new \App\Controllers\ReminderController($notificationSettingsRepo, $pushSubscriptionRepo, $pushSender, $billReminderService);
+
+$app->group('/api/reminders', function ($group) use ($reminderController, $db) {
+    $group->get('/settings', [$reminderController, 'getSettings']);
+    $group->put('/settings', [$reminderController, 'updateSettings']);
+    $group->get('/push/public-key', [$reminderController, 'publicKey']);
+    $group->post('/push/subscriptions', [$reminderController, 'subscribe']);
+    $group->delete('/push/subscriptions', [$reminderController, 'unsubscribe']);
+    $group->post('/push/test', [$reminderController, 'test'])->add(new \App\Middleware\RateLimiterMiddleware($db, 5, 15));
+})->add($authMiddleware);
+
 $notificationController = new \App\Controllers\NotificationController($db);
 $app->group('/api/notifications', function ($group) use ($notificationController) {
     $group->get('', [$notificationController, 'index']);

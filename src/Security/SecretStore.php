@@ -19,10 +19,19 @@ class SecretStore {
     }
 
     public function getOrCreate(string $name, int $bytes = 48): string {
+        return $this->getOrCreateWith($name, fn () => rtrim(strtr(base64_encode(random_bytes($bytes)), '+/', '-_'), '='));
+    }
+
+    /**
+     * Igual a getOrCreate, mas o valor vem de um gerador próprio (ex.: par de chaves VAPID em JSON).
+     *
+     * @param callable(): string $generate
+     */
+    public function getOrCreateWith(string $name, callable $generate): string {
         $existing = $this->find($name);
         if ($existing !== null) return $existing;
 
-        $value = rtrim(strtr(base64_encode(random_bytes($bytes)), '+/', '-_'), '=');
+        $value = $generate();
         try {
             $stmt = $this->db->prepare("INSERT INTO app_secrets (name, value, created_at) VALUES (?, ?, ?)");
             $stmt->execute([$name, $value, date('Y-m-d H:i:s')]);

@@ -45,4 +45,15 @@ class SecretStoreTest extends TestCase
 
         $this->assertSame(['name' => 1, 'value' => 1, 'created_at' => 1], array_map('intval', $notNull));
     }
+
+    public function test_vapid_keys_are_generated_once_and_reused(): void
+    {
+        putenv('VAPID_PUBLIC_KEY');
+        putenv('VAPID_PRIVATE_KEY');
+        $first = (new \App\Notifications\WebPushSender(new SecretStore($this->db)))->publicKey();
+        $second = (new \App\Notifications\WebPushSender(new SecretStore($this->db)))->publicKey();
+
+        $this->assertSame(87, strlen($first), 'Chave pública P-256 em base64url');
+        $this->assertSame($first, $second, 'Dispositivos inscritos param de receber se a chave mudar');
+    }
 }
