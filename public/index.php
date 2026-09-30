@@ -250,7 +250,7 @@ $app->group('/api/statements', function (\Slim\Routing\RouteCollectorProxy $grou
 $goalRepo = new \App\Repositories\GoalRepository($db);
 $goalContributionRepo = new \App\Repositories\GoalContributionRepository($db);
 $simulationService = new \App\Services\SimulationService($assetRepo, $billRepo, $goalRepo);
-$goalService = new \App\Services\GoalService($goalRepo, $goalContributionRepo, $simulationService, $billRepo, $categoryRepo);
+$goalService = new \App\Services\GoalService($goalRepo, $goalContributionRepo, $simulationService, $billRepo, $categoryRepo, new \App\Services\AccountBalanceService($db));
 $goalController = new \App\Controllers\GoalController($goalService);
 
 $app->group('/api/goals', function (\Slim\Routing\RouteCollectorProxy $group) use ($goalController) {

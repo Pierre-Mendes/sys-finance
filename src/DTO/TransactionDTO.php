@@ -18,9 +18,12 @@ class TransactionDTO
     public string $status;
     public string $priority;
     public string $recurrenceType;
+    /** @var string[] chaves presentes na requisição (para updates parciais) */
+    private array $provided;
 
     public function __construct(array $data)
     {
+        $this->provided = array_keys($data);
         $this->type = in_array($data['type'] ?? '', ['asset', 'bill']) ? $data['type'] : 'bill';
         $this->title = htmlspecialchars(strip_tags($data['title'] ?? ''));
         $this->date = htmlspecialchars(strip_tags($data['date'] ?? date('Y-m-d')));
@@ -36,6 +39,11 @@ class TransactionDTO
         $this->status = in_array($data['status'] ?? '', ['PENDING', 'PAID']) ? $data['status'] : 'PAID';
         $this->priority = in_array($data['priority'] ?? '', ['LOW', 'NORMAL', 'HIGH']) ? $data['priority'] : 'NORMAL';
         $this->recurrenceType = in_array($data['recurrence_type'] ?? '', ['NONE', 'MONTHLY', 'YEARLY']) ? $data['recurrence_type'] : 'NONE';
+    }
+
+    public function has(string $key): bool
+    {
+        return in_array($key, $this->provided, true);
     }
 
     public function isValid(): bool

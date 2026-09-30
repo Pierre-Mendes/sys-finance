@@ -16,19 +16,22 @@ class GoalService {
     private SimulationService $simulationService;
     private \App\Repositories\BillRepository $billRepo;
     private \App\Repositories\CategoryRepository $categoryRepo;
+    private AccountBalanceService $balances;
 
     public function __construct(
         IGoalRepository $goalRepo, 
         GoalContributionRepository $contributionRepo, 
         SimulationService $simulationService,
         \App\Repositories\BillRepository $billRepo,
-        \App\Repositories\CategoryRepository $categoryRepo
+        \App\Repositories\CategoryRepository $categoryRepo,
+        AccountBalanceService $balances
     ) {
         $this->goalRepo = $goalRepo;
         $this->contributionRepo = $contributionRepo;
         $this->simulationService = $simulationService;
         $this->billRepo = $billRepo;
         $this->categoryRepo = $categoryRepo;
+        $this->balances = $balances;
     }
 
     public function getAllGoals(int $workspaceId): array {
@@ -120,10 +123,11 @@ class GoalService {
                 null,
                 $dto->date ?: date('Y-m-d'),
                 'PAID', // Contribution is immediate
-                'MEDIUM',
+                'NORMAL', // bills.priority só aceita LOW/NORMAL/HIGH (MySQL recusa outros valores)
                 'NONE'
             );
             $this->billRepo->save($bill);
+            $this->balances->sync((int) $targetAccountId, $workspaceId);
         }
 
         return $saved;

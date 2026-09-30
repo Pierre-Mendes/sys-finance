@@ -21,18 +21,20 @@ class TransactionService {
     private PDO $db;
     private CreateTransactionUseCase $createUseCase;
     private ReferenceResolver $resolver;
+    private AccountBalanceService $balances;
 
     public function __construct(AssetRepository $assetRepo, BillRepository $billRepo, PDO $db, ReferenceResolver $resolver, WorkspaceService $workspaceService) {
         $this->assetRepo = $assetRepo;
         $this->billRepo = $billRepo;
         $this->db = $db;
         $this->resolver = $resolver;
+        $this->balances = new AccountBalanceService($db);
         
         $this->createUseCase = new CreateTransactionUseCase();
         $this->createUseCase->addStep(new AuthorizeSplitsStep($workspaceService));
         $this->createUseCase->addStep(new ResolveReferencesStep($resolver));
         $this->createUseCase->addStep(new PersistMainTransactionStep($assetRepo, $billRepo));
-        $this->createUseCase->addStep(new SyncAccountBalanceStep($this->db));
+        $this->createUseCase->addStep(new SyncAccountBalanceStep($this->balances));
         $this->createUseCase->addStep(new ProcessSplitsStep($this->createUseCase));
     }
 
@@ -84,17 +86,24 @@ class TransactionService {
             ->resolveCategory($workspaceId, $dto->categoryId, $dto->categoryName, CategoryService::levelForType($type))
             ->getId();
 
+        // Campos não enviados mantêm o valor atual: editar o título de uma conta pendente
+        // não pode marcá-la como paga nem apagar vencimento/recorrência.
         $t = new Transaction(
             $workspaceId, $type, $dto->title, $dto->date, 
             $dto->categoryId, $dto->accountId, 
-            $dto->amount, $dto->description, $id
+            $dto->amount, $dto->description, $id,
+            $existing->getParentTransactionId(),
+            $dto->has('due_date') ? $dto->dueDate : $existing->getDueDate(),
+            $dto->has('status') ? $dto->status : $existing->getStatus(),
+            $dto->has('priority') ? $dto->priority : $existing->getPriority(),
+            $dto->has('recurrence_type') ? $dto->recurrenceType : $existing->getRecurrenceType()
         );
 
         $saved = ($type === 'asset') ? $this->assetRepo->save($t) : $this->billRepo->save($t);
         
-        $this->syncAccountBalance($saved->getAccountId(), $workspaceId);
+        $this->balances->sync($saved->getAccountId(), $workspaceId);
         if ($oldAccountId !== $saved->getAccountId()) {
-            $this->syncAccountBalance($oldAccountId, $workspaceId);
+            $this->balances->sync($oldAccountId, $workspaceId);
         }
         return $saved;
     }
@@ -110,7 +119,7 @@ class TransactionService {
         $success = ($type === 'asset') ? $this->assetRepo->delete($id, $workspaceId) : $this->billRepo->delete($id, $workspaceId);
         if (!$success) throw new Exception("Transaction could not be deleted.");
 
-        $this->syncAccountBalance($accountId, $workspaceId);
+        $this->balances->sync($accountId, $workspaceId);
     }
     
     public function pay(int $id, int $workspaceId, string $type): Transaction {
@@ -131,7 +140,7 @@ class TransactionService {
 
         $savedId = ($type === 'asset') ? $this->assetRepo->save($t) : $this->billRepo->save($t);
         
-        $this->syncAccountBalance($t->getAccountId(), $workspaceId);
+        $this->balances->sync($t->getAccountId(), $workspaceId);
         
         // Clone for recurrence
         if ($existing->getRecurrenceType() && $existing->getRecurrenceType() !== 'NONE') {
@@ -159,30 +168,6 @@ class TransactionService {
         }
 
         return $t;
-    }
-
-    private function syncAccountBalance(int $accountId, int $workspaceId): void {
-        $stmtIn = $this->db->prepare("SELECT SUM(Amount) FROM assets WHERE AccountId = :acc AND WorkspaceId = :userId AND status = 'PAID'");
-        $stmtIn->execute(['acc' => $accountId, 'userId' => $workspaceId]);
-        $incomes = (float) $stmtIn->fetchColumn();
-
-        $stmtOut = $this->db->prepare("SELECT SUM(Amount) FROM bills WHERE AccountId = :acc AND WorkspaceId = :userId AND status = 'PAID'");
-        $stmtOut->execute(['acc' => $accountId, 'userId' => $workspaceId]);
-        $expenses = (float) $stmtOut->fetchColumn();
-
-        $total = $incomes - $expenses;
-
-        $stmtCheck = $this->db->prepare("SELECT TotalsId FROM totals WHERE AccountId = :acc AND WorkspaceId = :userId");
-        $stmtCheck->execute(['acc' => $accountId, 'userId' => $workspaceId]);
-        $exists = $stmtCheck->fetchColumn();
-
-        if ($exists) {
-            $stmtUp = $this->db->prepare("UPDATE totals SET Totals = :tot WHERE AccountId = :acc AND WorkspaceId = :userId");
-            $stmtUp->execute(['tot' => $total, 'acc' => $accountId, 'userId' => $workspaceId]);
-        } else {
-            $stmtIns = $this->db->prepare("INSERT INTO totals (WorkspaceId, AccountId, Totals) VALUES (:userId, :acc, :tot)");
-            $stmtIns->execute(['userId' => $workspaceId, 'acc' => $accountId, 'tot' => $total]);
-        }
     }
 
     private function validateData(TransactionDTO $dto): void {

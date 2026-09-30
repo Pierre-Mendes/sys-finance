@@ -57,6 +57,6 @@ Não há container de DI: as dependências são montadas à mão em `public/inde
 
 - **assets** = receitas, **bills** = despesas (tabelas separadas; `type` `asset`/`bill` na API).
 - **category.Level**: 1 = receita, 2 = despesa (`CategoryService::levelForType`).
-- **totals**: saldo cacheado por conta, recalculado a cada transação paga.
+- **totals**: saldo cacheado por conta, recalculado só pelo `AccountBalanceService`. Regra única: **apenas lançamentos `PAID` contam**; pendentes (a vencer, próximas recorrências, faturas abertas) aparecem só na projeção do Dashboard.
 - **Rateio (splits)**: uma despesa espelhada em outros workspaces onde o usuário é editor.
 - **Cartões**: compras parceladas geram N transações; a fatura vira uma `bill`.
