@@ -10,7 +10,14 @@ docker-compose.yml
 docker-compose.prod.yml
 README.md
 LICENSE
-vps_setup_guide.md
+docs
 implementation_plan.md
 task.md
 walkthrough.md
+# Artefatos de agentes (CodeGraph, Serena, Claude Code) não vão para a imagem
+.codegraph
+.serena
+.claude
+.mcp.json
+CLAUDE.md
+scripts

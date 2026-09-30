@@ -1,0 +1,32 @@
+{
+  "mcpServers": {
+    "codegraph": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@colbymchenry/codegraph@1.6.1", "serve", "--mcp"],
+      "env": {
+        "CODEGRAPH_TELEMETRY": "0",
+        "DO_NOT_TRACK": "1"
+      },
+      "alwaysLoad": true
+    },
+    "serena": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/oraios/serena@8a3ce35cae29a93748842ba463231d6c78d181e7",
+        "serena",
+        "start-mcp-server",
+        "--context",
+        "claude-code",
+        "--project",
+        "${CLAUDE_PROJECT_DIR:-.}",
+        "--enable-web-dashboard",
+        "false",
+        "--open-web-dashboard",
+        "false"
+      ]
+    }
+  }
+}
