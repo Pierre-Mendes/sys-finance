@@ -69,13 +69,7 @@ $app->options('/{routes:.+}', function ($request, $response, $args) {
     return $response;
 });
 
-$app->add(function ($request, $handler) {
-    $response = $handler->handle($request);
-    return $response
-            ->withHeader('Access-Control-Allow-Origin', '*')
-            ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
-            ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-});
+$app->add(new \App\Middleware\CorsMiddleware());
 
 // OWASP Global Security Headers
 $app->add(new \App\Middleware\SecurityHeadersMiddleware());
@@ -88,7 +82,8 @@ $workspaceService = new \App\Services\WorkspaceService($db);
 $notificationService = new \App\Services\NotificationService($db);
 $userRepo = new UserRepository($db);
 $authService = new AuthService($userRepo, $workspaceService, $notificationService);
-$authController = new AuthController($authService);
+$tokenService = new \App\Security\TokenService();
+$authController = new AuthController($authService, $tokenService);
 
 $accountRepo = new \App\Repositories\AccountRepository($db);
 $accountService = new \App\Services\AccountService($accountRepo);
@@ -101,11 +96,13 @@ $categoryRepo = new \App\Repositories\CategoryRepository($db);
 $categoryService = new \App\Services\CategoryService($categoryRepo);
 $categoryController = new App\Controllers\CategoryController($categoryService);
 
+$referenceResolver = new \App\Services\ReferenceResolver($accountRepo, $categoryRepo);
+
 $importService = new \App\Services\StatementImportService();
 $importController = new \App\Controllers\StatementImportController($importService);
 
 // Middleware Instances
-$authMiddleware = new \App\Middleware\AuthMiddleware();
+$authMiddleware = new \App\Middleware\AuthMiddleware($tokenService);
 $workspaceMiddleware = new \App\Middleware\WorkspaceMiddleware($db, $workspaceService);
 
 // Routes
@@ -122,8 +119,8 @@ $app->post('/api/auth/login', [$authController, 'login'])->add(new \App\Middlewa
 
 $app->get('/api/auth/me', [$authController, 'me'])->add($authMiddleware);
 $app->put('/api/auth/profile', [$authController, 'updateProfile'])->add($authMiddleware);
-$app->get('/api/auth/recovery-question', [$authController, 'getRecoveryQuestion']);
-$app->post('/api/auth/reset-password', [$authController, 'resetPassword']);
+$app->get('/api/auth/recovery-question', [$authController, 'getRecoveryQuestion'])->add(new \App\Middleware\RateLimiterMiddleware($db, 10, 15));
+$app->post('/api/auth/reset-password', [$authController, 'resetPassword'])->add(new \App\Middleware\RateLimiterMiddleware($db, 5, 15));
 
 $app->group('/api/accounts', function (\Slim\Routing\RouteCollectorProxy $group) use ($accountController, $statementController) {
     $group->get('', [$accountController, 'index']);
@@ -142,7 +139,7 @@ $app->group('/api/categories', function (\Slim\Routing\RouteCollectorProxy $grou
 
 $assetRepo = new \App\Repositories\AssetRepository($db);
 $billRepo = new \App\Repositories\BillRepository($db);
-$txService = new \App\Services\TransactionService($assetRepo, $billRepo, $db);
+$txService = new \App\Services\TransactionService($assetRepo, $billRepo, $db, $referenceResolver, $workspaceService);
 $txController = new App\Controllers\TransactionController($txService);
 
 $dashService = new \App\Services\DashboardService($db);
@@ -211,7 +208,7 @@ $app->group('/api/workspaces', function ($group) use ($workspaceController, $inv
 
 $cardRepo = new \App\Repositories\CreditCardRepository($db);
 $cardTxRepo = new \App\Repositories\CreditCardTransactionRepository($db);
-$cardService = new \App\Services\CreditCardService($cardRepo, $cardTxRepo, $billRepo, $categoryRepo);
+$cardService = new \App\Services\CreditCardService($cardRepo, $cardTxRepo, $billRepo, $categoryRepo, $referenceResolver);
 $cardController = new \App\Controllers\CreditCardController($cardService);
 
 $app->group('/api/credit-cards', function (\Slim\Routing\RouteCollectorProxy $group) use ($cardController) {
@@ -225,6 +222,9 @@ $app->group('/api/credit-cards', function (\Slim\Routing\RouteCollectorProxy $gr
     $group->delete('/transactions/{id}', [$cardController, 'deleteTransaction'])->add(\App\Middleware\GatekeeperMiddleware::requireEditor('credit_cards'));
     $group->post('/{id}/invoices/generate', [$cardController, 'generateInvoice'])->add(\App\Middleware\GatekeeperMiddleware::requireEditor('credit_cards'));
 })->add($workspaceMiddleware)->add($authMiddleware);
+
+$setupController = new \App\Controllers\SetupController($accountRepo, $categoryRepo, $cardRepo);
+$app->get('/api/setup/status', [$setupController, 'status'])->add($workspaceMiddleware)->add($authMiddleware);
 
 $app->post('/api/workspaces/join', [$inviteController, 'joinWorkspace'])->add($authMiddleware);
 

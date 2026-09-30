@@ -72,21 +72,29 @@
           </div>
 
           <div>
-              <label class="flex items-center gap-2 text-sm font-medium text-gray-600 mb-1">
+              <label for="tx-account" class="flex items-center gap-2 text-sm font-medium text-gray-600 mb-1">
                   Conta Bancária
               </label>
-              <select v-model="txForm.accountId" required class="w-full border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-700 disabled:opacity-50">
-                  <option value="" disabled>Selecione uma conta...</option>
-                  <option v-for="acc in accountStore.accounts" :key="acc.id" :value="acc.id">{{ acc.name }}</option>
-              </select>
+              <CreatableSelect
+                  input-id="tx-account"
+                  v-model="txForm.accountId"
+                  v-model:new-name="txForm.accountName"
+                  :options="accountStore.accounts"
+                  placeholder="Selecione ou digite uma nova conta (ex: Carteira)"
+                  create-label="Criar conta"
+              />
           </div>
 
           <div>
-              <label class="block text-sm font-medium text-gray-600 mb-1">Categoria</label>
-              <select v-model="txForm.categoryId" required class="w-full border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-700 disabled:opacity-50">
-                  <option value="" disabled>Selecione uma categoria...</option>
-                  <option v-for="cat in availableCategories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
-              </select>
+              <label for="tx-category" class="block text-sm font-medium text-gray-600 mb-1">Categoria</label>
+              <CreatableSelect
+                  input-id="tx-category"
+                  v-model="txForm.categoryId"
+                  v-model:new-name="txForm.categoryName"
+                  :options="availableCategories"
+                  placeholder="Selecione ou digite uma nova categoria"
+                  create-label="Criar categoria"
+              />
           </div>
           
           <div>
@@ -153,6 +161,7 @@ import { useAccountStore } from '@/presentation/store/accountStore'
 import { useWorkspaceStore } from '@/presentation/store/workspaceStore'
 import type { TransactionType, TransactionStatus, TransactionPriority, TransactionRecurrence } from '@/core/domain/Transaction'
 import api from '@/data/api/HttpClient'
+import CreatableSelect from '@/components/ui/CreatableSelect.vue'
 
 const props = defineProps<{
     modelValue: boolean
@@ -175,7 +184,9 @@ const txForm = ref<{
     date: string,
     amount: number | null,
     categoryId: string | number,
+    categoryName: string,
     accountId: string | number,
+    accountName: string,
     description: string,
     dueDate: string,
     status: TransactionStatus,
@@ -184,7 +195,7 @@ const txForm = ref<{
     splits: any[]
 }>({
     type: 'bill', title: '', date: new Date().toISOString().split('T')[0],
-    amount: null, categoryId: '', accountId: '', description: '',
+    amount: null, categoryId: '', categoryName: '', accountId: '', accountName: '', description: '',
     dueDate: '', status: 'PAID', priority: 'NORMAL', recurrence_type: 'NONE', splits: []
 })
 
@@ -202,6 +213,7 @@ watch(() => txForm.value.type, (newType) => {
             txForm.value.categoryId = ''
         }
     }
+    // Uma categoria "nova" digitada continua válida: será criada no tipo (receita/despesa) escolhido.
 })
 
 watch(() => props.modelValue, async (val) => {
@@ -216,7 +228,7 @@ watch(() => props.modelValue, async (val) => {
             txForm.value = {
                 id: t.id,
                 type: t.type, title: t.title, date: t.date, amount: t.amount,
-                categoryId: t.categoryId, accountId: t.accountId, description: t.description || '',
+                categoryId: t.categoryId, categoryName: '', accountId: t.accountId, accountName: '', description: t.description || '',
                 dueDate: t.dueDate || t.due_date || '', status: t.status || 'PAID', 
                 priority: t.priority || 'NORMAL', recurrence_type: t.recurrence_type || t.recurrenceType || 'NONE',
                 splits: []
@@ -224,7 +236,7 @@ watch(() => props.modelValue, async (val) => {
         } else {
             txForm.value = {
                 type: 'bill', title: '', date: new Date().toISOString().split('T')[0],
-                amount: null, categoryId: '', accountId: '', description: '',
+                amount: null, categoryId: '', categoryName: '', accountId: '', accountName: '', description: '',
                 dueDate: '', status: 'PAID', priority: 'NORMAL', recurrence_type: 'NONE', splits: []
             }
         }
@@ -244,8 +256,18 @@ const close = () => {
 }
 
 const saveTransaction = async () => {
+    if (!txForm.value.accountId && !txForm.value.accountName) {
+        toast.warning('Selecione uma conta ou digite o nome de uma nova.')
+        return
+    }
+    if (!txForm.value.categoryId && !txForm.value.categoryName) {
+        toast.warning('Selecione uma categoria ou digite o nome de uma nova.')
+        return
+    }
+
     try {
         const payload: any = { ...txForm.value }
+        const createdSomething = !!(payload.accountName || payload.categoryName)
         if (!hasSplits.value || payload.type !== 'bill') {
             payload.splits = [];
         }
@@ -259,6 +281,10 @@ const saveTransaction = async () => {
         } else {
             await transactionRepository.createTransaction(payload)
             toast.success('Lançamento inserido!')
+        }
+        // Conta/categoria criadas "na hora" precisam aparecer nas próximas seleções.
+        if (createdSomething) {
+            await Promise.all([accountStore.forceRefreshAccounts(), categoryStore.forceRefreshCategories()])
         }
         emit('saved')
         close()

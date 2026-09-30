@@ -9,6 +9,8 @@ use App\UseCases\Transactions\CreateTransactionUseCase;
 use App\UseCases\Transactions\Steps\PersistMainTransactionStep;
 use App\UseCases\Transactions\Steps\SyncAccountBalanceStep;
 use App\UseCases\Transactions\Steps\ProcessSplitsStep;
+use App\UseCases\Transactions\Steps\ResolveReferencesStep;
+use App\UseCases\Transactions\Steps\AuthorizeSplitsStep;
 use App\DTO\TransactionDTO;
 use PDO;
 use Exception;
@@ -18,13 +20,17 @@ class TransactionService {
     private BillRepository $billRepo;
     private PDO $db;
     private CreateTransactionUseCase $createUseCase;
+    private ReferenceResolver $resolver;
 
-    public function __construct(AssetRepository $assetRepo, BillRepository $billRepo, PDO $db) {
+    public function __construct(AssetRepository $assetRepo, BillRepository $billRepo, PDO $db, ReferenceResolver $resolver, WorkspaceService $workspaceService) {
         $this->assetRepo = $assetRepo;
         $this->billRepo = $billRepo;
         $this->db = $db;
+        $this->resolver = $resolver;
         
         $this->createUseCase = new CreateTransactionUseCase();
+        $this->createUseCase->addStep(new AuthorizeSplitsStep($workspaceService));
+        $this->createUseCase->addStep(new ResolveReferencesStep($resolver));
         $this->createUseCase->addStep(new PersistMainTransactionStep($assetRepo, $billRepo));
         $this->createUseCase->addStep(new SyncAccountBalanceStep($this->db));
         $this->createUseCase->addStep(new ProcessSplitsStep($this->createUseCase));
@@ -57,9 +63,9 @@ class TransactionService {
         return array_values($filtered);
     }
 
-    public function create(int $workspaceId, TransactionDTO $dto): Transaction {
+    public function create(int $workspaceId, TransactionDTO $dto, ?int $userId = null): Transaction {
         $this->validateData($dto);
-        return $this->createUseCase->execute($workspaceId, $dto);
+        return $this->createUseCase->execute($workspaceId, $dto, null, $userId);
     }
 
     public function update(int $id, int $workspaceId, TransactionDTO $dto): Transaction {
@@ -72,6 +78,11 @@ class TransactionService {
 
         if (!$existing) throw new Exception("Transaction not found.");
         $oldAccountId = $existing->getAccountId();
+
+        $dto->accountId = (int) $this->resolver->resolveAccount($workspaceId, $dto->accountId, $dto->accountName)->getId();
+        $dto->categoryId = (int) $this->resolver
+            ->resolveCategory($workspaceId, $dto->categoryId, $dto->categoryName, CategoryService::levelForType($type))
+            ->getId();
 
         $t = new Transaction(
             $workspaceId, $type, $dto->title, $dto->date, 
@@ -177,8 +188,8 @@ class TransactionService {
     private function validateData(TransactionDTO $dto): void {
         if (empty($dto->title)) throw new Exception("Title cannot be empty");
         if (empty($dto->date)) throw new Exception("Date cannot be empty");
-        if (empty($dto->categoryId)) throw new Exception("Category must be selected");
-        if (empty($dto->accountId)) throw new Exception("Account must be selected");
+        if (empty($dto->categoryId) && empty($dto->categoryName)) throw new Exception("Category must be selected");
+        if (empty($dto->accountId) && empty($dto->accountName)) throw new Exception("Account must be selected");
         if ($dto->amount <= 0) throw new Exception("Invalid amount");
     }
 }

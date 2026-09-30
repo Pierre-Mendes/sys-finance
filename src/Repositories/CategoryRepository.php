@@ -32,6 +32,21 @@ class CategoryRepository {
         return new Category($row['WorkspaceId'], $row['CategoryName'], $row['Level'], $row['CategoryId']);
     }
 
+    public function findByNameAndWorkspaceIdAndLevel(string $name, int $workspaceId, int $level): ?Category {
+        $stmt = $this->db->prepare("SELECT * FROM category WHERE WorkspaceId = :userId AND Level = :lvl AND LOWER(CategoryName) = LOWER(:name) LIMIT 1");
+        $stmt->execute(['userId' => $workspaceId, 'lvl' => $level, 'name' => trim($name)]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$row) return null;
+        return new Category($row['WorkspaceId'], $row['CategoryName'], $row['Level'], $row['CategoryId']);
+    }
+
+    public function countByWorkspaceIdAndLevel(int $workspaceId, int $level): int {
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM category WHERE WorkspaceId = :userId AND Level = :lvl");
+        $stmt->execute(['userId' => $workspaceId, 'lvl' => $level]);
+        return (int) $stmt->fetchColumn();
+    }
+
     public function save(Category $cat): Category {
         if ($cat->getId()) {
             $stmt = $this->db->prepare("UPDATE category SET CategoryName = :name WHERE CategoryId = :id AND WorkspaceId = :userId");

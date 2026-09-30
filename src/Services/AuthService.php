@@ -78,7 +78,7 @@ class AuthService {
         }
 
         // Fallback for incredibly old plain-text passwords
-        if ($user->getPassword() === $password) {
+        if (hash_equals((string) $user->getPassword(), $password)) {
             $user->setPassword(password_hash($password, PASSWORD_BCRYPT));
             $user = $this->ensureUserCode($user);
             $this->userRepository->save($user);

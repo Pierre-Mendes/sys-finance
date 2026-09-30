@@ -32,8 +32,9 @@ class InvestmentController
         $ids = array_column($investments, 'id');
         $transactions = [];
         if (!empty($ids)) {
-            $inids = implode(',', $ids);
-            $tStmt = $this->db->query("SELECT * FROM investment_transactions WHERE investmentId IN ($inids) ORDER BY date DESC, id DESC");
+            $placeholders = implode(',', array_fill(0, count($ids), '?'));
+            $tStmt = $this->db->prepare("SELECT * FROM investment_transactions WHERE investmentId IN ($placeholders) ORDER BY date DESC, id DESC");
+            $tStmt->execute(array_map('intval', $ids));
             $tLog = $tStmt->fetchAll(PDO::FETCH_ASSOC);
             foreach ($tLog as $t) {
                 $transactions[$t['investmentId']][] = $t;

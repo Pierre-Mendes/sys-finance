@@ -5,6 +5,7 @@ namespace App\DTO;
 class CreditCardTransactionDTO {
     public int $cardId;
     public int $categoryId;
+    public ?string $categoryName;
     public string $title;
     public float $amount;
     public string $date;
@@ -14,6 +15,7 @@ class CreditCardTransactionDTO {
     public function __construct(array $data) {
         $this->cardId = !empty($data['cardId']) ? (int)$data['cardId'] : 0;
         $this->categoryId = !empty($data['categoryId']) ? (int)$data['categoryId'] : 0;
+        $this->categoryName = !empty($data['categoryName']) ? strip_tags((string)$data['categoryName']) : null;
         $this->title = !empty($data['title']) ? htmlspecialchars(strip_tags((string)$data['title'])) : '';
         $this->amount = !empty($data['amount']) ? (float)$data['amount'] : 0.0;
         $this->date = !empty($data['date']) ? htmlspecialchars(strip_tags((string)$data['date'])) : '';
@@ -22,7 +24,7 @@ class CreditCardTransactionDTO {
     }
 
     public function isValid(): bool {
-        return $this->cardId > 0 && $this->categoryId > 0 && !empty($this->title) && 
+        return $this->cardId > 0 && ($this->categoryId > 0 || !empty($this->categoryName)) && !empty($this->title) && 
                $this->amount > 0 && !empty($this->date) && $this->installments > 0;
     }
 }

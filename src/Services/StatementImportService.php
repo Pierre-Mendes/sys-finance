@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Adapters\Bank\ItauPDFAdapter;
 use App\Adapters\Bank\SicoobPDFAdapter;
+use App\Adapters\Bank\CSVStatementAdapter;
+use App\Adapters\Bank\OFXStatementAdapter;
 use Exception;
 
 class StatementImportService {
@@ -25,17 +27,28 @@ class StatementImportService {
         $extension = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
 
         if ($extension === 'pdf') {
-            // Run pdftotext -layout to preserve column alignment
-            $output = [];
-            $returnVar = 0;
-            $safePath = escapeshellarg($filePath);
-            exec("pdftotext -layout $safePath - 2>&1", $output, $returnVar);
+            // Run pdftotext -layout to preserve column alignment.
+            // proc_open com array executa o binário diretamente, sem shell (sem risco de command injection).
+            // Comando fixo + argumentos em array (sem shell); $filePath é gerado pelo servidor.
+            $process = proc_open( // nosemgrep
+                ['pdftotext', '-layout', $filePath, '-'],
+                [1 => ['pipe', 'w'], 2 => ['pipe', 'w']],
+                $pipes
+            );
+            if (!is_resource($process)) {
+                throw new Exception("Unable to start pdftotext.");
+            }
+
+            $text = (string) stream_get_contents($pipes[1]);
+            $errorOutput = (string) stream_get_contents($pipes[2]);
+            fclose($pipes[1]);
+            fclose($pipes[2]);
+            $returnVar = proc_close($process);
 
             if ($returnVar !== 0) {
-                $errorOutput = implode("\n", $output);
                 throw new Exception("Error executing pdftotext (Exit Code $returnVar). Output: $errorOutput");
             }
-            $text = implode("\n", $output);
+            $text = rtrim($text, "\n");
         } else {
             // Plain text formats (CSV, OFX)
             $text = file_get_contents($filePath);

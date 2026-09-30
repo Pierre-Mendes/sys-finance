@@ -41,7 +41,8 @@ class InviteController
         }
 
         // Cleanup past expired invites to keep db clean
-        $this->pdo->exec("DELETE FROM workspace_invites WHERE ExpiresAt IS NOT NULL AND ExpiresAt < NOW()");
+        $this->pdo->prepare("DELETE FROM workspace_invites WHERE ExpiresAt IS NOT NULL AND ExpiresAt < ?")
+            ->execute([date('Y-m-d H:i:s')]);
 
         $stmt = $this->pdo->prepare("INSERT INTO workspace_invites (WorkspaceId, InviteCode, Passcode, ExpiresAt, CreatedBy) VALUES (?, ?, ?, ?, ?)");
         $stmt->execute([$workspaceId, $inviteCode, $passHash, $expires, $userId]);

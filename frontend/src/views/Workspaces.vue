@@ -474,21 +474,26 @@ const generateInvite = async () => {
         
         await fetchInvites() // Atualiza tabela de pendentes da view
         
-        // Permite usar a funcao global html global do browser "Copiar"
-        ;(window as any).copyToClip = () => {
-             navigator.clipboard.writeText(data.inviteCode);
-             toast.success('Código copiado para a Área de Transferência!');
-        }
-
+        // Sem onclick inline nem interpolação em HTML: o CSP bloqueia handlers inline e o código
+        // é inserido como texto (textContent), nunca como HTML.
         Swal.fire({
             title: 'Código Criado!',
             html: `Use a credencial de segurança abaixo:<br><br>
-                   <div onclick="window.copyToClip()" class="bg-gray-100 hover:bg-indigo-50 border border-gray-200 cursor-pointer inline-block px-6 py-4 rounded-xl transition" title="Clique para copiar">
-                      <b style="font-size: 28px; color: #4338ca; font-family: monospace; letter-spacing: 2px;">${data.inviteCode}</b>
+                   <button type="button" id="invite-code-copy" class="bg-gray-100 hover:bg-indigo-50 border border-gray-200 cursor-pointer inline-block px-6 py-4 rounded-xl transition" title="Clique para copiar">
+                      <b id="invite-code-value" style="font-size: 28px; color: #4338ca; font-family: monospace; letter-spacing: 2px;"></b>
                       <br><small style="color: #6366f1; font-weight: bold;">📋 Clicar aqui para copiar</small>
-                   </div>
+                   </button>
                    <br><br><span style="font-size: 13px; color: #666;">Passe verbalmente sua palavra-passe para o convidado autenticar!</span>`,
-            icon: 'success'
+            icon: 'success',
+            didOpen: (popup) => {
+                const code = String(data.inviteCode ?? '')
+                const valueEl = popup.querySelector('#invite-code-value')
+                if (valueEl) valueEl.textContent = code
+                popup.querySelector('#invite-code-copy')?.addEventListener('click', () => {
+                    navigator.clipboard.writeText(code)
+                    toast.success('Código copiado para a Área de Transferência!')
+                })
+            }
         })
         inviteForm.value.passcode = ''
     } catch (e: any) {

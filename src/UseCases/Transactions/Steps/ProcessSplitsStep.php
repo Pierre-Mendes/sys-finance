@@ -22,11 +22,15 @@ class ProcessSplitsStep implements ITransactionStep {
         foreach ($context->dto->splits as $split) {
             if (empty($split['workspaceId']) || empty($split['accountId']) || empty($split['amount'])) continue;
 
+            // Permissão no workspace de destino já validada pelo AuthorizeSplitsStep.
+            $targetWorkspaceId = (int) $split['workspaceId'];
+
             $childData = new TransactionDTO([
                 'type' => 'bill',
                 'title' => $context->dto->title . ' (Rateio Cruzado)',
                 'date' => $context->dto->date,
-                'categoryId' => $context->dto->categoryId,
+                // A categoria do workspace de origem não existe no destino: resolve pelo nome (buscar ou criar).
+                'categoryName' => $context->dto->categoryName,
                 'accountId' => (int)$split['accountId'],
                 'amount' => (float)$split['amount'],
                 'description' => 'Parcela do rateio com o Workspace ' . $context->workspaceId . '. Referência: ' . $context->transaction->getId(),
@@ -34,7 +38,7 @@ class ProcessSplitsStep implements ITransactionStep {
 
             // Synchronously execute another instance of the transaction
             // Note: Since this executes a full usecase loop, the SyncAccountBalanceStep will trigger properly for children too!
-            $this->useCase->execute((int)$split['workspaceId'], $childData, $context->transaction->getId());
+            $this->useCase->execute($targetWorkspaceId, $childData, $context->transaction->getId(), $context->userId);
         }
     }
 }

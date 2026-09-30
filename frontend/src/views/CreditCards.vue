@@ -2,6 +2,8 @@
 import { ref, onMounted, watch, computed } from 'vue'
 import { useCreditCardStore } from '@/presentation/store/creditCardStore'
 import { useAccountStore } from '@/presentation/store/accountStore'
+import { useCategoryStore } from '@/presentation/store/categoryStore'
+import CreatableSelect from '@/components/ui/CreatableSelect.vue'
 import MainLayout from '@/components/layout/MainLayout.vue'
 import LoaderSpinner from '@/components/ui/LoaderSpinner.vue'
 import { toast } from 'vue3-toastify'
@@ -9,6 +11,8 @@ import Swal from 'sweetalert2'
 
 const store = useCreditCardStore()
 const accountStore = useAccountStore()
+const categoryStore = useCategoryStore()
+const expenseCategories = computed(() => categoryStore.categories.filter(c => c.type === 'bill' || c.type === 'expense'))
 
 const showModal = ref(false)
 const newCard = ref({
@@ -17,7 +21,8 @@ const newCard = ref({
   limitAmount: 0,
   closingDay: 1,
   dueDay: 10,
-  accountId: 0,
+  accountId: 0 as number | string,
+  accountName: '',
   color: '#8a05be' // Default Purple
 })
 
@@ -37,7 +42,8 @@ const newTx = ref({
   amount: 0,
   installments: 1,
   date: new Date().toISOString().substring(0, 10),
-  categoryId: 1,
+  categoryId: '' as number | string,
+  categoryName: '',
   description: ''
 })
 
@@ -49,7 +55,8 @@ const editCard = ref({
   limitAmount: 0,
   closingDay: 1,
   dueDay: 10,
-  accountId: 0,
+  accountId: 0 as number | string,
+  accountName: '',
   color: '#8a05be'
 })
 
@@ -59,7 +66,8 @@ const editTxData = ref({
   title: '',
   amount: 0,
   date: '',
-  categoryId: 1,
+  categoryId: '' as number | string,
+  categoryName: '',
   description: '',
   installments: 1,
   currentInstallment: 1
@@ -115,6 +123,9 @@ onMounted(async () => {
   if (accountStore.accounts.length === 0) {
     await accountStore.fetchAccounts()
   }
+  if (categoryStore.categories.length === 0) {
+    await categoryStore.fetchCategories()
+  }
   
   if (store.selectedCardId) {
     await store.fetchCardTransactions(store.selectedCardId)
@@ -128,16 +139,18 @@ watch(() => store.selectedCardId, async (newId) => {
 })
 
 const addCard = async () => {
-  if (!newCard.value.name || !newCard.value.accountId) {
+  if (!newCard.value.name || (!newCard.value.accountId && !newCard.value.accountName)) {
     toast.warning('Preencha os dados obrigatórios.')
     return
   }
   
   try {
+    const createsAccount = !!newCard.value.accountName
     await store.createCard(newCard.value)
+    if (createsAccount) await accountStore.forceRefreshAccounts()
     toast.success('Cartão adicionado com sucesso!')
     showModal.value = false
-    newCard.value = { name: '', brand: 'Visa', limitAmount: 0, closingDay: 1, dueDay: 10, accountId: 0, color: '#8a05be' }
+    newCard.value = { name: '', brand: 'Visa', limitAmount: 0, closingDay: 1, dueDay: 10, accountId: 0, accountName: '', color: '#8a05be' }
   } catch (e) {
     // Error handled in store
   }
@@ -192,10 +205,16 @@ const recentTransactions = computed(() => {
 
 const submitTx = async () => {
   if (txCardId.value === 0 || newTx.value.amount <= 0) return
+  if (!newTx.value.categoryId && !newTx.value.categoryName) {
+    toast.warning('Selecione uma categoria ou digite o nome de uma nova.')
+    return
+  }
   try {
+    const createsCategory = !!newTx.value.categoryName
     await store.addTransaction(txCardId.value, newTx.value)
+    if (createsCategory) await categoryStore.forceRefreshCategories()
     showTxModal.value = false
-    newTx.value = { title: '', amount: 0, installments: 1, date: new Date().toISOString().substring(0, 10), categoryId: 1, description: '' }
+    newTx.value = { title: '', amount: 0, installments: 1, date: new Date().toISOString().substring(0, 10), categoryId: '', categoryName: '', description: '' }
   } catch (e) {
     // Error handled in store
   }
@@ -210,17 +229,20 @@ const openEditModal = (card: any) => {
     closingDay: card.closingDay,
     dueDay: card.dueDay,
     accountId: card.accountId,
+    accountName: '',
     color: card.color || '#8a05be'
   }
   showEditModal.value = true
 }
 
 const saveEdit = async () => {
-  if (!editCard.value.name || !editCard.value.accountId) {
+  if (!editCard.value.name || (!editCard.value.accountId && !editCard.value.accountName)) {
     toast.warning('Preencha os dados obrigatórios.')
     return
   }
+  const createsAccount = !!editCard.value.accountName
   await store.updateCard(editCard.value.id, editCard.value)
+  if (createsAccount) await accountStore.forceRefreshAccounts()
   showEditModal.value = false
 }
 
@@ -231,6 +253,7 @@ const openEditTxModal = (tx: any) => {
     amount: tx.amount,
     date: tx.date.split('T')[0],
     categoryId: tx.categoryId,
+    categoryName: '',
     description: tx.description || '',
     installments: tx.installments,
     currentInstallment: tx.currentInstallment
@@ -243,7 +266,9 @@ const saveEditTx = async () => {
     toast.warning('Preencha os dados obrigatórios.')
     return
   }
+  const createsCategory = !!editTxData.value.categoryName
   const res = await store.updateTransaction(editTxData.value.id, editTxData.value)
+  if (res && createsCategory) await categoryStore.forceRefreshCategories()
   if (res) showEditTxModal.value = false
 }
 
@@ -593,9 +618,14 @@ const formatDate = (dateStr: string) => {
               </div>
               <div class="col-span-1">
                 <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Conta Bancária</label>
-                <select v-model="newCard.accountId" class="w-full rounded-xl border border-gray-300 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white p-2.5 focus:ring-2 focus:ring-primary/20 outline-none transition">
-                  <option v-for="acc in accountStore.accounts" :key="acc.id" :value="acc.id">{{ acc.name }}</option>
-                </select>
+                <CreatableSelect
+                  v-model="newCard.accountId"
+                  v-model:new-name="newCard.accountName"
+                  :options="accountStore.accounts"
+                  placeholder="Escolha ou digite (ex: Nubank)"
+                  create-label="Criar conta"
+                  input-class="w-full rounded-xl border border-gray-300 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white p-2.5 focus:ring-2 focus:ring-primary/20 outline-none transition"
+                />
               </div>
               <div class="col-span-2">
                 <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Limite R$</label>
@@ -649,6 +679,17 @@ const formatDate = (dateStr: string) => {
               <div class="col-span-2">
                 <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Data da Compra</label>
                 <input v-model="newTx.date" type="date" class="w-full rounded-xl border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white p-2.5 border focus:ring-2 focus:ring-primary/20 outline-none transition" />
+              </div>
+              <div class="col-span-2">
+                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Categoria</label>
+                <CreatableSelect
+                  v-model="newTx.categoryId"
+                  v-model:new-name="newTx.categoryName"
+                  :options="expenseCategories"
+                  placeholder="Escolha ou digite (ex: Assinaturas)"
+                  create-label="Criar categoria"
+                  input-class="w-full rounded-xl border border-gray-300 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white p-2.5 focus:ring-2 focus:ring-primary/20 outline-none transition"
+                />
               </div>
             </div>
           </div>
@@ -706,9 +747,14 @@ const formatDate = (dateStr: string) => {
               </div>
               <div class="col-span-1">
                 <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Conta Bancária</label>
-                <select v-model="editCard.accountId" class="w-full rounded-xl border border-gray-300 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white p-2.5 focus:ring-2 focus:ring-primary/20 outline-none transition">
-                  <option v-for="acc in accountStore.accounts" :key="acc.id" :value="acc.id">{{ acc.name }}</option>
-                </select>
+                <CreatableSelect
+                  v-model="editCard.accountId"
+                  v-model:new-name="editCard.accountName"
+                  :options="accountStore.accounts"
+                  placeholder="Escolha ou digite (ex: Nubank)"
+                  create-label="Criar conta"
+                  input-class="w-full rounded-xl border border-gray-300 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white p-2.5 focus:ring-2 focus:ring-primary/20 outline-none transition"
+                />
               </div>
               <div class="col-span-2">
                 <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Limite R$</label>
@@ -854,6 +900,16 @@ const formatDate = (dateStr: string) => {
               <div class="col-span-1">
                 <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Data</label>
                 <input v-model="editTxData.date" type="date" class="w-full rounded-xl border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white p-2.5 border focus:ring-2 focus:ring-primary/20 outline-none transition" />
+              </div>
+              <div class="col-span-2">
+                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Categoria</label>
+                <CreatableSelect
+                  v-model="editTxData.categoryId"
+                  v-model:new-name="editTxData.categoryName"
+                  :options="expenseCategories"
+                  create-label="Criar categoria"
+                  input-class="w-full rounded-xl border border-gray-300 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white p-2.5 focus:ring-2 focus:ring-primary/20 outline-none transition"
+                />
               </div>
               <div class="col-span-2">
                 <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Descrição</label>

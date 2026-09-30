@@ -17,8 +17,8 @@ class CreateTransactionUseCase {
         $this->steps[] = $step;
     }
 
-    public function execute(int $workspaceId, TransactionDTO $dto, ?int $parentId = null): Transaction {
-        $context = new TransactionContext($workspaceId, $dto, $parentId);
+    public function execute(int $workspaceId, TransactionDTO $dto, ?int $parentId = null, ?int $userId = null): Transaction {
+        $context = new TransactionContext($workspaceId, $dto, $parentId, $userId);
 
         foreach ($this->steps as $step) {
             $step->handle($context);

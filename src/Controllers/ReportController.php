@@ -32,6 +32,11 @@ class ReportController {
         // Dompdf setup
         $options = new Options();
         $options->set('defaultFont', 'Helvetica');
+        // Nada de recursos remotos/arquivos locais, PHP ou JS embutidos no PDF (SSRF / LFI / XSS no documento).
+        $options->set('isRemoteEnabled', false);
+        $options->set('isPhpEnabled', false);
+        $options->set('isJavascriptEnabled', false);
+        $options->set('chroot', [realpath(__DIR__ . '/../../public') ?: __DIR__]);
         $dompdf = new Dompdf($options);
 
         // Build HTML Report
@@ -50,7 +55,7 @@ class ReportController {
         $totalExpense = 0;
 
         foreach ($transactions as $tx) {
-            if ($tx->getType() === 'income') {
+            if (in_array($tx->getType(), ['asset', 'income'], true)) {
                 $totalIncome += $tx->getAmount();
                 $color = 'green';
             } else {
@@ -61,11 +66,15 @@ class ReportController {
             $dateFormated = date('d/m/Y', strtotime($tx->getDate()));
             $amountFormated = number_format($tx->getAmount(), 2, ',', '.');
             
+            $title = self::html($tx->getTitle());
+            $category = self::html($tx->getCategoryName());
+            $account = self::html($tx->getAccountName());
+
             $html .= "<tr>
                         <td>{$dateFormated}</td>
-                        <td>{$tx->getTitle()}</td>
-                        <td>{$tx->getCategoryName()}</td>
-                        <td>{$tx->getAccountName()}</td>
+                        <td>{$title}</td>
+                        <td>{$category}</td>
+                        <td>{$account}</td>
                         <td align='right' style='color:{$color};'>{$amountFormated}</td>
                       </tr>";
         }
@@ -104,17 +113,17 @@ class ReportController {
         $transactions = $this->txService->getFilteredForUser($workspaceId, $filters);
 
         $out = fopen('php://temp', 'w');
-        fputcsv($out, ['Data', 'Tipo', 'Titulo', 'Categoria', 'Conta', 'Valor (R$)']);
+        fputcsv($out, ['Data', 'Tipo', 'Titulo', 'Categoria', 'Conta', 'Valor (R$)'], ',', '"', '');
 
         foreach ($transactions as $tx) {
             fputcsv($out, [
                 date('d/m/Y', strtotime($tx->getDate())),
-                $tx->getType() === 'income' ? 'Receita' : 'Despesa',
-                $tx->getTitle(),
-                $tx->getCategoryName(),
-                $tx->getAccountName(),
+                in_array($tx->getType(), ['asset', 'income'], true) ? 'Receita' : 'Despesa',
+                self::csvCell($tx->getTitle()),
+                self::csvCell($tx->getCategoryName()),
+                self::csvCell($tx->getAccountName()),
                 number_format($tx->getAmount(), 2, ',', '')
-            ]);
+            ], ',', '"', '');
         }
 
         rewind($out);
@@ -125,5 +134,23 @@ class ReportController {
         return $response->withHeader('Content-Type', 'text/csv')
                         ->withHeader('Content-Disposition', 'attachment; filename="relatorio_transacoes.csv"')
                         ->withStatus(200);
+    }
+
+    /**
+     * Escapa texto do usuário para HTML (OWASP A03 - XSS/HTML injection no PDF).
+     * Alguns campos já chegam com entidades (DTOs antigos usam htmlspecialchars na entrada),
+     * então decodificamos antes para não exibir "&amp;amp;".
+     */
+    private static function html(?string $value): string {
+        $plain = html_entity_decode((string) $value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        return htmlspecialchars($plain, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    }
+
+    /**
+     * Neutraliza CSV/Formula Injection: células iniciadas por = + - @ TAB ou CR viram texto no Excel/Sheets.
+     */
+    public static function csvCell(?string $value): string {
+        $plain = html_entity_decode((string) $value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        return preg_match('/^[=+\-@\t\r]/', $plain) ? "'" . $plain : $plain;
     }
 }

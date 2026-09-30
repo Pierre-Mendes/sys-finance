@@ -1,0 +1,19 @@
+# Regras do OWASP ZAP (baseline). Formato: <id>	<IGNORE|INFO|WARN|FAIL>	<descrição>
+# Por padrão o baseline trata todo alerta como WARN; aqui promovemos os críticos a FAIL
+# e ignoramos apenas falsos positivos conhecidos para uma SPA + API JSON. Revise ao ajustar.
+10020	FAIL	Anti-clickjacking Header
+10021	FAIL	X-Content-Type-Options Header Missing
+10038	FAIL	Content Security Policy (CSP) Header Not Set
+10055	WARN	CSP (style-src 'unsafe-inline' é necessário para ApexCharts/SweetAlert2)
+10035	INFO	Strict-Transport-Security Header (TLS é terminado fora do container)
+10036	FAIL	Server Leaks Version Information via "Server" HTTP Response Header Field
+10037	FAIL	Server Leaks Information via "X-Powered-By" HTTP Response Header Field(s)
+10096	IGNORE	Timestamp Disclosure (valores monetários/datas nos bundles JS)
+10027	IGNORE	Information Disclosure - Suspicious Comments (comentários de libs minificadas)
+10109	IGNORE	Modern Web Application (informativo: SPA detectada)
+10049	IGNORE	Storable and Cacheable Content (informativo)
+10015	INFO	Re-examine Cache-control Directives
+40012	FAIL	Cross Site Scripting (Reflected)
+40014	FAIL	Cross Site Scripting (Persistent)
+40018	FAIL	SQL Injection
+90022	FAIL	Application Error Disclosure

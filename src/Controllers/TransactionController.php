@@ -58,7 +58,7 @@ class TransactionController {
         }
 
         try {
-            $t = $this->txService->create($workspaceId, $dto);
+            $t = $this->txService->create($workspaceId, $dto, (int) $request->getAttribute('userId'));
             $response->getBody()->write(json_encode([
                 "success" => true, "message" => "Transaction created.", "data" => ["id" => $t->getId()]
             ]));

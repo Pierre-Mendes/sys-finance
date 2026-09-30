@@ -181,7 +181,8 @@
                       <label class="block text-[9px] font-black uppercase text-gray-400 mb-1 ml-1">Categoria / Destino</label>
                       <!-- Conditional Category / Goal Selector -->
                       <select v-if="tx.classification === 'standard' || tx.classification === 'investment'" v-model="tx.categoryId" class="w-full h-9 px-3 bg-white border border-gray-100 rounded-xl text-[11px] focus:ring-2 focus:ring-primary/10 appearance-none font-bold text-gray-700 shadow-sm transition-all shadow-gray-200/20">
-                        <option v-for="cat in categoryStore.categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
+                        <option value="">Outros (criada automaticamente)</option>
+                        <option v-for="cat in categoryStore.categories.filter(c => (tx.type === 'asset') === (c.type === 'income' || c.type === 'asset'))" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
                       </select>
                       <select v-else-if="tx.classification === 'transfer'" v-model="tx.targetAccountId" class="w-full h-9 px-3 bg-white border border-gray-100 rounded-xl text-[11px] focus:ring-2 focus:ring-primary/10 appearance-none font-bold text-blue-700 shadow-sm transition-all shadow-gray-200/20">
                         <option value="">Conta Destino...</option>
@@ -349,7 +350,7 @@ const uploadFile = async (file: File) => {
       selected: true,
       title: t.description,
       accountId: '',
-      categoryId: 1,
+      categoryId: '',
       classification: 'standard',
       targetAccountId: '',
       goalId: ''
@@ -404,7 +405,7 @@ const confirmImport = async () => {
             amount: tx.amount,
             date: tx.date,
             accountId: Number(tx.accountId),
-            categoryId: 1, // Transfer category
+            categoryName: 'Transferências', // buscar ou criar no workspace (nunca um ID fixo)
             status: 'PAID',
             description: `Transferência para ${tx.targetAccountId}`
           })
@@ -415,7 +416,7 @@ const confirmImport = async () => {
             amount: tx.amount,
             date: tx.date,
             accountId: Number(tx.targetAccountId),
-            categoryId: 1,
+            categoryName: 'Transferências',
             status: 'PAID',
             description: `Transferência de ${tx.accountId}`
           })
@@ -427,7 +428,7 @@ const confirmImport = async () => {
             amount: tx.amount,
             date: tx.date,
             accountId: Number(tx.accountId),
-            categoryId: 1,
+            categoryName: 'Metas',
             status: 'PAID',
             description: `Aporte na meta ID ${tx.goalId}`
           })
@@ -446,7 +447,7 @@ const confirmImport = async () => {
             amount: tx.amount,
             date: tx.date,
             accountId: Number(tx.accountId),
-            categoryId: Number(tx.categoryId),
+            ...(tx.categoryId ? { categoryId: Number(tx.categoryId) } : { categoryName: 'Outros' }),
             status: 'PAID',
             description: 'Importação Avançada (BETA)'
           })

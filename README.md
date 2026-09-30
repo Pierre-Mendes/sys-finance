@@ -125,6 +125,11 @@ erDiagram
 O ecossistema é mantido vivo de forma automática através das `GitHub Actions`:
 *   **Workflow Staging (Sandbox)**: Gatilho automático ou manual focado na porta SSH, espelha para o provedor Hostinger e reergue o container Sandbox (`porta 8082`), rodando também a injeção do `PHPMyAdmin (8083)` para debug manual interno.
 *   **Workflow Produção**: Uma rotina controlada manualmente que refaz o espelhamento mas de forma sólida isolando para o tráfego da rede (`porta 80` padrão).
+*   **CI (`verify.yml`)**: PHPUnit (com cobertura), Vitest e build do frontend.
+*   **Security & Quality Gate (`security.yml`)**: SAST (Semgrep OWASP Top 10 + CodeQL), SCA (`composer audit`, `npm audit`, OWASP Dependency-Check semanal), Gitleaks, DAST (OWASP ZAP contra a app em Docker) e SonarCloud opcional, consolidados no job **Quality Gate**.
+
+> Revisão completa, pendências e roadmap: [`docs/REVISAO_E_ROADMAP.md`](docs/REVISAO_E_ROADMAP.md).
+> **Deploy:** defina `JWT_SECRET` (mín. 32 caracteres) no `.env` antes de subir staging/produção.
 
 ---
 

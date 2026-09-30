@@ -5,6 +5,7 @@ namespace App\DTO;
 class CreditCardDTO {
     public string $name;
     public int $accountId;
+    public ?string $accountName;
     public float $limitAmount;
     public int $closingDay;
     public int $dueDay;
@@ -14,6 +15,7 @@ class CreditCardDTO {
     public function __construct(array $data) {
         $this->name = !empty($data['name']) ? htmlspecialchars(strip_tags((string)$data['name'])) : '';
         $this->accountId = !empty($data['accountId']) ? (int)$data['accountId'] : 0;
+        $this->accountName = !empty($data['accountName']) ? strip_tags((string)$data['accountName']) : null;
         $this->limitAmount = !empty($data['limitAmount']) ? (float)$data['limitAmount'] : 0.0;
         $this->closingDay = !empty($data['closingDay']) ? (int)$data['closingDay'] : 0;
         $this->dueDay = !empty($data['dueDay']) ? (int)$data['dueDay'] : 0;
@@ -22,7 +24,7 @@ class CreditCardDTO {
     }
 
     public function isValid(): bool {
-        return !empty($this->name) && $this->accountId > 0 && $this->limitAmount > 0 &&
+        return !empty($this->name) && ($this->accountId > 0 || !empty($this->accountName)) && $this->limitAmount > 0 &&
                $this->closingDay > 0 && $this->closingDay <= 31 &&
                $this->dueDay > 0 && $this->dueDay <= 31;
     }
