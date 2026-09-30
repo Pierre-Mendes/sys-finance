@@ -9,7 +9,10 @@ Checklist para qualquer mudança que toque entrada do usuário, dados de outro t
   `findByIdAndWorkspaceId`.
 - Rotas de escrita: `GatekeeperMiddleware::requireEditor('<módulo>')`.
 - Ação em outro workspace: `WorkspaceService::canEdit($userId, $workspaceId, $module)` antes de gravar.
-- **Pendente**: rotas de `/api/investments` e parte de `/api/workspaces` ainda sem gatekeeper (ver REVISAO_E_ROADMAP).
+- Rotas com `{id}` de workspace na URL: o papel (`workspaceRole`) vale para o workspace **ativo** (header), então
+  o `{id}` precisa ser igual a `workspaceId` (`WorkspaceController::updateWorkspace/deleteWorkspace`).
+- Módulos de permissão: `accounts`, `categories`, `transactions`, `budgets`, `goals`, `credit_cards`,
+  `investments`, `reports`.
 
 ## Autenticação (A07)
 
@@ -27,6 +30,12 @@ Checklist para qualquer mudança que toque entrada do usuário, dados de outro t
 - Comandos externos: `proc_open` com array de argumentos, nunca string de shell.
 - URLs externas com dado do usuário: validar formato + `rawurlencode` (ex.: tickers da Brapi).
 - Frontend: ver seção "Segurança na UI" em [frontend-vue.md](frontend-vue.md).
+
+## Requisições do servidor para fora (A10, SSRF)
+
+- Web Push: o servidor faz POST no `endpoint` enviado pelo navegador. Só aceite HTTPS nos serviços de push
+  conhecidos (`PushEndpointPolicy`: FCM, Mozilla, Apple, WNS); porta 443, sem usuário/senha na URL.
+- Payload do push só com texto e URL interna (começa com `/`); o `sw.js` ignora URLs externas.
 
 ## Uploads
 

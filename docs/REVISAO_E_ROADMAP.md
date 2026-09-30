@@ -107,7 +107,7 @@ Arquivo: `.github/workflows/security.yml`
 
 | Prioridade | Item |
 |---|---|
-| Alta | Rotas `/api/investments` (POST/PUT/DELETE) e parte de `/api/workspaces` não passam pelo `GatekeeperMiddleware`: um *viewer* consegue alterar dados. |
+| ~~Alta~~ | ~~Rotas `/api/investments` sem `GatekeeperMiddleware`; `PUT/DELETE /api/workspaces/{id}` conferia o papel no workspace ativo e não no `{id}`~~ **Corrigido** (módulo `investments` + `{id}` precisa ser o workspace ativo). |
 | Alta | Token em `localStorage` fica exposto a qualquer XSS. Avaliar cookie `HttpOnly` + `SameSite` com proteção CSRF. |
 | Média | Controllers devolvem `$e->getMessage()` cru ao cliente (vaza detalhes internos). Padronizar erros de domínio vs. 500 genérico. |
 | Média | `recovery-question` revela se um e-mail está cadastrado (enumeração de usuários). |
@@ -116,6 +116,7 @@ Arquivo: `.github/workflows/security.yml`
 | Baixa | `TransactionService::getFilteredForUser` filtra em memória e `CreditCardService::getAllCards` faz N+1. |
 | Baixa | Views antigas (`Categories.vue`, `Budgets.vue`…) usam `axios` direto em vez do `HttpClient`, duplicando headers. |
 | Baixa | SQL do Dashboard é específico de MySQL; os testes (SQLite) não cobrem esse serviço. |
+| Baixa | Dashboard dispara `Element not found` do ApexCharts no console ao carregar (gráficos aparecem normalmente). |
 
 ---
 
@@ -132,4 +133,5 @@ Ordenado por impacto na experiência de "registrar rápido, organizar depois":
 7. **Transferência entre contas** como tipo próprio (hoje `transfer` existe só no tipo do frontend).
 8. **Open Finance** (agregadores como Pluggy/Belvo) para sincronizar saldos e transações sem importar arquivo.
 9. **Metas e orçamentos com alertas** via notificação/Telegram quando atingir 80%/100% do teto.
-10. **Modo offline/PWA** para lançar no celular sem conexão e sincronizar depois.
+10. **Modo offline/PWA** para lançar no celular sem conexão e sincronizar depois. *(App instalável e lembretes
+    por push já existem; falta lançar offline.)*

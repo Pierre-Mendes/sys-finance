@@ -37,6 +37,7 @@ HTTP → CorsMiddleware → SecurityHeadersMiddleware
 | `Security/` | `TokenService` (JWT HS256) e `SecretStore` (chave gerada e guardada no banco). |
 | `Adapters/Bank/` | Parsers de extrato (PDF Itaú/Sicoob, CSV, OFX). |
 | `Strategies/` | Cotações de investimento (Brapi, RDC). |
+| `Notifications/` | Envio de Web Push (`PushSender`, `WebPushSender`) e validação de endpoint (`PushEndpointPolicy`). |
 
 Não há container de DI: as dependências são montadas à mão em `public/index.php`, junto com as rotas.
 
@@ -60,3 +61,8 @@ Não há container de DI: as dependências são montadas à mão em `public/inde
 - **totals**: saldo cacheado por conta, recalculado só pelo `AccountBalanceService`. Regra única: **apenas lançamentos `PAID` contam**; pendentes (a vencer, próximas recorrências, faturas abertas) aparecem só na projeção do Dashboard.
 - **Rateio (splits)**: uma despesa espelhada em outros workspaces onde o usuário é editor.
 - **Cartões**: compras parceladas geram N transações; a fatura vira uma `bill`.
+- **Lembretes**: `bin/reminders.php` (serviço `scheduler` do compose, a cada 15 min) chama o
+  `BillReminderService`: contas `PENDING` com `due_date` nos dias escolhidos (`notification_settings`) viram aviso no
+  sino (`notifications`) e um push resumido por usuário (`push_subscriptions`, `WebPushSender`). `bill_reminders_sent`
+  garante um aviso por conta/usuário/tipo/vencimento. Chaves VAPID geradas e guardadas em `app_secrets`.
+- **PWA**: `frontend/public/manifest.webmanifest` + `sw.js` (push e tela offline; não guarda dados da API).

@@ -6,6 +6,10 @@
 - `tests/Integration/`: estendem `Tests\TestCase`, que cria um SQLite temporário e roda **todas** as migrations.
   Use `$this->db` e os repositórios reais.
 - Chamadas HTTP externas usam php-vcr (cassetes em `tests/fixtures/vcr/`).
+- O SQLite temporário é **compartilhado pelos testes da mesma classe**: se o teste conta linhas, limpe as tabelas
+  no `setUp` (ver `BillReminderServiceTest`).
+- Código que depende de "agora" recebe a data (`BillReminderService::run(DateTimeImmutable $now)`), nunca chama
+  `date()`/`CURDATE()` por dentro.
 - Nome do teste descreve o comportamento: `test_split_into_workspace_without_permission_is_refused`.
 - Bug corrigido = teste que falha sem a correção.
 
