@@ -36,4 +36,13 @@ class SecretStoreTest extends TestCase
 
         $this->assertNull($stored->verify($fromEnv->issue(1, 'a@b.com')));
     }
+
+    public function test_app_secrets_columns_are_not_nullable(): void
+    {
+        // MySQL recusa chave primária anulável; o Phinx cria colunas NULL por padrão.
+        $columns = $this->db->query("PRAGMA table_info(app_secrets)")->fetchAll(\PDO::FETCH_ASSOC);
+        $notNull = array_column($columns, 'notnull', 'name');
+
+        $this->assertSame(['name' => 1, 'value' => 1, 'created_at' => 1], array_map('intval', $notNull));
+    }
 }

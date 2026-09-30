@@ -11,9 +11,11 @@ class CreateAppSecretsTable extends AbstractMigration
     public function change(): void
     {
         $table = $this->table('app_secrets', ['id' => false, 'primary_key' => ['name']]);
-        $table->addColumn('name', 'string', ['limit' => 64])
-              ->addColumn('value', 'string', ['limit' => 255])
-              ->addColumn('created_at', 'datetime')
+        // 'null' => false é obrigatório: o Phinx cria colunas NULL por padrão e o MySQL
+        // recusa chave primária anulável (erro 1171).
+        $table->addColumn('name', 'string', ['limit' => 64, 'null' => false])
+              ->addColumn('value', 'string', ['limit' => 255, 'null' => false])
+              ->addColumn('created_at', 'datetime', ['null' => false])
               ->create();
     }
 }
