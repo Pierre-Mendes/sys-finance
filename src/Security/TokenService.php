@@ -5,34 +5,36 @@ namespace App\Security;
 use RuntimeException;
 
 /**
- * Emite e valida tokens JWT (HS256) assinados com JWT_SECRET.
+ * Emite e valida tokens JWT (HS256).
+ *
+ * Origem da chave de assinatura, em ordem:
+ *   1. argumento explícito / variável JWT_SECRET (permite rotacionar manualmente);
+ *   2. SecretStore: gerada automaticamente no primeiro uso e guardada no banco (sem configuração no deploy);
+ *   3. chave fixa de desenvolvimento, só com APP_ENV testing/development/local.
  *
  * Substitui o antigo token base64("id:email"), que podia ser forjado por qualquer
  * pessoa que soubesse o id de um usuário (OWASP A07 - Identification and Authentication Failures).
  */
 class TokenService {
     private const DEV_FALLBACK_SECRET = 'dev-only-insecure-secret-change-me-please-0123456789';
+    private const STORE_KEY = 'jwt_signing_key';
 
-    private string $secret;
+    private ?string $secret = null;
+    private ?SecretStore $store;
     private int $ttlSeconds;
 
-    public function __construct(?string $secret = null, ?int $ttlSeconds = null) {
+    public function __construct(?string $secret = null, ?int $ttlSeconds = null, ?SecretStore $store = null) {
         $secret = $secret ?? (getenv('JWT_SECRET') ?: '');
-
-        if ($secret === '') {
-            // Fallback só em ambientes explicitamente locais: qualquer outro (inclusive APP_ENV ausente) exige o segredo.
-            if (!in_array(getenv('APP_ENV'), ['testing', 'development', 'local'], true)) {
-                throw new RuntimeException('JWT_SECRET não configurado. Defina a variável de ambiente (mín. 32 caracteres).');
-            }
-            $secret = self::DEV_FALLBACK_SECRET;
+        if ($secret !== '') {
+            $this->secret = self::validated($secret);
         }
 
-        if (strlen($secret) < 32) {
-            throw new RuntimeException('JWT_SECRET deve ter pelo menos 32 caracteres.');
-        }
-
-        $this->secret = $secret;
+        $this->store = $store;
         $this->ttlSeconds = $ttlSeconds ?? (int) (getenv('JWT_TTL') ?: 60 * 60 * 24 * 7);
+
+        if ($this->secret === null && $this->store === null) {
+            $this->secret = self::devFallback();
+        }
     }
 
     public function issue(int $userId, string $email): string {
@@ -77,7 +79,27 @@ class TokenService {
     }
 
     private function sign(string $data): string {
-        return hash_hmac('sha256', $data, $this->secret, true);
+        return hash_hmac('sha256', $data, $this->secret(), true);
+    }
+
+    /** Resolvido sob demanda: rotas que não usam token (ex.: /api/health) não tocam o banco. */
+    private function secret(): string {
+        return $this->secret ??= self::validated($this->store->getOrCreate(self::STORE_KEY));
+    }
+
+    private static function validated(string $secret): string {
+        if (strlen($secret) < 32) {
+            throw new RuntimeException('JWT_SECRET deve ter pelo menos 32 caracteres.');
+        }
+        return $secret;
+    }
+
+    private static function devFallback(): string {
+        // Sem banco e sem JWT_SECRET, só ambientes explicitamente locais podem usar a chave fixa.
+        if (!in_array(getenv('APP_ENV'), ['testing', 'development', 'local'], true)) {
+            throw new RuntimeException('Chave do JWT indisponível: defina JWT_SECRET ou forneça um SecretStore.');
+        }
+        return self::DEV_FALLBACK_SECRET;
     }
 
     private static function base64UrlEncode(string $data): string {

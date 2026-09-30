@@ -28,7 +28,7 @@ services:
       - DB_PASS=root
       - DB_NAME=money_manager_staging
       - APP_ENV=staging
-      - JWT_SECRET=${JWT_SECRET:?defina JWT_SECRET no .env}
+      - JWT_SECRET=${JWT_SECRET:-}  # opcional: sem ele a chave é gerada e guardada no banco
       - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS:-}
       - CSP_CONNECT_SRC=${CSP_CONNECT_SRC:-https://*.sentry.io}
       - SENTRY_DSN=${SENTRY_DSN:-}

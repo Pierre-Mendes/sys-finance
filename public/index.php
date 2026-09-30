@@ -82,7 +82,8 @@ $workspaceService = new \App\Services\WorkspaceService($db);
 $notificationService = new \App\Services\NotificationService($db);
 $userRepo = new UserRepository($db);
 $authService = new AuthService($userRepo, $workspaceService, $notificationService);
-$tokenService = new \App\Security\TokenService();
+// Chave do JWT: JWT_SECRET se definido; senão gerada uma vez e guardada no banco (app_secrets).
+$tokenService = new \App\Security\TokenService(null, null, new \App\Security\SecretStore($db));
 $authController = new AuthController($authService, $tokenService);
 
 $accountRepo = new \App\Repositories\AccountRepository($db);

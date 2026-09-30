@@ -27,7 +27,6 @@ services:
       - DB_USER=root
       - DB_PASS=dast-root
       - DB_NAME=money_manager
-      - JWT_SECRET=dast-ephemeral-secret-not-used-anywhere-else-0123456789
       - CORS_ALLOWED_ORIGINS=http://localhost:8080
     healthcheck:
       test: ["CMD", "curl", "-fsS", "http://localhost/api/health"]
