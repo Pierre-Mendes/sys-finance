@@ -17,7 +17,13 @@ php_value error_reporting 0
     <FilesMatch "\.(html)$">
         Header set Cache-Control "no-cache"
     </FilesMatch>
+    # Service worker e manifest precisam ser revalidados, senão o celular fica preso numa versão antiga do app.
+    <FilesMatch "^(sw\.js|manifest\.webmanifest)$">
+        Header set Cache-Control "no-cache"
+    </FilesMatch>
 </IfModule>
+
+AddType application/manifest+json .webmanifest
 
 # Set Directory Index to prioritize Vue index.html
 DirectoryIndex index.html index.php

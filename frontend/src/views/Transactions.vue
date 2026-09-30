@@ -2,7 +2,7 @@
   <MainLayout>
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <h2 class="text-2xl sm:text-3xl font-semibold text-gray-800">Lançamentos</h2>
-        <div class="flex flex-col md:flex-row gap-3 w-full md:w-auto items-center">
+        <div class="grid grid-cols-2 md:flex md:flex-row gap-3 w-full md:w-auto items-center">
           <button @click="showFilters = !showFilters" class="w-full md:w-auto px-4 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary shadow-sm flex items-center justify-center gap-2 transition">
              <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
              Filtros {{ (filterType || filterStatus || searchQuery) ? '(Ativos)' : '' }}
@@ -12,7 +12,8 @@
             <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>Importar PDF
           </button>
 
-          <button @click="openCreateModal" class="w-full sm:w-auto bg-primary hover:bg-blue-600 px-5 py-2.5 rounded-lg text-white font-medium shadow transition cursor-pointer flex items-center justify-center gap-2 whitespace-nowrap">
+          <!-- No celular o "+" da barra inferior faz o mesmo -->
+          <button @click="openCreateModal" class="hidden md:flex w-full sm:w-auto bg-primary hover:bg-blue-600 px-5 py-2.5 rounded-lg text-white font-medium shadow transition cursor-pointer items-center justify-center gap-2 whitespace-nowrap">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>Novo Lançamento
           </button>
         </div>
@@ -53,7 +54,7 @@
           </div>
       </div>
 
-      <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 flex gap-3 text-blue-800 text-sm mb-6 items-start shadow-sm">
+      <div class="hidden sm:flex bg-blue-50 border border-blue-200 rounded-xl p-4 gap-3 text-blue-800 text-sm mb-6 items-start shadow-sm">
          <svg class="w-5 h-5 flex-shrink-0 mt-0.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
          <div>
             <span class="font-bold block mb-1">O coração do fluxo financeiro</span>
@@ -61,7 +62,46 @@
          </div>
       </div>
 
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden overflow-x-auto w-full">
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden w-full">
+        <!-- Celular: cartões (a tabela cortava status e valor em telas estreitas) -->
+        <ul class="md:hidden divide-y divide-gray-100">
+          <li v-for="t in paginatedTransactions" :key="`m-${t.type}-${t.id}`" class="p-4 flex gap-3">
+            <span :class="['mt-1.5 w-2.5 h-2.5 rounded-full flex-shrink-0', t.type === 'asset' ? 'bg-green-500' : 'bg-red-500']"></span>
+            <div class="flex-1 min-w-0">
+              <div class="flex justify-between items-start gap-3">
+                <p class="font-medium text-gray-800 truncate">{{ t.title }}</p>
+                <p :class="['font-semibold whitespace-nowrap', t.type === 'asset' ? 'text-green-600' : 'text-red-500']">
+                  {{ t.type === 'asset' ? '+' : '-' }} R$ {{ formatCurrency(t.amount) }}
+                </p>
+              </div>
+              <p class="text-xs text-gray-500 truncate mt-0.5">
+                {{ formatDate(t.date) }}<template v-if="t.accountName"> · {{ t.accountName }}</template><template v-if="t.categoryName"> · {{ t.categoryName }}</template>
+              </p>
+              <div class="flex items-center justify-between gap-2 mt-2">
+                <div class="flex items-center gap-2 min-w-0">
+                  <span v-if="t.status === 'PAID'" class="px-2 py-0.5 text-[10px] font-bold bg-green-100 text-green-700 rounded-full uppercase">Pago</span>
+                  <span v-else class="px-2 py-0.5 text-[10px] font-bold bg-amber-100 text-amber-700 rounded-full uppercase">Pendente</span>
+                  <span v-if="t.dueDate && t.status !== 'PAID'" class="text-[11px] whitespace-nowrap" :class="isOverdue(t.dueDate) ? 'text-red-600 font-semibold' : 'text-gray-500'">
+                    Vence {{ formatDate(t.dueDate).slice(0, 5) }}
+                  </span>
+                </div>
+                <div class="flex items-center gap-1 flex-shrink-0">
+                  <button v-if="t.status === 'PENDING'" @click="payTransaction(t)" class="px-3 py-2 text-xs font-semibold text-emerald-700 bg-emerald-50 rounded-lg active:bg-emerald-100">Pagar</button>
+                  <button @click="openEditModal(t)" class="p-2 text-blue-500 rounded-lg active:bg-blue-50" aria-label="Editar">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                  </button>
+                  <button @click="deleteTransaction(t)" class="p-2 text-red-500 rounded-lg active:bg-red-50" aria-label="Excluir">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li v-if="isLoading" class="p-8 text-center text-sm text-gray-400">Carregando lançamentos...</li>
+          <li v-else-if="paginatedTransactions.length === 0" class="p-8 text-center text-gray-500">Nenhum lançamento encontrado.</li>
+        </ul>
+
+        <div class="hidden md:block overflow-x-auto">
         <table class="w-full text-left min-w-[700px]">
           <thead class="bg-gray-50 text-gray-600 text-sm font-semibold uppercase border-b border-gray-100">
             <tr>
@@ -132,6 +172,7 @@
             </tr>
           </tbody>
         </table>
+        </div>
 
         <!-- Pagination Controls -->
         <div class="p-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between text-sm text-gray-500 bg-gray-50/50 gap-4">
@@ -170,7 +211,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
 import Swal from 'sweetalert2'
 import MainLayout from '@/components/layout/MainLayout.vue'
@@ -180,6 +221,7 @@ import StatementImportModal from '@/presentation/components/domain/StatementImpo
 import { transactionRepository } from '@/data/repositories/TransactionRepositoryImpl'
 
 const router = useRouter()
+const route = useRoute()
 const transactions = ref<any[]>([])
 
 const isLoading = ref(true)
@@ -240,7 +282,7 @@ const paginatedTransactions = computed(() => {
     return filteredTransactions.value.slice(start, end)
 })
 
-watch([searchQuery, itemsPerPage, sortOrder], () => {
+watch([searchQuery, filterType, filterStatus, itemsPerPage, sortOrder], () => {
     currentPage.value = 1
 })
 
@@ -291,7 +333,25 @@ const fetchData = async () => {
     }
 }
 
-onMounted(fetchData)
+// Links vindos de notificações (?status=PENDING) e do botão "+" da barra inferior (?new=1).
+const applyRouteQuery = () => {
+    const status = route.query.status
+    if (status === 'PENDING' || status === 'PAID') {
+        filterStatus.value = status
+        showFilters.value = true
+    }
+    if (route.query.new === '1') {
+        openCreateModal()
+        const { new: _new, ...rest } = route.query
+        router.replace({ query: rest })
+    }
+}
+
+onMounted(() => {
+    fetchData()
+    applyRouteQuery()
+})
+watch(() => route.query, applyRouteQuery)
 
 const openCreateModal = () => {
     transactionToEdit.value = null;

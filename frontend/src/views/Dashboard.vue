@@ -61,6 +61,8 @@
 
     <SetupChecklist ref="setupChecklist" @new-transaction="openModal = true" />
 
+    <UpcomingBills ref="upcomingBills" @paid="fetchAnalytics" />
+
     <!-- Alerta de Saúde Financeira -->
     <div v-if="healthStatus === 'critical'" class="mb-8 bg-red-50 border-l-4 border-red-500 p-4 rounded-xl flex items-center justify-between shadow-sm animate-pulse">
         <div class="flex items-center gap-3">
@@ -303,6 +305,7 @@ import { toast } from 'vue3-toastify'
 import MainLayout from '@/components/layout/MainLayout.vue'
 import TransactionModal from '@/presentation/components/domain/TransactionModal.vue'
 import SetupChecklist from '@/presentation/components/domain/SetupChecklist.vue'
+import UpcomingBills from '@/presentation/components/domain/UpcomingBills.vue'
 import { escapeHtml } from '@/core/security/escapeHtml'
 import api from '@/data/api/HttpClient'
 import { useWorkspaceStore } from '@/presentation/store/workspaceStore'
@@ -454,10 +457,12 @@ const fetchAnalytics = async () => {
 }
 
 const setupChecklist = ref<InstanceType<typeof SetupChecklist> | null>(null)
+const upcomingBills = ref<InstanceType<typeof UpcomingBills> | null>(null)
 
 const onTransactionSaved = () => {
     fetchAnalytics()
     setupChecklist.value?.refresh()
+    upcomingBills.value?.reload()
 }
 
 onMounted(() => {

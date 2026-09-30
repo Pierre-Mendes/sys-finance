@@ -670,7 +670,7 @@ const formatDate = (dateStr: string) => {
               </div>
               <div class="col-span-1">
                 <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Valor Total R$</label>
-                <input v-model.number="newTx.amount" type="number" step="0.01" class="w-full rounded-xl border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white p-2.5 border focus:ring-2 focus:ring-primary/20 outline-none transition" />
+                <input v-model.number="newTx.amount" type="number" inputmode="decimal" step="0.01" class="w-full rounded-xl border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white p-2.5 border focus:ring-2 focus:ring-primary/20 outline-none transition" />
               </div>
               <div class="col-span-1">
                 <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Nº de Parcelas</label>
