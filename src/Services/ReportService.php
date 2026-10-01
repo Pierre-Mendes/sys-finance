@@ -16,6 +16,8 @@ use DateTimeImmutable;
  */
 class ReportService {
     public const FORECAST_HORIZONS = [30, 60, 90];
+    /** Meses de saldo realizado mostrados antes da previsão (linha sólida antes da tracejada). */
+    public const HISTORY_MONTHS = 6;
     private const MONTHS = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
     private const PIE_SLICES = 7;
 
@@ -188,11 +190,32 @@ class ReportService {
             'firstNegativeDate' => $firstNegative,
             'stale' => ['count' => $stale['count'], 'amount' => round($stale['amount'], 2), 'olderThanDays' => BillReminderService::STALE_AFTER_DAYS],
             'points' => $points,
+            'history' => $this->balanceHistory($workspaceId, $today, $start),
             'events' => array_map(fn ($e) => array_merge($e, ['amount' => round($e['amount'], 2)]), array_slice($events, 0, 50)),
         ];
     }
 
     // ---------------------------------------------------------------- helpers
+
+    /**
+     * Saldo realizado no último dia de cada um dos HISTORY_MONTHS meses anteriores e hoje.
+     * O último ponto é igual ao primeiro da previsão, então as duas linhas se encontram.
+     *
+     * @return array<int, array{date: string, balance: float}>
+     */
+    private function balanceHistory(int $workspaceId, DateTimeImmutable $today, float $currentBalance): array {
+        $out = [];
+        $thisMonth = $today->modify('first day of this month');
+        for ($i = self::HISTORY_MONTHS; $i >= 1; $i--) {
+            $nextMonthStart = $thisMonth->modify('-' . ($i - 1) . ' months');
+            $out[] = [
+                'date' => $nextMonthStart->modify('-1 day')->format('Y-m-d'),
+                'balance' => round($this->repo->paidNetBefore($workspaceId, $nextMonthStart->format('Y-m-d')), 2),
+            ];
+        }
+        $out[] = ['date' => $today->format('Y-m-d'), 'balance' => round($currentBalance, 2)];
+        return $out;
+    }
 
     private function timeline(int $workspaceId, DateTimeImmutable $first, int $count, array $byMonth, bool $withYear): array {
         $balance = $this->repo->paidNetBefore($workspaceId, $first->format('Y-m-d'));

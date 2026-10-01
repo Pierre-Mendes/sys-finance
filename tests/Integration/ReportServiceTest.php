@@ -188,4 +188,23 @@ class ReportServiceTest extends TestCase
         $this->assertSame(['count' => 1, 'amount' => -900.0, 'olderThanDays' => 30], $f['stale']);
         $this->assertNotContains('IPTU esquecido', array_column($f['events'], 'title'));
     }
+
+    public function test_forecast_history_ends_where_the_projection_starts(): void
+    {
+        $this->add('asset', 'Salário', 3000, '2026-06-05', 'Salário');
+        $this->add('bill', 'Mercado', 500, '2026-08-10', 'Alimentação');
+        $this->add('asset', 'Salário', 3000, '2026-10-01', 'Salário');
+        $this->add('bill', 'Luz', 200, '2026-10-20', 'Moradia', 'PENDING');
+
+        $f = $this->reports->forecast($this->ws, new DateTimeImmutable('2026-10-15'), 30);
+
+        $this->assertSame(
+            ['2026-04-30', '2026-05-31', '2026-06-30', '2026-07-31', '2026-08-31', '2026-09-30', '2026-10-15'],
+            array_column($f['history'], 'date'),
+            '6 fins de mês (sem o mês corrente incompleto) + hoje'
+        );
+        $this->assertSame([0.0, 0.0, 3000.0, 3000.0, 2500.0, 2500.0, 5500.0], array_column($f['history'], 'balance'));
+        $this->assertSame($f['points'][0]['date'], end($f['history'])['date']);
+        $this->assertSame($f['startBalance'], end($f['history'])['balance'], 'As linhas se encontram em hoje');
+    }
 }

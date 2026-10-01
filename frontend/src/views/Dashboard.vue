@@ -63,7 +63,9 @@
 
     <OverdueReview ref="overdueReview" @changed="onTransactionSaved" />
 
-    <UpcomingBills ref="upcomingBills" @paid="fetchAnalytics" />
+    <UpcomingBills ref="upcomingBills" @paid="onTransactionSaved" />
+
+    <ForecastCard ref="forecastCard" class="mb-8" />
 
     <!-- Alerta de Saúde Financeira -->
     <div v-if="healthStatus === 'critical'" class="mb-8 bg-red-50 border-l-4 border-red-500 p-4 rounded-xl flex items-center justify-between shadow-sm animate-pulse">
@@ -310,6 +312,7 @@ import TransactionModal from '@/presentation/components/domain/TransactionModal.
 import SetupChecklist from '@/presentation/components/domain/SetupChecklist.vue'
 import UpcomingBills from '@/presentation/components/domain/UpcomingBills.vue'
 import OverdueReview from '@/presentation/components/domain/OverdueReview.vue'
+import ForecastCard from '@/presentation/components/reports/ForecastCard.vue'
 import { escapeHtml } from '@/core/security/escapeHtml'
 import api from '@/data/api/HttpClient'
 import { useWorkspaceStore } from '@/presentation/store/workspaceStore'
@@ -463,12 +466,14 @@ const fetchAnalytics = async () => {
 const setupChecklist = ref<InstanceType<typeof SetupChecklist> | null>(null)
 const upcomingBills = ref<InstanceType<typeof UpcomingBills> | null>(null)
 const overdueReview = ref<InstanceType<typeof OverdueReview> | null>(null)
+const forecastCard = ref<InstanceType<typeof ForecastCard> | null>(null)
 
 const onTransactionSaved = () => {
     fetchAnalytics()
     setupChecklist.value?.refresh()
     upcomingBills.value?.reload()
     overdueReview.value?.reload()
+    forecastCard.value?.reload()
 }
 
 onMounted(() => {
