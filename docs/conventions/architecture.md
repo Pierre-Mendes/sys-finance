@@ -65,4 +65,7 @@ Não há container de DI: as dependências são montadas à mão em `public/inde
   `BillReminderService`: contas `PENDING` com `due_date` nos dias escolhidos (`notification_settings`) viram aviso no
   sino (`notifications`) e um push resumido por usuário (`push_subscriptions`, `WebPushSender`). `bill_reminders_sent`
   garante um aviso por conta/usuário/tipo/vencimento. Chaves VAPID geradas e guardadas em `app_secrets`.
+- **Relatórios** (`ReportService` + `ReportRepository`): mensal/anual e previsão de saldo. Contam só `PAID`;
+  as somas por mês/categoria/dia são feitas em PHP (SQL portável). Percentual sem base volta `null`, nunca NaN.
+  A previsão soma pendentes (atrasados entram hoje), próximas recorrências e compras de cartão sem fatura.
 - **PWA**: `frontend/public/manifest.webmanifest` + `sw.js` (push e tela offline; não guarda dados da API).

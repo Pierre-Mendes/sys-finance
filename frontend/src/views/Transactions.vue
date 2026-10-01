@@ -333,11 +333,16 @@ const fetchData = async () => {
     }
 }
 
-// Links vindos de notificações (?status=PENDING) e do botão "+" da barra inferior (?new=1).
+// Links vindos de notificações (?status=PENDING), de Relatórios (?q=) e do botão "+" da barra inferior (?new=1).
 const applyRouteQuery = () => {
     const status = route.query.status
     if (status === 'PENDING' || status === 'PAID') {
         filterStatus.value = status
+        showFilters.value = true
+    }
+    // Detalhamento vindo de Relatórios (?q=<categoria>)
+    if (typeof route.query.q === 'string' && route.query.q) {
+        searchQuery.value = route.query.q
         showFilters.value = true
     }
     if (route.query.new === '1') {

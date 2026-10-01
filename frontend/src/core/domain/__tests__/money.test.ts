@@ -1,0 +1,17 @@
+import { describe, it, expect } from 'vitest'
+import { formatBRLCompact, formatChange } from '../money'
+
+describe('money', () => {
+  it('formata eixos de forma compacta', () => {
+    expect(formatBRLCompact(1234)).toBe('R$ 1,2 mil')
+    expect(formatBRLCompact(-2_500_000)).toBe('-R$ 2,5 mi')
+    expect(formatBRLCompact(800)).toBe('R$ 800')
+  })
+
+  it('nunca mostra NaN: variação sem base vira travessão', () => {
+    expect(formatChange(null)).toBe('—')
+    expect(formatChange(NaN)).toBe('—')
+    expect(formatChange(12.5)).toBe('+12,5%')
+    expect(formatChange(-3)).toBe('-3%')
+  })
+})

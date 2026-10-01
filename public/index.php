@@ -156,10 +156,13 @@ $app->group('/api/transactions', function (\Slim\Routing\RouteCollectorProxy $gr
 
 $app->get('/api/dashboard', [$dashController, 'index'])->add($workspaceMiddleware)->add($authMiddleware);
 
-$reportController = new \App\Controllers\ReportController($txService);
+$reportController = new \App\Controllers\ReportController($txService, new \App\Services\ReportService(new \App\Repositories\ReportRepository($db)));
 $app->group('/api/reports', function (\Slim\Routing\RouteCollectorProxy $group) use ($reportController) {
     $group->get('/pdf', [$reportController, 'generatePdf']);
     $group->get('/csv', [$reportController, 'generateCsv']);
+    $group->get('/summary', [$reportController, 'summary']);
+    $group->get('/summary/csv', [$reportController, 'summaryCsv']);
+    $group->get('/forecast', [$reportController, 'forecast']);
 })->add($workspaceMiddleware)->add($authMiddleware);
 
 $budgetRepo = new \App\Repositories\BudgetRepository($db);

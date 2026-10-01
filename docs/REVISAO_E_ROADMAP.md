@@ -120,7 +120,22 @@ Arquivo: `.github/workflows/security.yml`
 
 ---
 
-## 5. Roadmap de funcionalidades (inspirado em apps como o Recta)
+## 5. Relatórios (out/2026)
+
+Tela `/reports` refeita a partir do mapeamento do Recta, sem os bugs observados lá:
+
+| Recurso | Observação |
+|---|---|
+| Mensal / Anual com KPIs, variação e taxa de poupança | variação sem base mostra "—" (o Recta mostrava 100% ou NaN%) |
+| Insights automáticos (até 3) | déficit, poupança, despesas em alta/queda, mês acima da média, categoria dominante |
+| Previsão de saldo 30/60/90 dias | inclui recorrências e compras de cartão sem fatura; alerta a data em que o saldo fica negativo |
+| Receitas × despesas e saldo acumulado | 12 meses até o mês escolhido (não até hoje); acumulado é o saldo real, não zera |
+| Pizzas por categoria + lista com valores | até 7 fatias + "Outras" |
+| Média dos 6 meses anteriores, dia da semana e calendário de gastos | só no mensal |
+| Tabela por categoria | ordenável, com total; clicar abre os lançamentos da categoria |
+| CSV do relatório | `;` + vírgula decimal + BOM (abre certo no Excel em português) |
+
+## 6. Roadmap de funcionalidades (inspirado em apps como o Recta)
 
 Ordenado por impacto na experiência de "registrar rápido, organizar depois":
 

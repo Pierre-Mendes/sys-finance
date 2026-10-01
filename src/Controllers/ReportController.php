@@ -2,7 +2,10 @@
 
 namespace App\Controllers;
 
+use App\Services\ReportService;
 use App\Services\TransactionService;
+use DateTimeImmutable;
+use DateTimeZone;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Dompdf\Dompdf;
@@ -10,9 +13,105 @@ use Dompdf\Options;
 
 class ReportController {
     private TransactionService $txService;
+    private ?ReportService $reports;
 
-    public function __construct(TransactionService $txService) {
+    public function __construct(TransactionService $txService, ?ReportService $reports = null) {
         $this->txService = $txService;
+        $this->reports = $reports;
+    }
+
+    /** GET /api/reports/summary?type=monthly&month=2026-09 | type=annual&year=2026 */
+    public function summary(Request $request, Response $response): Response {
+        $workspaceId = (int) $request->getAttribute('workspaceId');
+        $period = self::period($request->getQueryParams());
+        if ($period === null) {
+            return self::json($response, ['error' => 'Período inválido. Use type=monthly&month=AAAA-MM ou type=annual&year=AAAA.'], 400);
+        }
+
+        $data = $period['type'] === 'monthly'
+            ? $this->reports->monthly($workspaceId, $period['month'])
+            : $this->reports->annual($workspaceId, $period['year'], self::today());
+        return self::json($response, ['data' => $data]);
+    }
+
+    /** GET /api/reports/forecast?days=30|60|90 */
+    public function forecast(Request $request, Response $response): Response {
+        $days = (int) ($request->getQueryParams()['days'] ?? 90);
+        if (!in_array($days, ReportService::FORECAST_HORIZONS, true)) {
+            return self::json($response, ['error' => 'Horizonte inválido. Use 30, 60 ou 90 dias.'], 400);
+        }
+        $data = $this->reports->forecast((int) $request->getAttribute('workspaceId'), self::today(), $days);
+        return self::json($response, ['data' => $data]);
+    }
+
+    /**
+     * GET /api/reports/summary/csv: resumo, categorias e mês a mês do relatório na tela.
+     * Separador ";" e vírgula decimal (Excel em português); BOM para o Excel ler UTF-8.
+     */
+    public function summaryCsv(Request $request, Response $response): Response {
+        $period = self::period($request->getQueryParams());
+        if ($period === null) {
+            return self::json($response, ['error' => 'Período inválido.'], 400);
+        }
+        $workspaceId = (int) $request->getAttribute('workspaceId');
+        $r = $period['type'] === 'monthly'
+            ? $this->reports->monthly($workspaceId, $period['month'])
+            : $this->reports->annual($workspaceId, $period['year'], self::today());
+
+        $money = fn ($v) => number_format((float) $v, 2, ',', '');
+        $pct = fn ($v) => $v === null ? '' : number_format((float) $v, 1, ',', '');
+
+        $out = fopen('php://temp', 'w');
+        fwrite($out, "\xEF\xBB\xBF");
+        $put = fn (array $row) => fputcsv($out, $row, ';', '"', '');
+        $put(['Relatório ' . ($r['type'] === 'monthly' ? 'mensal' : 'anual'), $r['period']['label']]);
+        $put([]);
+        $put(['Resumo', 'Valor (R$)']);
+        $put(['Receitas', $money($r['kpis']['income'])]);
+        $put(['Despesas', $money($r['kpis']['expense'])]);
+        $put(['Saldo', $money($r['kpis']['balance'])]);
+        $put(['Taxa de poupança (%)', $pct($r['kpis']['savingsRate'])]);
+        $put([]);
+        $put(['Categoria', 'Receitas (R$)', 'Despesas (R$)', 'Saldo (R$)', '% das receitas', '% das despesas']);
+        foreach ($r['categories'] as $c) {
+            $put([self::csvCell($c['name']), $money($c['income']), $money($c['expense']), $money($c['net']), $pct($c['incomeShare']), $pct($c['expenseShare'])]);
+        }
+        $put([]);
+        $put(['Mês', 'Receitas (R$)', 'Despesas (R$)', 'Resultado (R$)', 'Saldo acumulado (R$)']);
+        foreach ($r['timeline'] as $m) {
+            $put([$m['period'], $money($m['income']), $money($m['expense']), $money($m['net']), $money($m['balance'])]);
+        }
+        rewind($out);
+        $csv = stream_get_contents($out);
+        fclose($out);
+
+        $name = $r['type'] === 'monthly' ? "relatorio_mensal_{$period['month']}.csv" : "relatorio_anual_{$period['year']}.csv";
+        $response->getBody()->write($csv);
+        return $response->withHeader('Content-Type', 'text/csv; charset=utf-8')
+                        ->withHeader('Content-Disposition', "attachment; filename=\"{$name}\"");
+    }
+
+    /** Valida type/month/year da query. Valores fora do formato voltam null (400). */
+    public static function period(array $q): ?array {
+        $type = $q['type'] ?? 'monthly';
+        if ($type === 'monthly') {
+            $month = (string) ($q['month'] ?? self::today()->format('Y-m'));
+            return preg_match('/^(19|20)\d{2}-(0[1-9]|1[0-2])$/', $month) ? ['type' => 'monthly', 'month' => $month] : null;
+        }
+        if ($type === 'annual') {
+            $year = (string) ($q['year'] ?? self::today()->format('Y'));
+            return preg_match('/^(19|20)\d{2}$/', $year) ? ['type' => 'annual', 'year' => (int) $year] : null;
+        }
+        return null;
+    }
+
+    private static function today(): DateTimeImmutable {
+        return new DateTimeImmutable('now', new DateTimeZone(getenv('APP_TIMEZONE') ?: 'America/Sao_Paulo'));
+    }
+
+    private static function json(Response $response, array $data, int $status = 200): Response {
+        $response->getBody()->write(json_encode($data));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus($status);
     }
 
     public function generatePdf(Request $request, Response $response): Response {
