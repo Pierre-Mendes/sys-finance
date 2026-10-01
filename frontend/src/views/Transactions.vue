@@ -5,7 +5,7 @@
         <div class="grid grid-cols-2 md:flex md:flex-row gap-3 w-full md:w-auto items-center">
           <button @click="showFilters = !showFilters" class="w-full md:w-auto px-4 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary shadow-sm flex items-center justify-center gap-2 transition">
              <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
-             Filtros {{ (filterType || filterStatus || searchQuery) ? '(Ativos)' : '' }}
+             Filtros {{ (filterType || filterStatus || searchQuery || filterCategory || filterFrom || filterTo) ? '(Ativos)' : '' }}
           </button>
           
           <button @click="openImportModal" class="w-full sm:w-auto bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 px-5 py-2.5 rounded-lg font-medium shadow-sm transition cursor-pointer flex items-center justify-center gap-2 whitespace-nowrap">
@@ -52,6 +52,15 @@
                   Limpar Filtros
               </button>
           </div>
+      </div>
+
+      <div v-if="filterCategory || filterFrom || filterTo" class="mb-4 flex flex-wrap items-center gap-2 text-sm">
+        <span class="text-gray-500">Mostrando:</span>
+        <span v-if="filterCategory" class="px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-800 font-medium">{{ filterCategory }}</span>
+        <span v-if="filterFrom || filterTo" class="px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-800 font-medium">
+          {{ filterFrom ? formatDate(filterFrom) : '…' }} a {{ filterTo ? formatDate(filterTo) : '…' }}
+        </span>
+        <button type="button" @click="clearDrillDown" class="text-red-600 hover:underline font-medium">Limpar</button>
       </div>
 
       <div class="hidden sm:flex bg-blue-50 border border-blue-200 rounded-xl p-4 gap-3 text-blue-800 text-sm mb-6 items-start shadow-sm">
@@ -234,6 +243,10 @@ const showFilters = ref(false)
 const searchQuery = ref('')
 const filterType = ref('')
 const filterStatus = ref('')
+// Detalhamento vindo de Relatórios: categoria exata e período do relatório
+const filterCategory = ref('')
+const filterFrom = ref('')
+const filterTo = ref('')
 const currentPage = ref(1)
 const itemsPerPage = ref(10)
 const sortOrder = ref('desc')
@@ -247,6 +260,16 @@ const filteredTransactions = computed(() => {
     
     if (filterStatus.value) {
         result = result.filter(t => t.status === filterStatus.value)
+    }
+
+    if (filterCategory.value) {
+        result = result.filter(t => t.categoryName === filterCategory.value)
+    }
+    if (filterFrom.value) {
+        result = result.filter(t => (t.date || '').slice(0, 10) >= filterFrom.value)
+    }
+    if (filterTo.value) {
+        result = result.filter(t => (t.date || '').slice(0, 10) <= filterTo.value)
     }
 
     if (searchQuery.value) {
@@ -266,10 +289,19 @@ const filteredTransactions = computed(() => {
     return result
 })
 
+const clearDrillDown = () => {
+    filterCategory.value = ''
+    filterFrom.value = ''
+    filterTo.value = ''
+    const { category: _c, from: _f, to: _t, ...rest } = route.query
+    router.replace({ query: rest })
+}
+
 const clearFilters = () => {
     searchQuery.value = ''
     filterType.value = ''
     filterStatus.value = ''
+    clearDrillDown()
 }
 
 const totalPages = computed(() => {
@@ -282,7 +314,7 @@ const paginatedTransactions = computed(() => {
     return filteredTransactions.value.slice(start, end)
 })
 
-watch([searchQuery, filterType, filterStatus, itemsPerPage, sortOrder], () => {
+watch([searchQuery, filterType, filterStatus, filterCategory, filterFrom, filterTo, itemsPerPage, sortOrder], () => {
     currentPage.value = 1
 })
 
@@ -345,6 +377,10 @@ const applyRouteQuery = () => {
         searchQuery.value = route.query.q
         showFilters.value = true
     }
+    const isDate = (v: unknown): v is string => typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v)
+    if (typeof route.query.category === 'string') filterCategory.value = route.query.category
+    if (isDate(route.query.from)) filterFrom.value = route.query.from
+    if (isDate(route.query.to)) filterTo.value = route.query.to
     if (route.query.new === '1') {
         openCreateModal()
         const { new: _new, ...rest } = route.query

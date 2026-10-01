@@ -275,7 +275,7 @@ const exportSummary = async () => {
 
 const drill = (category: string) => {
   if (category === 'Outras') return
-  router.push({ path: '/transactions', query: { q: category } })
+  router.push({ path: '/transactions', query: { category, from: report.value.period.from, to: report.value.period.to } })
 }
 
 // ---- KPIs

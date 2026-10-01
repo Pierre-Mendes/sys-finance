@@ -116,7 +116,6 @@ Arquivo: `.github/workflows/security.yml`
 | Baixa | `TransactionService::getFilteredForUser` filtra em memória e `CreditCardService::getAllCards` faz N+1. |
 | Baixa | Views antigas (`Categories.vue`, `Budgets.vue`…) usam `axios` direto em vez do `HttpClient`, duplicando headers. |
 | Baixa | SQL do Dashboard é específico de MySQL; os testes (SQLite) não cobrem esse serviço. |
-| Baixa | Dashboard dispara `Element not found` do ApexCharts no console ao carregar (gráficos aparecem normalmente). |
 
 ---
 
@@ -132,7 +131,7 @@ Tela `/reports` refeita a partir do mapeamento do Recta, sem os bugs observados 
 | Receitas × despesas e saldo acumulado | 12 meses até o mês escolhido (não até hoje); acumulado é o saldo real, não zera |
 | Pizzas por categoria + lista com valores | até 7 fatias + "Outras" |
 | Média dos 6 meses anteriores, dia da semana e calendário de gastos | só no mensal |
-| Tabela por categoria | ordenável, com total; clicar abre os lançamentos da categoria |
+| Tabela por categoria | ordenável, com total; clicar abre os lançamentos daquela categoria **no período do relatório** |
 | CSV do relatório | `;` + vírgula decimal + BOM (abre certo no Excel em português) |
 
 ## 6. Roadmap de funcionalidades (inspirado em apps como o Recta)

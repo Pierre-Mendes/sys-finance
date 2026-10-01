@@ -37,3 +37,10 @@ npx vue-tsc -b         # typecheck
 npx vitest run         # testes
 npm run build
 ```
+
+## Gráficos (ApexCharts)
+
+- Não desmonte um `<apexchart>` com `v-if` enquanto os dados recarregam: se o elemento sai do DOM no meio do
+  desenho, o ApexCharts rejeita com `Element not found`. Mantenha montado e sinalize a recarga (ex.: `opacity-50`).
+- Nomes vindos do usuário em `labels`/tooltip sempre com `escapeHtml` (o ApexCharts usa `innerHTML`).
+- Valores em R$ com `formatBRL`/`formatBRLCompact` (`core/domain/money.ts`); variação sem base é `null` → "—".

@@ -13,8 +13,9 @@
       </div>
     </header>
 
-    <div v-if="loading" class="h-64 flex items-center justify-center text-sm text-gray-400">Calculando previsão...</div>
-    <template v-else-if="data">
+    <div v-if="!data && loading" class="h-64 flex items-center justify-center text-sm text-gray-400">Calculando previsão...</div>
+    <!-- Ao trocar o horizonte o gráfico continua montado (desmontar no meio do desenho gera "Element not found") -->
+    <div v-else-if="data" :class="{ 'opacity-60 pointer-events-none': loading }">
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
         <div class="rounded-xl bg-gray-50 p-3">
           <p class="text-xs text-gray-500">Saldo hoje</p>
@@ -57,7 +58,7 @@
           </li>
         </ul>
       </details>
-    </template>
+    </div>
   </section>
 </template>
 

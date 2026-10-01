@@ -260,7 +260,8 @@
                 </select>
             </div>
             <div class="flex-1 flex items-center justify-center relative">
-                <apexchart v-if="!isRefreshing && categoryChartSeries.length" type="donut" width="300" :options="categoryChartOpts" :series="categoryChartSeries"></apexchart>
+                <!-- Não desmontar durante a atualização: remover o gráfico no meio do desenho gera "Element not found" no ApexCharts -->
+                <apexchart v-if="categoryChartSeries.length" :class="{ 'opacity-50': isRefreshing }" type="donut" width="300" :options="categoryChartOpts" :series="categoryChartSeries"></apexchart>
                 <div v-else-if="!isRefreshing" class="text-gray-400 text-sm">Sem dados suficientes.</div>
             </div>
         </div>
