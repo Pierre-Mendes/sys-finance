@@ -152,6 +152,8 @@ $app->group('/api/transactions', function (\Slim\Routing\RouteCollectorProxy $gr
     $group->put('/{id}', [$txController, 'update'])->add(\App\Middleware\GatekeeperMiddleware::requireEditor('transactions'));
     $group->delete('/{id}', [$txController, 'delete'])->add(\App\Middleware\GatekeeperMiddleware::requireEditor('transactions'));
     $group->post('/{id}/pay', [$txController, 'pay'])->add(\App\Middleware\GatekeeperMiddleware::requireEditor('transactions'));
+    $group->post('/{id}/reschedule', [$txController, 'reschedule'])->add(\App\Middleware\GatekeeperMiddleware::requireEditor('transactions'));
+    $group->post('/{id}/cancel', [$txController, 'cancel'])->add(\App\Middleware\GatekeeperMiddleware::requireEditor('transactions'));
 })->add($workspaceMiddleware)->add($authMiddleware);
 
 $app->get('/api/dashboard', [$dashController, 'index'])->add($workspaceMiddleware)->add($authMiddleware);

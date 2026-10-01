@@ -45,6 +45,12 @@
         <p>O saldo fica positivo nos próximos {{ data.days }} dias. Menor saldo: {{ formatBRL(data.min.balance) }} em {{ formatDay(data.min.date) }}.</p>
       </div>
 
+      <p v-if="data.stale?.count" class="mb-4 text-sm text-amber-900 bg-amber-50 border border-amber-200 rounded-xl p-3">
+        {{ data.stale.count }} {{ data.stale.count === 1 ? 'conta atrasada' : 'contas atrasadas' }} há mais de {{ data.stale.olderThanDays }} dias
+        ({{ formatBRL(Math.abs(data.stale.amount)) }}) {{ data.stale.count === 1 ? 'ficou' : 'ficaram' }} fora da previsão.
+        <router-link :to="{ path: '/dashboard', query: { review: 'overdue' } }" class="font-semibold underline">Revisar</router-link>
+      </p>
+
       <apexchart type="area" height="260" :options="chartOptions" :series="series" />
 
       <details v-if="data.events.length" class="mt-4 group">

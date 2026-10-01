@@ -76,7 +76,7 @@
                 {{ tooltipData.title }}
             </span>
             <span class="block text-gray-300 mt-0.5">{{ tooltipData.description || 'Sem descrição' }}</span>
-            <span class="block mt-1 font-bold" :class="tooltipData.status === 'PAID' ? 'text-green-400' : 'text-amber-400'">{{ tooltipData.status === 'PAID' ? 'Pago' : 'Pendente' }}</span>
+            <span class="block mt-1 font-bold" :class="tooltipData.status === 'PAID' ? 'text-green-400' : 'text-amber-400'">{{ tooltipData.status === 'PAID' ? 'Pago' : tooltipData.status === 'CANCELED' ? 'Desconsiderada' : 'Pendente' }}</span>
         </div>
     </Teleport>
 
@@ -115,7 +115,7 @@
                          </div>
                          <div class="flex justify-between"><span class="text-gray-500">Status de Quitação:</span> 
                              <span class="font-bold px-2 py-0.5 rounded text-[10px] uppercase tracking-wider" :class="selectedTransaction.status === 'PAID' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'">
-                                 {{ selectedTransaction.status === 'PAID' ? 'Pago (Baixado)' : 'Pendente' }}
+                                 {{ selectedTransaction.status === 'PAID' ? 'Pago (Baixado)' : selectedTransaction.status === 'CANCELED' ? 'Desconsiderada' : 'Pendente' }}
                              </span>
                          </div>
                      </div>

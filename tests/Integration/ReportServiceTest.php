@@ -175,4 +175,17 @@ class ReportServiceTest extends TestCase
             $this->assertLessThanOrEqual(6, count(str_getcsv($line, ';', '"', '')), $line);
         }
     }
+
+    public function test_forecast_leaves_out_bills_overdue_for_over_30_days_and_reports_them(): void
+    {
+        $this->add('asset', 'Salário', 1000, '2026-09-01', 'Salário');
+        $this->add('bill', 'IPTU esquecido', 900, '2026-06-01', 'Impostos', 'PENDING', ['due_date' => '2026-06-10']);
+        $this->add('bill', 'Luz', 100, '2026-09-25', 'Moradia', 'PENDING', ['due_date' => '2026-09-28']);
+
+        $f = $this->reports->forecast($this->ws, new DateTimeImmutable('2026-10-01'), 30);
+
+        $this->assertSame(900.0, $f['endBalance'], 'Só a Luz (atrasada há 3 dias) entra');
+        $this->assertSame(['count' => 1, 'amount' => -900.0, 'olderThanDays' => 30], $f['stale']);
+        $this->assertNotContains('IPTU esquecido', array_column($f['events'], 'title'));
+    }
 }

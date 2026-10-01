@@ -112,11 +112,11 @@ class ReportRepository {
     /**
      * Compras de cartão no intervalo, com o cartão (nome e dia de vencimento).
      *
-     * @return array<int, array{cardName: string, dueDay: int, date: string, amount: float}>
+     * @return array<int, array{cardName: string, closingDay: int, dueDay: int, date: string, amount: float}>
      */
     public function cardPurchasesBetween(int $workspaceId, string $from, string $to): array {
         $stmt = $this->db->prepare("
-            SELECT c.Name AS card, c.DueDay AS due_day, t.Date AS d, t.Amount AS amount
+            SELECT c.Name AS card, c.ClosingDay AS closing_day, c.DueDay AS due_day, t.Date AS d, t.Amount AS amount
             FROM credit_card_transactions t
             INNER JOIN credit_cards c ON c.CardId = t.CardId AND c.WorkspaceId = t.WorkspaceId
             WHERE t.WorkspaceId = ? AND t.Date BETWEEN ? AND ?
@@ -124,6 +124,7 @@ class ReportRepository {
         $stmt->execute([$workspaceId, $from, $to]);
         return array_map(fn ($r) => [
             'cardName' => (string) $r['card'],
+            'closingDay' => (int) $r['closing_day'],
             'dueDay' => (int) $r['due_day'],
             'date' => substr((string) $r['d'], 0, 10),
             'amount' => (float) $r['amount'],

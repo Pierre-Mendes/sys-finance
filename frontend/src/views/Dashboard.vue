@@ -61,6 +61,8 @@
 
     <SetupChecklist ref="setupChecklist" @new-transaction="openModal = true" />
 
+    <OverdueReview ref="overdueReview" @changed="onTransactionSaved" />
+
     <UpcomingBills ref="upcomingBills" @paid="fetchAnalytics" />
 
     <!-- Alerta de Saúde Financeira -->
@@ -307,6 +309,7 @@ import MainLayout from '@/components/layout/MainLayout.vue'
 import TransactionModal from '@/presentation/components/domain/TransactionModal.vue'
 import SetupChecklist from '@/presentation/components/domain/SetupChecklist.vue'
 import UpcomingBills from '@/presentation/components/domain/UpcomingBills.vue'
+import OverdueReview from '@/presentation/components/domain/OverdueReview.vue'
 import { escapeHtml } from '@/core/security/escapeHtml'
 import api from '@/data/api/HttpClient'
 import { useWorkspaceStore } from '@/presentation/store/workspaceStore'
@@ -459,11 +462,13 @@ const fetchAnalytics = async () => {
 
 const setupChecklist = ref<InstanceType<typeof SetupChecklist> | null>(null)
 const upcomingBills = ref<InstanceType<typeof UpcomingBills> | null>(null)
+const overdueReview = ref<InstanceType<typeof OverdueReview> | null>(null)
 
 const onTransactionSaved = () => {
     fetchAnalytics()
     setupChecklist.value?.refresh()
     upcomingBills.value?.reload()
+    overdueReview.value?.reload()
 }
 
 onMounted(() => {

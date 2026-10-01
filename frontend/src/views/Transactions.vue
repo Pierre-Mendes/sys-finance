@@ -44,6 +44,7 @@
                  <option value="">Todos os Status</option>
                  <option value="PAID">Já Pagos</option>
                  <option value="PENDING">Pendentes</option>
+                 <option value="CANCELED">Desconsideradas</option>
               </select>
           </div>
           <div class="w-full md:w-auto">
@@ -89,8 +90,9 @@
               <div class="flex items-center justify-between gap-2 mt-2">
                 <div class="flex items-center gap-2 min-w-0">
                   <span v-if="t.status === 'PAID'" class="px-2 py-0.5 text-[10px] font-bold bg-green-100 text-green-700 rounded-full uppercase">Pago</span>
+                  <span v-else-if="t.status === 'CANCELED'" class="px-2 py-0.5 text-[10px] font-bold bg-gray-100 text-gray-600 rounded-full uppercase">Desconsiderada</span>
                   <span v-else class="px-2 py-0.5 text-[10px] font-bold bg-amber-100 text-amber-700 rounded-full uppercase">Pendente</span>
-                  <span v-if="t.dueDate && t.status !== 'PAID'" class="text-[11px] whitespace-nowrap" :class="isOverdue(t.dueDate) ? 'text-red-600 font-semibold' : 'text-gray-500'">
+                  <span v-if="t.dueDate && t.status === 'PENDING'" class="text-[11px] whitespace-nowrap" :class="isOverdue(t.dueDate) ? 'text-red-600 font-semibold' : 'text-gray-500'">
                     Vence {{ formatDate(t.dueDate).slice(0, 5) }}
                   </span>
                 </div>
@@ -144,9 +146,10 @@
               <td class="p-4">
                   <div class="flex flex-col gap-1 items-start">
                       <span v-if="t.status === 'PAID'" class="px-2 py-0.5 text-[10px] font-bold bg-green-100 text-green-700 rounded-full uppercase border border-green-200">Pago</span>
+                      <span v-else-if="t.status === 'CANCELED'" class="px-2 py-0.5 text-[10px] font-bold bg-gray-100 text-gray-600 rounded-full uppercase border border-gray-200">Desconsiderada</span>
                       <span v-else class="px-2 py-0.5 text-[10px] font-bold bg-amber-100 text-amber-700 rounded-full uppercase border border-amber-200 shadow-sm animate-pulse-slow">Pendente</span>
                       
-                      <span v-if="t.dueDate" class="text-[11px] font-medium whitespace-nowrap mt-0.5" :class="{'text-red-600 font-semibold': t.status !== 'PAID' && isOverdue(t.dueDate), 'text-gray-500': t.status === 'PAID' || !isOverdue(t.dueDate)}">
+                      <span v-if="t.dueDate" class="text-[11px] font-medium whitespace-nowrap mt-0.5" :class="{'text-red-600 font-semibold': t.status === 'PENDING' && isOverdue(t.dueDate), 'text-gray-500': t.status !== 'PENDING' || !isOverdue(t.dueDate)}">
                           Vence: {{ formatDate(t.dueDate) }}
                       </span>
                   </div>

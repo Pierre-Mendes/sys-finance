@@ -110,10 +110,18 @@ class ReportService {
         $today = $today->setTime(0, 0);
         $horizon = $today->modify("+{$days} days");
         $todayStr = $today->format('Y-m-d');
+        $staleBefore = $today->modify('-' . BillReminderService::STALE_AFTER_DAYS . ' days')->format('Y-m-d');
         $events = [];
+        $stale = ['count' => 0, 'amount' => 0.0];
 
         foreach ($this->repo->pendingUntil($workspaceId, $horizon->format('Y-m-d')) as $p) {
             $sign = $p['type'] === 'asset' ? 1 : -1;
+            // Atrasada há muito tempo: provavelmente esquecida. Fica fora da conta até o usuário decidir.
+            if ($p['date'] < $staleBefore) {
+                $stale['count']++;
+                $stale['amount'] += $sign * $p['amount'];
+                continue;
+            }
             $overdue = $p['date'] < $todayStr;
             $events[] = ['date' => $overdue ? $todayStr : $p['date'], 'title' => $p['title'], 'amount' => $sign * $p['amount'], 'kind' => $overdue ? 'overdue' : 'pending'];
 
@@ -130,16 +138,15 @@ class ReportService {
             }
         }
 
-        // Cartão: a fatura do mês m vence no dia de vencimento de m (mesma regra do CreditCardService).
+        // Cartão: compras ainda sem fatura gerada entram no vencimento da fatura delas (ciclo por fechamento).
+        // Olha 2 meses para trás: compras de faturas já fechadas e não geradas entram como atrasadas (hoje).
         $invoices = array_flip($this->repo->invoiceTitles($workspaceId));
         $byInvoice = [];
-        foreach ($this->repo->cardPurchasesBetween($workspaceId, $today->modify('first day of this month')->format('Y-m-d'), $horizon->format('Y-m-d')) as $c) {
-            [$y, $m] = array_map('intval', explode('-', substr($c['date'], 0, 7)));
-            $title = "Fatura {$c['cardName']} ({$m}/{$y})";
+        foreach ($this->repo->cardPurchasesBetween($workspaceId, $today->modify('first day of this month')->modify('-2 months')->format('Y-m-d'), $horizon->format('Y-m-d')) as $c) {
+            $inv = (new CardBillingCycle($c['closingDay'], $c['dueDay']))->invoiceFor(new DateTimeImmutable($c['date']));
+            $title = CardBillingCycle::title($c['cardName'], $inv['month'], $inv['year']);
             if (isset($invoices[$title])) continue; // já virou uma conta e está nos pendentes
-            $due = (new DateTimeImmutable(sprintf('%04d-%02d-01', $y, $m)));
-            $due = $due->setDate($y, $m, min($c['dueDay'], (int) $due->format('t')));
-            $byInvoice[$title]['date'] = max($due->format('Y-m-d'), $todayStr);
+            $byInvoice[$title]['date'] = max($inv['due']->format('Y-m-d'), $todayStr);
             $byInvoice[$title]['amount'] = ($byInvoice[$title]['amount'] ?? 0) + $c['amount'];
         }
         foreach ($byInvoice as $title => $inv) {
@@ -179,6 +186,7 @@ class ReportService {
             'outgoing' => round($outgoing, 2),
             'min' => $min,
             'firstNegativeDate' => $firstNegative,
+            'stale' => ['count' => $stale['count'], 'amount' => round($stale['amount'], 2), 'olderThanDays' => BillReminderService::STALE_AFTER_DAYS],
             'points' => $points,
             'events' => array_map(fn ($e) => array_merge($e, ['amount' => round($e['amount'], 2)]), array_slice($events, 0, 50)),
         ];

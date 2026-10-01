@@ -127,4 +127,33 @@ class TransactionController {
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
     }
+
+    /** POST /api/transactions/{id}/reschedule {type, due_date}: nova data para uma conta pendente. */
+    public function reschedule(Request $request, Response $response, array $args): Response {
+        $input = (array) $request->getParsedBody();
+        return $this->pendingAction($response, $input, fn (string $type) => $this->txService->reschedule(
+            (int) ($args['id'] ?? 0), (int) $request->getAttribute('workspaceId'), $type, (string) ($input['due_date'] ?? '')
+        ), 'Conta reagendada.');
+    }
+
+    /** POST /api/transactions/{id}/cancel {type}: desconsidera uma conta pendente (fica no histórico). */
+    public function cancel(Request $request, Response $response, array $args): Response {
+        $input = (array) $request->getParsedBody();
+        return $this->pendingAction($response, $input, fn (string $type) => $this->txService->cancel(
+            (int) ($args['id'] ?? 0), (int) $request->getAttribute('workspaceId'), $type
+        ), 'Conta desconsiderada.');
+    }
+
+    private function pendingAction(Response $response, array $input, callable $action, string $message): Response {
+        $type = $input['type'] ?? '';
+        try {
+            if (!in_array($type, ['asset', 'bill'], true)) throw new Exception('Tipo inválido.');
+            $t = $action($type);
+            $response->getBody()->write(json_encode(["success" => true, "message" => $message, "data" => ["id" => $t->getId(), "status" => $t->getStatus(), "dueDate" => $t->getDueDate()]]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        } catch (Exception $e) {
+            $response->getBody()->write(json_encode(["success" => false, "error" => $e->getMessage()]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+    }
 }

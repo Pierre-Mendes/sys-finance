@@ -13,6 +13,8 @@ export interface CreditCard {
   dueDay: number
   color: string
   usedAmount: number
+  bestPurchaseDay?: number
+  openInvoice?: { closingDate: string; dueDate: string; total: number }
 }
 
 export interface CardTransaction {
@@ -164,10 +166,11 @@ export const useCreditCardStore = defineStore('creditCard', () => {
     }
   }
 
-  async function generateInvoice(cardId: number, month: number, year: number) {
+  /** Sem mês/ano gera a última fatura já fechada (ciclo pelo dia de fechamento). */
+  async function generateInvoice(cardId: number, month?: number, year?: number) {
     isLoading.value = true
     try {
-      const response = await api.post(`/api/credit-cards/${cardId}/invoices/generate`, { month, year })
+      const response = await api.post(`/api/credit-cards/${cardId}/invoices/generate`, month && year ? { month, year } : {})
       return response.data;
     } catch (error: any) {
       console.error('Failed to generate invoice', error)

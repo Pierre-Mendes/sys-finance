@@ -1,5 +1,6 @@
 export type TransactionType = 'asset' | 'income' | 'bill' | 'expense' | 'transfer';
-export type TransactionStatus = 'PAID' | 'PENDING';
+/** CANCELED = desconsiderada: conta pendente que o usuário decidiu não pagar (fica no histórico). */
+export type TransactionStatus = 'PAID' | 'PENDING' | 'CANCELED';
 export type TransactionPriority = 'LOW' | 'NORMAL' | 'HIGH';
 export type TransactionRecurrence = 'NONE' | 'MONTHLY' | 'YEARLY';
 

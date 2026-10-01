@@ -26,6 +26,14 @@ export class TransactionRepositoryImpl implements ITransactionRepository {
         const response = await api.post(`/api/transactions/${id}/pay`, { is_paid: isPaid, type })
         return response.data.data
     }
+
+    async rescheduleTransaction(id: number, type: string, dueDate: string): Promise<void> {
+        await api.post(`/api/transactions/${id}/reschedule`, { type, due_date: dueDate })
+    }
+
+    async cancelTransaction(id: number, type: string): Promise<void> {
+        await api.post(`/api/transactions/${id}/cancel`, { type })
+    }
 }
 
 export const transactionRepository = new TransactionRepositoryImpl()
