@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "env": {
+    "CODEGRAPH_TELEMETRY": "0"
+  },
+  "enabledMcpjsonServers": ["codegraph", "serena"],
+  "permissions": {
+    "allow": [
+      "mcp__codegraph__*",
+      "mcp__serena__get_symbols_overview",
+      "mcp__serena__find_symbol",
+      "mcp__serena__find_referencing_symbols",
+      "mcp__serena__find_implementations",
+      "mcp__serena__find_declaration",
+      "mcp__serena__get_diagnostics_for_file",
+      "mcp__serena__list_memories",
+      "mcp__serena__read_memory",
+      "mcp__serena__initial_instructions",
+      "Bash(python3 scripts/docs_search.py *)",
+      "Bash(npx -y @colbymchenry/codegraph@1.6.1 *)",
+      "Bash(vendor/bin/phpunit *)",
+      "Bash(vendor/bin/phpunit)",
+      "Bash(npx vitest run *)",
+      "Bash(npx vitest run)",
+      "Bash(npx vue-tsc *)",
+      "Bash(php -l *)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/session-start.sh",
+            "timeout": 600,
+            "statusMessage": "Instalando dependências e indexando código (CodeGraph/Serena)..."
+          }
+        ]
+      }
+    ]
+  }
+}

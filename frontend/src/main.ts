@@ -24,3 +24,10 @@ app.use(pinia)
 app.use(router)
 app.use(VueApexCharts)
 app.mount('#app')
+
+// PWA: instalação na tela inicial e notificações push (public/sw.js).
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch((e) => console.warn('Service worker não registrado', e))
+    })
+}

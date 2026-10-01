@@ -23,7 +23,7 @@ export class TransactionRepositoryImpl implements ITransactionRepository {
     }
 
     async payTransaction(id: number, isPaid: boolean, type: string): Promise<Transaction> {
-        const response = await api.put(`/api/transactions/${id}/pay`, { is_paid: isPaid, type })
+        const response = await api.post(`/api/transactions/${id}/pay`, { is_paid: isPaid, type })
         return response.data.data
     }
 }

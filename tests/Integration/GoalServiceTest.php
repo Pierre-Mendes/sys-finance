@@ -28,7 +28,7 @@ class GoalServiceTest extends TestCase
         $categoryRepo = new \App\Repositories\CategoryRepository($this->db);
         $simulationService = new SimulationService($assetRepo, $billRepo, $goalRepo);
         
-        $this->goalService = new GoalService($goalRepo, $contributionRepo, $simulationService, $billRepo, $categoryRepo);
+        $this->goalService = new GoalService($goalRepo, $contributionRepo, $simulationService, $billRepo, $categoryRepo, new \App\Services\AccountBalanceService($this->db));
     }
 
     public function test_create_and_retrieve_goal(): void
@@ -79,5 +79,22 @@ class GoalServiceTest extends TestCase
         ]);
 
         $this->goalService->addContribution($this->workspaceId, $contribDto);
+    }
+
+    public function test_contribution_with_account_creates_bill_with_valid_priority(): void
+    {
+        $account = (new \App\Repositories\AccountRepository($this->db))->save(new \App\Models\Account($this->workspaceId, 'Banco'));
+        $goal = $this->goalService->createGoal($this->workspaceId, new GoalDTO(['title' => 'Viagem', 'targetAmount' => 1000.0]));
+
+        $this->goalService->addContribution($this->workspaceId, new GoalContributionDTO([
+            'goalId' => $goal->getId(),
+            'accountId' => $account->getId(),
+            'amount' => 100.0,
+            'date' => '2026-09-30',
+        ]));
+
+        // bills.priority é ENUM('LOW','NORMAL','HIGH') no MySQL: qualquer outro valor quebra o aporte.
+        $priority = $this->db->query("SELECT priority FROM bills WHERE Title = 'Meta: Viagem'")->fetchColumn();
+        $this->assertContains($priority, ['LOW', 'NORMAL', 'HIGH']);
     }
 }

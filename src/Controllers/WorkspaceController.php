@@ -155,7 +155,8 @@ class WorkspaceController
         $workspaceId = (int) $args['id'];
         $role = $request->getAttribute('workspaceRole');
         
-        if ($role !== 'owner') {
+        // O papel vem do workspace ativo (X-Workspace-Id): o {id} da URL precisa ser esse mesmo workspace.
+        if ($role !== 'owner' || $workspaceId !== (int) $request->getAttribute('workspaceId')) {
             $response->getBody()->write(json_encode(['error' => 'Apenas o proprietário pode editar o Workspace.']));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(403);
         }
@@ -178,7 +179,8 @@ class WorkspaceController
         $workspaceId = (int) $args['id'];
         $role = $request->getAttribute('workspaceRole');
         
-        if ($role !== 'owner') {
+        // O papel vem do workspace ativo (X-Workspace-Id): o {id} da URL precisa ser esse mesmo workspace.
+        if ($role !== 'owner' || $workspaceId !== (int) $request->getAttribute('workspaceId')) {
             $response->getBody()->write(json_encode(['error' => 'Apenas o proprietário pode excluir o Workspace.']));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(403);
         }

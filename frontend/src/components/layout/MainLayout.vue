@@ -162,10 +162,46 @@
         </button>
       </header>
       
-      <main class="flex-1 p-4 sm:p-6 lg:p-8 w-full max-w-7xl mx-auto overflow-x-hidden">
+      <!-- pb extra no celular para o conteúdo não ficar atrás da barra inferior -->
+      <main class="flex-1 p-4 pb-28 sm:p-6 sm:pb-28 lg:p-8 w-full max-w-7xl mx-auto overflow-x-hidden">
         <slot />
       </main>
     </div>
+
+    <!-- Barra inferior (celular): atalhos do dia a dia + botão de lançamento rápido -->
+    <nav class="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-white border-t border-gray-200 shadow-[0_-2px_10px_rgba(0,0,0,0.05)] pb-[env(safe-area-inset-bottom)]" aria-label="Navegação principal">
+      <ul class="grid grid-cols-5 h-16 text-[11px] font-medium text-gray-500">
+        <li>
+          <router-link to="/dashboard" class="h-full flex flex-col items-center justify-center gap-1" active-class="text-primary">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+            Início
+          </router-link>
+        </li>
+        <li>
+          <router-link to="/transactions" class="h-full flex flex-col items-center justify-center gap-1" active-class="text-primary">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+            Lançamentos
+          </router-link>
+        </li>
+        <li class="flex items-start justify-center">
+          <router-link :to="{ path: '/transactions', query: { new: '1' } }" class="-mt-5 w-14 h-14 rounded-full bg-primary text-white shadow-lg flex items-center justify-center active:scale-95 transition" aria-label="Novo lançamento">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 5v14m-7-7h14"></path></svg>
+          </router-link>
+        </li>
+        <li>
+          <router-link to="/credit-cards" class="h-full flex flex-col items-center justify-center gap-1" active-class="text-primary">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+            Cartões
+          </router-link>
+        </li>
+        <li>
+          <button type="button" @click="sidebarOpen = true" class="w-full h-full flex flex-col items-center justify-center gap-1">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            Mais
+          </button>
+        </li>
+      </ul>
+    </nav>
 
     <!-- System Invites Notifications Overlay Modal -->
     <div v-if="invitesModalOpen" class="fixed inset-0 bg-gray-900/40 z-[60] flex items-start justify-center pt-20 px-4 sm:pt-24 backdrop-blur-sm" @click.self="invitesModalOpen = false">
@@ -235,7 +271,7 @@
                                 
                                 <div v-if="notif.action_url" class="mt-3">
                                     <button @click="navigateToAction(notif.action_url, notif.id)" class="w-full text-[11px] font-bold uppercase tracking-wider bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-indigo-700 hover:shadow-lg transition-all flex items-center justify-center gap-2 active:scale-95">
-                                        Configurar Agora
+                                        {{ notif.type === 'SLA_WARNING' ? 'Ver contas' : 'Configurar Agora' }}
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                                     </button>
                                 </div>
@@ -255,7 +291,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { computed } from 'vue'
 import api from '@/data/api/HttpClient'
@@ -264,6 +300,9 @@ import Swal from 'sweetalert2'
 
 const router = useRouter()
 const sidebarOpen = ref(false)
+// Cada tela monta o próprio MainLayout: remove o hook ao desmontar para não acumular.
+const removeCloseOnNavigate = router.afterEach(() => { sidebarOpen.value = false })
+onUnmounted(removeCloseOnNavigate)
 const isCollapsed = ref(false)
 const userName = ref('')
 

@@ -27,7 +27,7 @@
               </div>
               <div class="flex-1">
                   <label class="block text-sm font-medium text-gray-600 mb-1">Valor (R$)</label>
-                  <input v-model.number="txForm.amount" type="number" step="0.01" min="0" required class="w-full border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary" placeholder="0.00" />
+                  <input v-model.number="txForm.amount" type="number" inputmode="decimal" step="0.01" min="0" required class="w-full border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary" placeholder="0.00" />
               </div>
           </div>
 
@@ -133,7 +133,7 @@
                           </div>
                           <div class="w-1/3">
                               <label class="block text-xs font-medium text-gray-600 mb-1">Valor Lançado</label>
-                              <input v-model.number="split.amount" type="number" step="0.01" min="0" class="w-full border border-gray-300 rounded p-1.5 focus:outline-none focus:ring-1 focus:ring-primary text-sm" required />
+                              <input v-model.number="split.amount" type="number" inputmode="decimal" step="0.01" min="0" class="w-full border border-gray-300 rounded p-1.5 focus:outline-none focus:ring-1 focus:ring-primary text-sm" required />
                           </div>
                       </div>
                   </div>

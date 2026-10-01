@@ -23,7 +23,7 @@ RUN a2enmod rewrite headers \
 
 # Instalando as dependencias do sistema necessarias para o Composer
 RUN apt-get update && apt-get install -y git zip unzip poppler-utils \
-    && docker-php-ext-install mysqli pdo pdo_mysql opcache
+    && docker-php-ext-install mysqli pdo pdo_mysql opcache bcmath
 
 # Instalando o Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -57,5 +57,5 @@ RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf
 # Configurar Apache para não remover variáveis de ambiente
 # CSP_CONNECT_SRC precisa de um valor padrão: o Apache escreve "(null)" no CSP se a variável não existir.
 ENV CSP_CONNECT_SRC="https://*.sentry.io"
-RUN echo "PassEnv DB_HOST DB_USER DB_PASS DB_NAME APP_ENV JWT_SECRET JWT_TTL SENTRY_DSN CORS_ALLOWED_ORIGINS CSP_CONNECT_SRC" > /etc/apache2/conf-available/passenv.conf \
+RUN echo "PassEnv DB_HOST DB_USER DB_PASS DB_NAME APP_ENV APP_TIMEZONE JWT_SECRET JWT_TTL SENTRY_DSN CORS_ALLOWED_ORIGINS CSP_CONNECT_SRC VAPID_SUBJECT VAPID_PUBLIC_KEY VAPID_PRIVATE_KEY" > /etc/apache2/conf-available/passenv.conf \
     && a2enconf passenv

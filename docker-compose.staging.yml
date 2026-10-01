@@ -28,10 +28,34 @@ services:
       - DB_PASS=root
       - DB_NAME=money_manager_staging
       - APP_ENV=staging
-      - JWT_SECRET=${JWT_SECRET:?defina JWT_SECRET no .env}
+      - JWT_SECRET=${JWT_SECRET:-}  # opcional: sem ele a chave é gerada e guardada no banco
       - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS:-}
       - CSP_CONNECT_SRC=${CSP_CONNECT_SRC:-https://*.sentry.io}
       - SENTRY_DSN=${SENTRY_DSN:-}
+      - APP_TIMEZONE=${APP_TIMEZONE:-America/Sao_Paulo}
+      - VAPID_SUBJECT=${VAPID_SUBJECT:-}  # opcional: mailto: ou https:// de contato para os serviços de push
+    depends_on:
+      db-staging:
+        condition: service_healthy
+
+  # Lembretes de contas a vencer (no app + Web Push): mesma imagem da web, roda a cada 15 min.
+  # Cada aviso sai uma vez só, então reiniciar ou atrasar o agendador não duplica notificações.
+  scheduler-staging:
+    build:
+      context: .
+      args:
+        - VITE_API_BASE_URL=http://localhost:8082
+    container_name: financas-scheduler-staging
+    restart: always
+    entrypoint: ["sh", "-c", "while true; do php bin/reminders.php || true; sleep 900; done"]
+    environment:
+      - DB_HOST=db-staging
+      - DB_USER=root
+      - DB_PASS=root
+      - DB_NAME=money_manager_staging
+      - APP_ENV=staging
+      - APP_TIMEZONE=${APP_TIMEZONE:-America/Sao_Paulo}
+      - VAPID_SUBJECT=${VAPID_SUBJECT:-}
     depends_on:
       db-staging:
         condition: service_healthy

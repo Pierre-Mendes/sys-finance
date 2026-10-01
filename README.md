@@ -128,8 +128,8 @@ O ecossistema é mantido vivo de forma automática através das `GitHub Actions`
 *   **CI (`verify.yml`)**: PHPUnit (com cobertura), Vitest e build do frontend.
 *   **Security & Quality Gate (`security.yml`)**: SAST (Semgrep OWASP Top 10 + CodeQL), SCA (`composer audit`, `npm audit`, OWASP Dependency-Check semanal), Gitleaks, DAST (OWASP ZAP contra a app em Docker) e SonarCloud opcional, consolidados no job **Quality Gate**.
 
-> Revisão completa, pendências e roadmap: [`docs/REVISAO_E_ROADMAP.md`](docs/REVISAO_E_ROADMAP.md).
-> **Deploy:** defina `JWT_SECRET` (mín. 32 caracteres) no `.env` antes de subir staging/produção.
+> Documentação e convenções: [`docs/INDEX.md`](docs/INDEX.md) · Revisão, pendências e roadmap: [`docs/REVISAO_E_ROADMAP.md`](docs/REVISAO_E_ROADMAP.md).
+> **Deploy:** a chave do JWT é gerada e guardada no banco automaticamente; `JWT_SECRET` é opcional (tem prioridade se definido).
 
 ---
 

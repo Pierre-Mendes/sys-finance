@@ -25,12 +25,9 @@ class DashboardService {
             }
         }
 
-        // Totals
-        $stmtIn = $this->select($wsIds, "SELECT SUM(Amount) FROM assets WHERE WorkspaceId IN ({ws})");
-        $totalIncome = (float) $stmtIn->fetchColumn();
-
-        $stmtOut = $this->select($wsIds, "SELECT SUM(Amount) FROM bills WHERE WorkspaceId IN ({ws})");
-        $totalExpense = (float) $stmtOut->fetchColumn();
+        // Totals: só o que já foi pago/recebido. Pendentes (inclusive as próximas parcelas geradas
+        // pela recorrência e faturas em aberto) entram apenas na projeção.
+        ['income' => $totalIncome, 'expense' => $totalExpense] = $this->paidTotals($wsIds);
 
         $balance = $totalIncome - $totalExpense;
 
@@ -39,8 +36,8 @@ class DashboardService {
         if ($is360 && $userId) {
             $stmtBreakdown = $this->select($wsIds, "
                 SELECT w.WorkspaceId as id, w.WorkspaceName as name, w.Type as type,
-                       (COALESCE((SELECT SUM(Amount) FROM assets WHERE WorkspaceId = w.WorkspaceId), 0) - 
-                        COALESCE((SELECT SUM(Amount) FROM bills WHERE WorkspaceId = w.WorkspaceId), 0)) as balance
+                       (COALESCE((SELECT SUM(Amount) FROM assets WHERE WorkspaceId = w.WorkspaceId AND status = 'PAID'), 0) - 
+                        COALESCE((SELECT SUM(Amount) FROM bills WHERE WorkspaceId = w.WorkspaceId AND status = 'PAID'), 0)) as balance
                 FROM workspaces w
                 WHERE w.WorkspaceId IN ({ws})
                 ORDER BY balance DESC
@@ -214,6 +211,18 @@ class DashboardService {
                 ]
             ]
         ];
+    }
+
+    /**
+     * Receitas e despesas efetivamente pagas: é o mesmo critério do saldo das contas (tabela totals).
+     *
+     * @return array{income: float, expense: float}
+     */
+    public function paidTotals(array $wsIds): array {
+        $income = (float) $this->select($wsIds, "SELECT SUM(Amount) FROM assets WHERE WorkspaceId IN ({ws}) AND status = 'PAID'")->fetchColumn();
+        $expense = (float) $this->select($wsIds, "SELECT SUM(Amount) FROM bills WHERE WorkspaceId IN ({ws}) AND status = 'PAID'")->fetchColumn();
+
+        return ['income' => $income, 'expense' => $expense];
     }
 
     /**

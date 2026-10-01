@@ -302,6 +302,7 @@ const permissionModules = [
     { key: 'budgets', label: 'Orçamentos (Mensal)' },
     { key: 'goals', label: 'Metas e Objetivos' },
     { key: 'credit_cards', label: 'Cartões de Crédito' },
+    { key: 'investments', label: 'Investimentos' },
     { key: 'reports', label: 'Relatórios' }
 ]
 

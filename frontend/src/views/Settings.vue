@@ -109,6 +109,8 @@
         </form>
 
     </div>
+
+    <ReminderSettings v-if="!isLoadingData" />
   </MainLayout>
 </template>
 
@@ -116,6 +118,7 @@
 import { ref, onMounted } from 'vue'
 import { toast } from 'vue3-toastify'
 import MainLayout from '@/components/layout/MainLayout.vue'
+import ReminderSettings from '@/presentation/components/domain/ReminderSettings.vue'
 import { useRouter } from 'vue-router'
 import api from '@/data/api/HttpClient'
 

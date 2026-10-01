@@ -77,3 +77,17 @@ To run all tests locally before pushing:
 ```bash
 cd frontend && npm run test:unit
 ```
+
+## Lembretes de contas a vencer (push)
+
+- O `docker compose` sobe o serviço `scheduler` junto com a web. Ele roda `php bin/reminders.php` a cada 15 minutos.
+  Para conferir: `docker logs financas-scheduler-prod`.
+- As chaves VAPID do Web Push são geradas no primeiro uso e guardadas na tabela `app_secrets`, então não há nada a
+  configurar. Opcionais:
+  - `APP_TIMEZONE` (padrão `America/Sao_Paulo`): fuso usado para "vence hoje" e para o horário dos avisos.
+  - `VAPID_SUBJECT`: contato para os serviços de push, ex. `mailto:voce@seudominio.com`.
+  - `VAPID_PUBLIC_KEY`/`VAPID_PRIVATE_KEY`: só se quiser fixar as chaves. Trocar as chaves desativa o push de todos
+    os dispositivos já inscritos.
+- **Push exige HTTPS** (exceto em `localhost`). Sem domínio com certificado, os usuários recebem os avisos só no sino.
+- No iPhone o push funciona com o app instalado na tela inicial (Safari → Compartilhar → "Adicionar à Tela de
+  Início"), iOS 16.4 ou superior.

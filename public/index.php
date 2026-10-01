@@ -82,7 +82,8 @@ $workspaceService = new \App\Services\WorkspaceService($db);
 $notificationService = new \App\Services\NotificationService($db);
 $userRepo = new UserRepository($db);
 $authService = new AuthService($userRepo, $workspaceService, $notificationService);
-$tokenService = new \App\Security\TokenService();
+// Chave do JWT: JWT_SECRET se definido; senão gerada uma vez e guardada no banco (app_secrets).
+$tokenService = new \App\Security\TokenService(null, null, new \App\Security\SecretStore($db));
 $authController = new AuthController($authService, $tokenService);
 
 $accountRepo = new \App\Repositories\AccountRepository($db);
@@ -179,11 +180,11 @@ $investmentController = new \App\Controllers\InvestmentController($db, $quoteSer
 
 $app->group('/api/investments', function (\Slim\Routing\RouteCollectorProxy $group) use ($investmentController) {
     $group->get('', [$investmentController, 'index']);
-    $group->post('', [$investmentController, 'create']);
-    $group->delete('/{id}', [$investmentController, 'destroy']);
-    $group->post('/quotes/sync', [$investmentController, 'syncQuotes']);
-    $group->post('/{id}/transactions', [$investmentController, 'addTransaction']);
-    $group->put('/{id}', [$investmentController, 'manualQuote']);
+    $group->post('', [$investmentController, 'create'])->add(\App\Middleware\GatekeeperMiddleware::requireEditor('investments'));
+    $group->delete('/{id}', [$investmentController, 'destroy'])->add(\App\Middleware\GatekeeperMiddleware::requireEditor('investments'));
+    $group->post('/quotes/sync', [$investmentController, 'syncQuotes'])->add(\App\Middleware\GatekeeperMiddleware::requireEditor('investments'));
+    $group->post('/{id}/transactions', [$investmentController, 'addTransaction'])->add(\App\Middleware\GatekeeperMiddleware::requireEditor('investments'));
+    $group->put('/{id}', [$investmentController, 'manualQuote'])->add(\App\Middleware\GatekeeperMiddleware::requireEditor('investments'));
 })->add($workspaceMiddleware)->add($authMiddleware);
 
 $workspaceController = new App\Controllers\WorkspaceController($db, $workspaceService);
@@ -233,6 +234,23 @@ $app->group('/api/system-invites', function ($group) use ($inviteController) {
     $group->post('/{id}/resolve', [$inviteController, 'resolveSystemInvite']);
 })->add($authMiddleware);
 
+$pushSender = new \App\Notifications\WebPushSender(new \App\Security\SecretStore($db));
+$notificationSettingsRepo = new \App\Repositories\NotificationSettingsRepository($db);
+$pushSubscriptionRepo = new \App\Repositories\PushSubscriptionRepository($db);
+$billReminderService = new \App\Services\BillReminderService(
+    new \App\Repositories\BillReminderRepository($db), $notificationSettingsRepo, $pushSubscriptionRepo, $notificationService, $pushSender
+);
+$reminderController = new \App\Controllers\ReminderController($notificationSettingsRepo, $pushSubscriptionRepo, $pushSender, $billReminderService);
+
+$app->group('/api/reminders', function ($group) use ($reminderController, $db) {
+    $group->get('/settings', [$reminderController, 'getSettings']);
+    $group->put('/settings', [$reminderController, 'updateSettings']);
+    $group->get('/push/public-key', [$reminderController, 'publicKey']);
+    $group->post('/push/subscriptions', [$reminderController, 'subscribe']);
+    $group->delete('/push/subscriptions', [$reminderController, 'unsubscribe']);
+    $group->post('/push/test', [$reminderController, 'test'])->add(new \App\Middleware\RateLimiterMiddleware($db, 5, 15));
+})->add($authMiddleware);
+
 $notificationController = new \App\Controllers\NotificationController($db);
 $app->group('/api/notifications', function ($group) use ($notificationController) {
     $group->get('', [$notificationController, 'index']);
@@ -249,7 +267,7 @@ $app->group('/api/statements', function (\Slim\Routing\RouteCollectorProxy $grou
 $goalRepo = new \App\Repositories\GoalRepository($db);
 $goalContributionRepo = new \App\Repositories\GoalContributionRepository($db);
 $simulationService = new \App\Services\SimulationService($assetRepo, $billRepo, $goalRepo);
-$goalService = new \App\Services\GoalService($goalRepo, $goalContributionRepo, $simulationService, $billRepo, $categoryRepo);
+$goalService = new \App\Services\GoalService($goalRepo, $goalContributionRepo, $simulationService, $billRepo, $categoryRepo, new \App\Services\AccountBalanceService($db));
 $goalController = new \App\Controllers\GoalController($goalService);
 
 $app->group('/api/goals', function (\Slim\Routing\RouteCollectorProxy $group) use ($goalController) {

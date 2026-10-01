@@ -28,7 +28,7 @@ services:
       - DB_PASS=root
       - DB_NAME=money_manager
       - APP_ENV=development
-      - JWT_SECRET=${JWT_SECRET:-dev-only-insecure-secret-change-me-please-0123456789}
+      - JWT_SECRET=${JWT_SECRET:-}  # opcional: sem ele a chave é gerada e guardada no banco
       - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS:-*}
     depends_on:
       db:
