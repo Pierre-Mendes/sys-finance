@@ -91,3 +91,11 @@ cd frontend && npm run test:unit
 - **Push exige HTTPS** (exceto em `localhost`). Sem domínio com certificado, os usuários recebem os avisos só no sino.
 - No iPhone o push funciona com o app instalado na tela inicial (Safari → Compartilhar → "Adicionar à Tela de
   Início"), iOS 16.4 ou superior.
+
+## Sessão (cookie HttpOnly)
+
+- O login grava a sessão num cookie `HttpOnly`. Com HTTPS (direto ou atrás de proxy que envia `X-Forwarded-Proto: https`)
+  o cookie sai com `Secure` automaticamente. Para forçar: `COOKIE_SECURE=true`.
+- SPA e API no mesmo domínio (o padrão do Docker): nada a configurar.
+- SPA em outro domínio: `COOKIE_SAMESITE=None`, HTTPS obrigatório e `CORS_ALLOWED_ORIGINS` com a origem exata do frontend.
+- Na primeira vez depois deste deploy todos precisam entrar de novo (o token antigo do navegador é descartado).

@@ -18,6 +18,13 @@ Checklist para qualquer mudança que toque entrada do usuário, dados de outro t
 
 - Tokens: `TokenService` (JWT HS256, expiração `JWT_TTL`). Chave: `JWT_SECRET` se definida; senão gerada e
   guardada em `app_secrets` pelo `SecretStore`. Trocar a chave desloga todos.
+- **Sessão no navegador = cookie** (`SessionCookie`): o login devolve o JWT só no cookie `sf_session`
+  (`HttpOnly`, `SameSite=Strict`, `Path=/api`, `Secure` em HTTPS) e nunca no corpo. O JS não lê o token.
+  - CSRF: double-submit. O cookie `sf_csrf` (legível) é repetido no header `X-CSRF-Token` pelo `HttpClient`;
+    escrita autenticada por cookie sem o header = 403. `Authorization: Bearer` continua aceito (clientes de API).
+  - `POST /api/auth/logout` apaga os cookies. Frontend em outro domínio: `COOKIE_SAMESITE=None` + HTTPS +
+    `CORS_ALLOWED_ORIGINS` explícito (com `*` o navegador não envia cookie).
+  - Nunca `localStorage.setItem('token', ...)` nem `Authorization: Bearer` montado no frontend (regra Semgrep).
 - Senhas com `password_hash`/`password_verify`; comparações de segredo com `hash_equals`.
 - Endpoints públicos sensíveis com `RateLimiterMiddleware`.
 
@@ -30,6 +37,12 @@ Checklist para qualquer mudança que toque entrada do usuário, dados de outro t
 - Comandos externos: `proc_open` com array de argumentos, nunca string de shell.
 - URLs externas com dado do usuário: validar formato + `rawurlencode` (ex.: tickers da Brapi).
 - Frontend: ver seção "Segurança na UI" em [frontend-vue.md](frontend-vue.md).
+
+## XSS no frontend (regras em `.semgrep/app-rules.yml`, bloqueiam o PR)
+
+- Nada de `v-html` (exceção revisada: ícones SVG fixos de `Help.vue`).
+- SweetAlert2: `title`, `html` e `footer` são HTML. Dado do usuário só em `text`/`titleText` ou via `textContent`.
+- ApexCharts: rótulos com nome digitado pelo usuário passam por `escapeHtml`.
 
 ## Requisições do servidor para fora (A10, SSRF)
 

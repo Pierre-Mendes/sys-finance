@@ -108,7 +108,8 @@ Arquivo: `.github/workflows/security.yml`
 | Prioridade | Item |
 |---|---|
 | ~~Alta~~ | ~~Rotas `/api/investments` sem `GatekeeperMiddleware`; `PUT/DELETE /api/workspaces/{id}` conferia o papel no workspace ativo e não no `{id}`~~ **Corrigido** (módulo `investments` + `{id}` precisa ser o workspace ativo). |
-| Alta | Token em `localStorage` fica exposto a qualquer XSS. Avaliar cookie `HttpOnly` + `SameSite` com proteção CSRF. |
+| ~~Alta~~ | ~~Token em `localStorage` exposto a XSS~~ **Corrigido**: sessão em cookie `HttpOnly` + `SameSite` + CSRF double-submit. |
+| Média | Logout apaga o cookie, mas o JWT segue válido até expirar (sem revogação no servidor). Próximo passo: versão de sessão por usuário ("sair de todos os dispositivos"). |
 | Média | Controllers devolvem `$e->getMessage()` cru ao cliente (vaza detalhes internos). Padronizar erros de domínio vs. 500 genérico. |
 | Média | `recovery-question` revela se um e-mail está cadastrado (enumeração de usuários). |
 | Média | Rate limit de login conta também tentativas bem-sucedidas; tabela `rate_limits` cresce sem limpeza. |
@@ -143,7 +144,8 @@ Ordenado por impacto na experiência de "registrar rápido, organizar depois":
 3. **Categorias padrão por workspace** (Alimentação, Moradia, Transporte…) criadas no cadastro, editáveis depois.
 4. **Regras de categorização automática** aprendidas da importação de extratos ("UBER*" → Transporte).
 5. **Detecção de recorrências/assinaturas** a partir do histórico, com alerta de aumento de preço.
-6. **Fatura do cartão por ciclo real** (fechamento/vencimento) em vez de mês civil, com pagamento da fatura debitando a conta.
+6. ~~**Fatura do cartão por ciclo real**~~ **Feito** (`CardBillingCycle`): compra entra na fatura pelo dia de fechamento,
+   melhor dia de compra exibido no cartão, pagar a fatura libera o limite.
 7. **Transferência entre contas** como tipo próprio (hoje `transfer` existe só no tipo do frontend).
 8. **Open Finance** (agregadores como Pluggy/Belvo) para sincronizar saldos e transações sem importar arquivo.
 9. **Metas e orçamentos com alertas** via notificação/Telegram quando atingir 80%/100% do teto.

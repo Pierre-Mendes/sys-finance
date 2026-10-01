@@ -60,7 +60,13 @@ Não há container de DI: as dependências são montadas à mão em `public/inde
 - **category.Level**: 1 = receita, 2 = despesa (`CategoryService::levelForType`).
 - **totals**: saldo cacheado por conta, recalculado só pelo `AccountBalanceService`. Regra única: **apenas lançamentos `PAID` contam**; pendentes (a vencer, próximas recorrências, faturas abertas) aparecem só na projeção do Dashboard.
 - **Rateio (splits)**: uma despesa espelhada em outros workspaces onde o usuário é editor.
-- **Cartões**: compras parceladas geram N transações; a fatura vira uma `bill`.
+- **Cartões**: compras parceladas geram N transações; a fatura vira uma `bill` ("Fatura <cartão> (<mês>/<ano> do
+  vencimento)"). Ciclo único em `CardBillingCycle`: compra antes do dia de fechamento entra na fatura que fecha no mês;
+  no dia do fechamento ou depois, na seguinte (melhor dia de compra = dia de fechamento). Vencimento = dia de vencimento
+  logo após o fechamento. Limite usado = compras de faturas ainda não pagas.
+- **Status de lançamento**: `PENDING`, `PAID` e `CANCELED` (desconsiderada: o usuário decidiu não pagar; fica no histórico
+  e sai do saldo, da previsão e dos lembretes). Pendente atrasada há mais de 30 dias (`STALE_AFTER_DAYS`) fica fora da
+  previsão e gera um pedido mensal de revisão (Dashboard → "Contas atrasadas": pagar, reagendar ou desconsiderar).
 - **Lembretes**: `bin/reminders.php` (serviço `scheduler` do compose, a cada 15 min) chama o
   `BillReminderService`: contas `PENDING` com `due_date` nos dias escolhidos (`notification_settings`) viram aviso no
   sino (`notifications`) e um push resumido por usuário (`push_subscriptions`, `WebPushSender`). `bill_reminders_sent`
