@@ -44,7 +44,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import axios from 'axios'
+import api from '@/data/api/HttpClient'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
@@ -59,14 +59,15 @@ const handleLogin = async () => {
     isSubmitting.value = true
 
     try {
-        const response = await axios.post('/api/auth/login', {
+        const response = await api.post('/api/auth/login', {
             email: email.value,
             password: password.value
         });
         
         if (response.data.success) {
             toast.success('Login efetuado com sucesso!');
-            localStorage.setItem('token', response.data.token);
+            // A sessão fica num cookie HttpOnly definido pela API; aqui só guardamos dados de exibição.
+            localStorage.removeItem('token');
             localStorage.setItem('user', JSON.stringify(response.data.user));
             
             // Aguarda o toast de sucesso aparecer e muda de tela

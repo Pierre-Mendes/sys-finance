@@ -129,7 +129,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
+import api from '@/data/api/HttpClient'
 import { toast } from 'vue3-toastify'
 import Swal from 'sweetalert2'
 import MainLayout from '@/components/layout/MainLayout.vue'
@@ -208,8 +208,7 @@ const prevPage = () => {
 const fetchCategories = async () => {
     isLoading.value = true;
     try {
-        const token = localStorage.getItem('token')
-        const response = await axios.get('/api/categories?type=' + activeType.value, { headers: { Authorization: `Bearer ${token}` }})
+        const response = await api.get('/api/categories?type=' + activeType.value)
         categories.value = response.data.data
     } catch (e: any) {
         if (e.response?.status === 401) { 
@@ -275,9 +274,8 @@ const removeTag = (index: number) => {
 
 const saveCategory = async () => {
     try {
-        const token = localStorage.getItem('token')
         if (editingCategoryId.value) {
-            await axios.put(`/api/categories/${editingCategoryId.value}`, { name: newCategoryName.value }, { headers: { Authorization: `Bearer ${token}` }})
+            await api.put(`/api/categories/${editingCategoryId.value}`, { name: newCategoryName.value })
             toast.success('Categoria atualizada!')
         } else {
             // Process tags + any pending input
@@ -291,7 +289,7 @@ const saveCategory = async () => {
             
             const payloadArray = categoryTags.value; // Send array directly
 
-            const response = await axios.post('/api/categories', { name: payloadArray, type: activeType.value }, { headers: { Authorization: `Bearer ${token}` }})
+            const response = await api.post('/api/categories', { name: payloadArray, type: activeType.value })
             toast.success(response.data.message || 'Categoria(s) adicionada(s)!')
         }
         openModal.value = false
@@ -315,8 +313,7 @@ const deleteCategory = async (cat: any) => {
     if (!result.isConfirmed) return;
 
     try {
-        const token = localStorage.getItem('token')
-        await axios.delete(`/api/categories/${cat.id}`, { headers: { Authorization: `Bearer ${token}` }})
+        await api.delete(`/api/categories/${cat.id}`)
         toast.success('Categoria removida.')
         fetchCategories()
     } catch (e: any) {

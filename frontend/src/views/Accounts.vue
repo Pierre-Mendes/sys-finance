@@ -120,7 +120,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
+import api from '@/data/api/HttpClient'
 import { toast } from 'vue3-toastify'
 import Swal from 'sweetalert2'
 import MainLayout from '@/components/layout/MainLayout.vue'
@@ -189,8 +189,7 @@ const prevPage = () => {
 const fetchAccounts = async () => {
     isLoading.value = true;
     try {
-        const token = localStorage.getItem('token')
-        const response = await axios.get('/api/accounts', { headers: { Authorization: `Bearer ${token}` }})
+        const response = await api.get('/api/accounts')
         accounts.value = response.data.data
     } catch (e: any) {
         if (e.response?.status === 401) { 
@@ -249,9 +248,8 @@ const removeTag = (index: number) => {
 
 const saveAccount = async () => {
     try {
-        const token = localStorage.getItem('token')
         if (editingAccountId.value) {
-            await axios.put(`/api/accounts/${editingAccountId.value}`, { name: newAccountName.value }, { headers: { Authorization: `Bearer ${token}` }})
+            await api.put(`/api/accounts/${editingAccountId.value}`, { name: newAccountName.value })
             toast.success('Conta atualizada com sucesso!')
         } else {
             addTagFromInput();
@@ -261,7 +259,7 @@ const saveAccount = async () => {
                 return;
             }
             const payloadArray = accountTags.value;
-            await axios.post('/api/accounts', { name: payloadArray }, { headers: { Authorization: `Bearer ${token}` }})
+            await api.post('/api/accounts', { name: payloadArray })
             toast.success('Conta(s) criada(s) com sucesso!')
         }
         openModal.value = false
@@ -285,8 +283,7 @@ const deleteAccount = async (acc: any) => {
     if (!result.isConfirmed) return;
 
     try {
-        const token = localStorage.getItem('token')
-        await axios.delete(`/api/accounts/${acc.id}`, { headers: { Authorization: `Bearer ${token}` }})
+        await api.delete(`/api/accounts/${acc.id}`)
         toast.success('Conta removida com sucesso.')
         fetchAccounts()
     } catch (e: any) {

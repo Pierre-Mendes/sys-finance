@@ -119,6 +119,7 @@ $app->post('/api/auth/signup', [$authController, 'signup'])->add(new \App\Middle
 $app->post('/api/auth/login', [$authController, 'login'])->add(new \App\Middleware\RateLimiterMiddleware($db, 5, 10));
 
 $app->get('/api/auth/me', [$authController, 'me'])->add($authMiddleware);
+$app->post('/api/auth/logout', [$authController, 'logout']);
 $app->put('/api/auth/profile', [$authController, 'updateProfile'])->add($authMiddleware);
 $app->get('/api/auth/recovery-question', [$authController, 'getRecoveryQuestion'])->add(new \App\Middleware\RateLimiterMiddleware($db, 10, 15));
 $app->post('/api/auth/reset-password', [$authController, 'resetPassword'])->add(new \App\Middleware\RateLimiterMiddleware($db, 5, 15));

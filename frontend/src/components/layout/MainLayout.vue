@@ -294,7 +294,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { computed } from 'vue'
-import api from '@/data/api/HttpClient'
+import api, { logout as apiLogout } from '@/data/api/HttpClient'
 import { toast } from 'vue3-toastify'
 import Swal from 'sweetalert2'
 
@@ -427,9 +427,9 @@ onMounted(() => {
     }, 2000)
 })
 
-const logout = () => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('user')
+// Pede à API para apagar o cookie HttpOnly de sessão e limpa os dados locais.
+const logout = async () => {
+    await apiLogout().catch(() => {})
     router.push('/')
 }
 </script>

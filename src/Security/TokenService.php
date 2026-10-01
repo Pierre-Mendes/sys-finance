@@ -37,6 +37,10 @@ class TokenService {
         }
     }
 
+    public function ttl(): int {
+        return $this->ttlSeconds;
+    }
+
     public function issue(int $userId, string $email): string {
         $now = time();
         $header = ['alg' => 'HS256', 'typ' => 'JWT'];

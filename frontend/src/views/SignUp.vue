@@ -86,7 +86,7 @@
 
 <script setup lang="ts">
 import { reactive } from 'vue'
-import axios from 'axios'
+import api from '@/data/api/HttpClient'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
@@ -104,7 +104,7 @@ const form = reactive({
 
 const handleSignup = async () => {
     try {
-        const response = await axios.post('/api/auth/signup', form);
+        const response = await api.post('/api/auth/signup', form);
         
         if (response.data.success) {
             toast.success('Conta criada com sucesso!');
