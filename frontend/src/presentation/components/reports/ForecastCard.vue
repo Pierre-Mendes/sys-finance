@@ -2,12 +2,12 @@
   <section class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 sm:p-6">
     <header class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
       <div>
-        <h3 class="text-lg font-bold text-gray-800">Previsão de saldo</h3>
-        <p class="text-xs text-gray-500">Saldo de hoje + contas a pagar e receber, recorrências e compras no cartão ainda sem fatura.</p>
+        <h3 class="text-lg font-bold text-gray-800">Saldo: realizado e previsto</h3>
+        <p class="text-xs text-gray-500">Linha sólida: saldo no fim de cada mês até hoje. Tracejada: previsão com contas a pagar e receber, recorrências e compras no cartão ainda sem fatura.</p>
       </div>
-      <div class="inline-flex bg-gray-100 rounded-lg p-1 self-start" role="group" aria-label="Horizonte da previsão">
+      <div class="inline-flex flex-shrink-0 bg-gray-100 rounded-lg p-1 self-start" role="group" aria-label="Horizonte da previsão">
         <button v-for="d in HORIZONS" :key="d" type="button" @click="days = d"
-                :class="['px-3 py-1.5 text-sm rounded-md font-medium', days === d ? 'bg-white shadow text-gray-900' : 'text-gray-500']">
+                :class="['px-3 py-1.5 text-sm rounded-md font-medium whitespace-nowrap', days === d ? 'bg-white shadow text-gray-900' : 'text-gray-500']">
           {{ d }} dias
         </button>
       </div>
@@ -96,19 +96,29 @@ const load = async () => {
   }
 }
 
-const series = computed(() => [{ name: 'Saldo previsto', data: (data.value?.points ?? []).map((p: any) => ({ x: localDay(p.date), y: p.balance })) }])
+// Duas séries no mesmo eixo de tempo: identidade pelo traço (sólido x tracejado) + legenda, não só pela cor.
+const series = computed(() => [
+  { name: 'Realizado (linha sólida)', data: (data.value?.history ?? []).map((p: any) => ({ x: localDay(p.date), y: p.balance })) },
+  { name: 'Previsto (tracejado)', data: (data.value?.points ?? []).map((p: any) => ({ x: localDay(p.date), y: p.balance })) },
+])
+const todayTs = computed(() => (data.value?.points?.[0] ? localDay(data.value.points[0].date) : Date.now()))
 
 const chartOptions = computed(() => ({
   chart: { toolbar: { show: false }, zoom: { enabled: false }, fontFamily: 'inherit' },
-  colors: ['#2a78d6'],
-  stroke: { width: 2, curve: 'stepline' },
-  fill: { type: 'gradient', gradient: { opacityFrom: 0.25, opacityTo: 0.02 } },
+  colors: ['#2a78d6', '#2a78d6'],
+  stroke: { width: [2, 2], curve: ['straight', 'stepline'], dashArray: [0, 6] },
+  fill: { type: ['gradient', 'solid'], opacity: [1, 0], gradient: { opacityFrom: 0.25, opacityTo: 0.02 } },
+  markers: { size: [4, 0], strokeColors: '#fff', strokeWidth: 2, hover: { size: 5 } },
+  legend: { position: 'top', horizontalAlign: 'left' },
   dataLabels: { enabled: false },
   xaxis: { type: 'datetime', labels: { datetimeUTC: false, format: 'dd/MM', style: { colors: '#6b7280' } }, tooltip: { enabled: false } },
   yaxis: { labels: { formatter: formatBRLCompact, style: { colors: '#6b7280' } } },
   grid: { borderColor: '#f1f1f1', strokeDashArray: 4 },
-  annotations: { yaxis: [{ y: 0, borderColor: '#9ca3af', strokeDashArray: 4 }] },
-  tooltip: { x: { format: 'dd/MM/yyyy' }, y: { formatter: (v: number) => formatBRL(v) } },
+  annotations: {
+    yaxis: [{ y: 0, borderColor: '#9ca3af', strokeDashArray: 4 }],
+    xaxis: [{ x: todayTs.value, borderColor: '#6b7280', strokeDashArray: 0, label: { text: 'Hoje', orientation: 'horizontal', style: { color: '#fff', background: '#6b7280' } } }],
+  },
+  tooltip: { shared: false, intersect: false, x: { format: 'dd/MM/yyyy' }, y: { formatter: (v: number) => formatBRL(v) } },
 }))
 
 watch(days, load)
