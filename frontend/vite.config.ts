@@ -18,9 +18,11 @@ export default defineConfig({
     ],
   },
   server: {
+    // No Docker (docker-compose.yml) o alvo é o container "backend"; fora dele, a API local na 8081.
+    watch: process.env.VITE_USE_POLLING === 'true' ? { usePolling: true, interval: 300 } : undefined,
     proxy: {
       '/api': {
-        target: 'http://localhost:8081',
+        target: process.env.VITE_PROXY_TARGET || 'http://localhost:8081',
         changeOrigin: true,
         secure: false,
       }

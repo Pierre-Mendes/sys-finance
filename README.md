@@ -135,14 +135,29 @@ O ecossistema é mantido vivo de forma automática através das `GitHub Actions`
 
 ## 💻 Instalação Local (Developer Setup)
 
-**Requisitos**: Docker, NodeJS v20+
+**Requisitos**: Docker (com Docker Compose v2). Node e PHP na máquina são opcionais.
 
-1.  **Infraestrutura**: `docker compose up -d` (MySQL/MariaDB).
-2.  **Banco de Dados**: `vendor/bin/phinx migrate -e development`.
-3.  **API**: `php -S 0.0.0.0:8000 -t public/`.
-4.  **Frontend**: `cd frontend && npm install && npm run dev`.
+```bash
+docker compose up -d --build   # primeira vez (ou depois de mudar o Dockerfile)
+docker compose up -d           # nas próximas
+docker compose logs -f backend frontend
+docker compose down            # para tudo (use -v para apagar também o banco)
+```
 
-Acesse em: `http://localhost:5173`
+| Serviço | Endereço | O que faz |
+|---|---|---|
+| `frontend` | http://localhost:5173 | Vite com hot reload; **use o app por aqui** (`/api` é repassado ao backend) |
+| `backend` | http://localhost:8081/api/health | PHP 8.4 + Apache; instala o Composer e roda as migrations ao subir |
+| `db` | localhost:3307 (root/root) | MySQL 8 com volume persistente |
+| `scheduler` | — | lembretes de contas a vencer a cada 15 min |
+
+O código é montado por volume: alterações em `src/` e `frontend/src/` aparecem sem rebuild.
+Mudou `composer.lock` ou `package-lock.json`? Basta reiniciar o container (`docker compose restart backend frontend`).
+Testes rodam dentro dos containers: `docker compose exec backend vendor/bin/phpunit` e
+`docker compose exec frontend npx vitest run`.
+
+Sem Docker: `vendor/bin/phinx migrate -e development`, `php -S 127.0.0.1:8081 -t public public/index.php`
+e `cd frontend && npm install && npm run dev` (acesse `http://localhost:5173`).
 
 ---
 
