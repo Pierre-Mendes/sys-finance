@@ -30,11 +30,12 @@ services:
     image: sys-finance-backend-dev
     container_name: financas-backend
     ports:
-      - "8081:80"
+      - "8081:8080"  # o container roda sem root, por isso o Apache escuta na 8080
     volumes:
       - .:/var/www/html
-      # Dependências do Composer ficam no container (não misturam com o vendor/ do host).
+      # Dependências do Composer e uploads temporários ficam em volumes do container (graváveis pelo www-data).
       - backend-vendor:/var/www/html/vendor
+      - backend-storage:/var/www/html/storage
     environment:
       DB_HOST: db
       DB_USER: root
@@ -49,7 +50,7 @@ services:
       db:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-fsS", "http://localhost/api/health"]
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/api/health"]
       interval: 5s
       timeout: 5s
       retries: 60
@@ -68,7 +69,7 @@ services:
       - frontend-node-modules:/app/node_modules
     environment:
       # O Vite repassa /api para o container do backend: navegador vê uma origem só (cookies e CSRF funcionam).
-      VITE_PROXY_TARGET: http://backend
+      VITE_PROXY_TARGET: http://backend:8080
       # Polling para o hot reload funcionar com volumes no Docker Desktop (Windows/macOS).
       VITE_USE_POLLING: ${VITE_USE_POLLING:-true}
     depends_on:
@@ -101,4 +102,5 @@ services:
 volumes:
   db-data:
   backend-vendor:
+  backend-storage:
   frontend-node-modules:

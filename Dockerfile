@@ -53,10 +53,17 @@ RUN echo "PassEnv DB_HOST DB_USER DB_PASS DB_NAME APP_ENV APP_TIMEZONE JWT_SECRE
     && a2enconf passenv
 
 # --- ESTÁGIO 3: Desenvolvimento (docker-compose.yml) ---
-# O código vem por volume; o entrypoint instala o Composer, espera o banco e roda as migrations.
+# O código vem por volume; o entrypoint instala o Composer e roda as migrations.
+# Roda como www-data (sem root): Apache escuta na 8080 e vendor/ e storage/ são volumes do container.
 FROM php-base AS backend-dev
-COPY docker/dev/backend-entrypoint.sh /usr/local/bin/backend-entrypoint
-RUN chmod +x /usr/local/bin/backend-entrypoint
+RUN sed -ri 's/^Listen 80$/Listen 8080/' /etc/apache2/ports.conf \
+    && sed -ri 's/<VirtualHost \*:80>/<VirtualHost *:8080>/' /etc/apache2/sites-available/000-default.conf \
+    && mkdir -p /var/www/html/vendor /var/www/html/storage/temp /tmp/composer \
+    && chown -R www-data:www-data /var/www/html /tmp/composer
+COPY --chmod=755 docker/dev/backend-entrypoint.sh /usr/local/bin/backend-entrypoint
+ENV COMPOSER_HOME=/tmp/composer
+USER www-data
+EXPOSE 8080
 ENTRYPOINT ["backend-entrypoint"]
 CMD ["apache2-foreground"]
 

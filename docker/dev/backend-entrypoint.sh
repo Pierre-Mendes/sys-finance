@@ -9,9 +9,7 @@ if [ ! -f vendor/autoload.php ] || [ ! -f vendor/.installed ] || [ composer.lock
     touch vendor/.installed
 fi
 
-# logs/ e storage/ vêm do host montados; o Apache roda como www-data.
-mkdir -p logs storage/temp
-chmod -R a+rwX logs storage
+# Sem permissão de escrita em logs/ (pasta do host), a API manda os logs para o stderr: `docker compose logs backend`.
 
 # O healthcheck do MySQL pode passar enquanto o servidor de inicialização ainda roda: tenta por até ~60 s.
 if [ "${RUN_MIGRATIONS:-1}" = "1" ]; then
