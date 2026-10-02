@@ -57,7 +57,11 @@ Checklist para qualquer mudança que toque entrada do usuário, dados de outro t
 
 ## Configuração (A05)
 
-- Headers: `SecurityHeadersMiddleware` (API) e `public/.htaccess` (estáticos). CSP sem `unsafe-eval`.
+- Headers: `SecurityHeadersMiddleware` (API) e `public/.htaccess` (estáticos). CSP sem `unsafe-eval` e sem
+  `unsafe-inline` em `style-src`; COOP `same-origin`, COEP `require-corp`, CORP `same-origin` (API: `same-site`).
+- CSS de libs entra como arquivo importado em `main.ts`, nunca via `<style>` injetado em runtime:
+  ApexCharts com `injectStyleSheet: false`, SweetAlert2 pelo build `sweetalert2.esm.js` (alias no Vite).
+  No HTML de SweetAlert use classes Tailwind, nunca o atributo `style=` (a CSP bloqueia).
 - CORS por `CORS_ALLOWED_ORIGINS`; origens extras do front em `CSP_CONNECT_SRC`.
 - Apache sem versão (`ServerTokens Prod`), PHP sem `X-Powered-By`.
 

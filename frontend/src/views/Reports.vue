@@ -76,9 +76,18 @@
             <apexchart type="bar" height="280" :options="flowOptions" :series="flowSeries" />
           </section>
           <section class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-            <h3 class="font-bold text-gray-800">Saldo acumulado</h3>
-            <p class="text-xs text-gray-500 mb-2">Saldo no fim de cada mês, somando tudo que já foi pago.</p>
-            <apexchart type="area" height="280" :options="balanceOptions" :series="balanceSeries" />
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <h3 class="font-bold text-gray-800">Saldo acumulado</h3>
+                <p class="text-xs text-gray-500 mb-2">Saldo no fim de cada mês, somando tudo que já foi pago.</p>
+              </div>
+              <!-- No celular fica recolhido: a previsão acima já mostra o saldo realizado recente -->
+              <button v-if="!isDesktop" type="button" @click="balanceExpanded = !balanceExpanded" :aria-expanded="balanceExpanded"
+                      class="text-sm font-medium text-primary whitespace-nowrap">
+                {{ balanceExpanded ? 'Ver menos' : 'Ver mais' }}
+              </button>
+            </div>
+            <apexchart v-if="isDesktop || balanceExpanded" type="area" height="280" :options="balanceOptions" :series="balanceSeries" />
           </section>
         </div>
 
@@ -198,7 +207,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
 import MainLayout from '@/components/layout/MainLayout.vue'
@@ -236,6 +245,14 @@ const report = ref<any>(null)
 const loading = ref(false)
 const exporting = ref(false)
 const sort = ref<{ key: string; dir: 'asc' | 'desc' }>({ key: 'expense', dir: 'desc' })
+
+// Saldo acumulado: aberto no desktop, recolhido ("Ver mais") no celular.
+const desktopQuery = typeof window !== 'undefined' && window.matchMedia ? window.matchMedia('(min-width: 1024px)') : null
+const isDesktop = ref(desktopQuery?.matches ?? true)
+const balanceExpanded = ref(false)
+const onViewportChange = (e: MediaQueryListEvent) => { isDesktop.value = e.matches }
+desktopQuery?.addEventListener('change', onViewportChange)
+onUnmounted(() => desktopQuery?.removeEventListener('change', onViewportChange))
 
 const years = computed<number[]>(() => report.value?.availableYears ?? [year.value])
 const previousLabel = computed(() => (type.value === 'monthly' ? 'mês anterior' : 'ano anterior'))
