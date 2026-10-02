@@ -1,3 +1,11 @@
+# Ambiente de desenvolvimento completo: `docker compose up` sobe banco, API, frontend e lembretes.
+#   Frontend (Vite com hot reload): http://localhost:5173  → é por aqui que se usa o app
+#   API (PHP/Apache):               http://localhost:8081/api/health
+#   MySQL:                          localhost:3307 (root/root)
+# O código é montado por volume: alterações no PHP e no Vue aparecem sem rebuild.
+# Produção usa docker-compose.prod.yml (imagem única com a SPA buildada).
+name: sys-finance
+
 services:
   db:
     image: mysql:8.0
@@ -10,29 +18,87 @@ services:
     ports:
       - "3307:3306"
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      timeout: 20s
-      retries: 10
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
 
-  web:
-    build: .
-    container_name: financas-web
+  backend:
+    build:
+      context: .
+      target: backend-dev
+    image: sys-finance-backend-dev
+    container_name: financas-backend
     ports:
       - "8081:80"
     volumes:
-      # Mapeia a pasta do projeto (root) para a pasta raiz web do apache
       - .:/var/www/html
+      # Dependências do Composer ficam no container (não misturam com o vendor/ do host).
+      - backend-vendor:/var/www/html/vendor
     environment:
-      - DB_HOST=db
-      - DB_USER=root
-      - DB_PASS=root
-      - DB_NAME=money_manager
-      - APP_ENV=development
-      - JWT_SECRET=${JWT_SECRET:-}  # opcional: sem ele a chave é gerada e guardada no banco
-      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS:-*}
+      DB_HOST: db
+      DB_USER: root
+      DB_PASS: root
+      DB_NAME: money_manager
+      APP_ENV: development
+      APP_TIMEZONE: ${APP_TIMEZONE:-America/Sao_Paulo}
+      JWT_SECRET: ${JWT_SECRET:-}  # opcional: sem ele a chave é gerada e guardada no banco
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:5173}
+      CSP_CONNECT_SRC: ${CSP_CONNECT_SRC:-https://*.sentry.io}
     depends_on:
       db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost/api/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 60
+      start_period: 120s
+
+  frontend:
+    image: node:22-alpine
+    container_name: financas-frontend
+    working_dir: /app
+    # npm ci só quando o package-lock.json muda (node_modules fica num volume do container).
+    command: sh -c "if [ ! -d node_modules/.bin ] || [ ! -f node_modules/.installed ] || [ package-lock.json -nt node_modules/.installed ]; then npm ci && touch node_modules/.installed; fi && npm run dev -- --host 0.0.0.0"
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - frontend-node-modules:/app/node_modules
+    environment:
+      # O Vite repassa /api para o container do backend: navegador vê uma origem só (cookies e CSRF funcionam).
+      VITE_PROXY_TARGET: http://backend
+      # Polling para o hot reload funcionar com volumes no Docker Desktop (Windows/macOS).
+      VITE_USE_POLLING: ${VITE_USE_POLLING:-true}
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  # Lembretes de contas a vencer (no app + Web Push), a cada 15 min. Mesma imagem do backend, sem Apache.
+  scheduler:
+    build:
+      context: .
+      target: backend-dev
+    image: sys-finance-backend-dev
+    container_name: financas-scheduler
+    command: ["sh", "-c", "while true; do php bin/reminders.php || true; sleep 900; done"]
+    volumes:
+      - .:/var/www/html
+      - backend-vendor:/var/www/html/vendor
+    environment:
+      DB_HOST: db
+      DB_USER: root
+      DB_PASS: root
+      DB_NAME: money_manager
+      APP_ENV: development
+      APP_TIMEZONE: ${APP_TIMEZONE:-America/Sao_Paulo}
+      RUN_MIGRATIONS: "0"  # quem migra é o backend
+    depends_on:
+      backend:
         condition: service_healthy
 
 volumes:
   db-data:
+  backend-vendor:
+  frontend-node-modules:
