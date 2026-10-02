@@ -19,8 +19,13 @@ use Throwable;
 class BillReminderService {
     /** Maior antecedência aceita nas preferências. */
     public const MAX_DAYS_BEFORE = 7;
-    /** Contas atrasadas há mais tempo que isso não geram aviso (evita alertas de contas esquecidas há meses). */
-    private const OVERDUE_LOOKBACK_DAYS = 30;
+    /**
+     * Atrasada há mais que isso = "esquecida": não recebe o aviso diário de atraso; em vez disso o usuário
+     * recebe, uma vez por mês, um pedido para decidir (pagar, reagendar ou desconsiderar). A previsão de saldo
+     * também deixa essas contas de fora.
+     */
+    public const STALE_AFTER_DAYS = 30;
+    private const OVERDUE_LOOKBACK_DAYS = self::STALE_AFTER_DAYS;
 
     public function __construct(
         private BillReminderRepository $reminders,
@@ -39,10 +44,11 @@ class BillReminderService {
             $now->modify('-' . self::OVERDUE_LOOKBACK_DAYS . ' days')->format('Y-m-d'),
             $now->modify('+' . self::MAX_DAYS_BEFORE . ' days')->format('Y-m-d')
         );
-        if (!$rows) return ['inApp' => 0, 'pushUsers' => 0];
-
-        $settings = $this->settings->getMany(array_column($rows, 'userId'));
         $hour = (int) $now->format('G');
+        $settings = $this->settings->getMany(array_column($rows, 'userId'));
+        $staleCreated = $this->staleReview($now, $settings, $hour);
+        if (!$rows) return ['inApp' => $staleCreated, 'pushUsers' => 0];
+
         $sentAt = $now->format('Y-m-d H:i:s');
 
         $created = 0;
@@ -68,7 +74,41 @@ class BillReminderService {
             $this->pushTo($userId, self::pushPayload($items));
         }
 
+        $created += $staleCreated;
+
         return ['inApp' => $created, 'pushUsers' => count($pushByUser)];
+    }
+
+    /**
+     * Uma vez por mês, para cada usuário com contas atrasadas há mais de STALE_AFTER_DAYS: um aviso pedindo
+     * para revisar (Dashboard → "Contas atrasadas"). Registro com bill_id 0 + kind STALE + mês.
+     */
+    private function staleReview(DateTimeImmutable $now, array $settings, int $hour): int {
+        $stale = $this->reminders->findPendingForMembers('1900-01-01', $now->modify('-' . (self::STALE_AFTER_DAYS + 1) . ' days')->format('Y-m-d'));
+        if (!$stale) return 0;
+
+        $byUser = [];
+        foreach ($stale as $b) {
+            $byUser[$b['userId']]['count'] = ($byUser[$b['userId']]['count'] ?? 0) + 1;
+            $byUser[$b['userId']]['total'] = ($byUser[$b['userId']]['total'] ?? 0) + $b['amount'];
+        }
+        $settings += $this->settings->getMany(array_keys($byUser));
+        $month = $now->format('Y-m-01');
+        $created = 0;
+        foreach ($byUser as $userId => $info) {
+            if ($hour < ($settings[$userId]['reminderHour'] ?? 8)) continue;
+            if (!$this->reminders->markSent(0, $userId, 'STALE', $month, $now->format('Y-m-d H:i:s'))) continue;
+            $total = 'R$ ' . number_format($info['total'], 2, ',', '.');
+            $plural = $info['count'] > 1;
+            $this->notifications->notify(
+                $userId,
+                $plural ? "{$info['count']} contas atrasadas há mais de " . self::STALE_AFTER_DAYS . ' dias' : 'Conta atrasada há mais de ' . self::STALE_AFTER_DAYS . ' dias',
+                "Somam {$total}. Diga o que fazer com " . ($plural ? 'elas' : 'ela') . ': marcar como paga, reagendar ou desconsiderar.',
+                'SLA_WARNING', null, '/dashboard?review=overdue'
+            );
+            $created++;
+        }
+        return $created;
     }
 
     /**

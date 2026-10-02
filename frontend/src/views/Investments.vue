@@ -268,7 +268,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import axios from 'axios'
+import api from '@/data/api/HttpClient'
 import MainLayout from '../components/layout/MainLayout.vue'
 import { toast } from 'vue3-toastify'
 import Swal from 'sweetalert2'
@@ -331,8 +331,7 @@ const getRentabilityInfo = (inv: any) => {
 const fetchData = async () => {
     loading.value = true
     try {
-        const token = localStorage.getItem('token')
-        const { data } = await axios.get('/api/investments', { headers: { Authorization: `Bearer ${token}` }})
+        const { data } = await api.get('/api/investments')
         investments.value = data.data || []
     } catch (e: any) {
         toast.error('Erro ao carregar carteira')
@@ -353,8 +352,7 @@ const openCreateModal = () => {
 const submitCreate = async () => {
     isSubmitting.value = true
     try {
-        const token = localStorage.getItem('token')
-        await axios.post('/api/investments', createForm.value, { headers: { Authorization: `Bearer ${token}` }})
+        await api.post('/api/investments', createForm.value)
         toast.success('Ativo criado com sucesso!')
         createModalOpen.value = false
         fetchData()
@@ -375,8 +373,7 @@ const submitTx = async () => {
     if (!activeAsset.value) return
     isSubmitting.value = true
     try {
-        const token = localStorage.getItem('token')
-        await axios.post(`/api/investments/${activeAsset.value.id}/transactions`, txForm.value, { headers: { Authorization: `Bearer ${token}` }})
+        await api.post(`/api/investments/${activeAsset.value.id}/transactions`, txForm.value)
         toast.success(txForm.value.action === 'BUY' ? 'Aporte registrado!' : 'Venda registrada!')
         txModalOpen.value = false
         fetchData()
@@ -397,8 +394,7 @@ const submitQuote = async () => {
     if (!activeAsset.value) return
     isSubmitting.value = true
     try {
-        const token = localStorage.getItem('token')
-        await axios.put(`/api/investments/${activeAsset.value.id}`, quoteForm.value, { headers: { Authorization: `Bearer ${token}` }})
+        await api.put(`/api/investments/${activeAsset.value.id}`, quoteForm.value)
         toast.success('Cotação manual gravada!')
         quoteModalOpen.value = false
         fetchData()
@@ -412,8 +408,7 @@ const submitQuote = async () => {
 const syncQuotes = async () => {
     isSyncing.value = true
     try {
-        const token = localStorage.getItem('token')
-        const { data } = await axios.post('/api/investments/quotes/sync', {}, { headers: { Authorization: `Bearer ${token}` }})
+        const { data } = await api.post('/api/investments/quotes/sync', {})
         toast.success(data.message)
         fetchData()
     } catch(e: any) {
@@ -437,8 +432,7 @@ const deleteInvestment = async (id: number) => {
 
     if (result.isConfirmed) {
         try {
-            const token = localStorage.getItem('token');
-            await axios.delete(`/api/investments/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+            await api.delete(`/api/investments/${id}`);
             toast.success('Ativo apagado da carteira.');
             fetchData();
         } catch (e: any) {

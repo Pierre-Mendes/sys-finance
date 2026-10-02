@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Services\AuthService;
+use App\Security\SessionCookie;
 use App\Security\TokenService;
 use App\DTO\AuthDTO;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -66,10 +67,11 @@ class AuthController {
         try {
             $user = $this->authService->login($dto->email, $dto->password);
             
+            // O token vai só no cookie HttpOnly: o JavaScript da página nunca o vê.
+            $response = SessionCookie::attach($response, $request, $this->tokenService->issue($user->getId(), $user->getEmail()), $this->tokenService->ttl());
             $response->getBody()->write(json_encode([
                 "success" => true,
                 "message" => "Login successful.",
-                "token" => $this->tokenService->issue($user->getId(), $user->getEmail()),
                 "user" => [
                     "id" => $user->getId(),
                     "email" => $user->getEmail(),
@@ -86,6 +88,12 @@ class AuthController {
             ]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
         }
+    }
+
+    /** Encerra a sessão apagando os cookies (funciona mesmo com a sessão já expirada). */
+    public function logout(Request $request, Response $response): Response {
+        $response->getBody()->write(json_encode(["success" => true]));
+        return SessionCookie::clear($response, $request)->withHeader('Content-Type', 'application/json');
     }
 
     public function me(Request $request, Response $response): Response {

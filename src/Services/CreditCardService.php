@@ -29,20 +29,39 @@ class CreditCardService {
         $this->resolver = $resolver;
     }
 
-    public function getAllCards(int $workspaceId): array {
+    /**
+     * Cartões com limite usado e a fatura aberta.
+     * Limite usado = compras cujas faturas ainda não foram pagas (pagar a fatura libera o limite).
+     */
+    public function getAllCards(int $workspaceId, ?\DateTimeImmutable $today = null): array {
+        $today ??= new \DateTimeImmutable('today');
         $cards = $this->cardRepo->findAllByWorkspaceId($workspaceId);
         $result = [];
         foreach ($cards as $card) {
-            $txs = $this->txRepo->findAllByCardId($card->getId(), $workspaceId);
-            $usedAmount = 0;
-            foreach ($txs as $tx) {
-                // For now, let's sum ALL transactions on the card.
-                // In a more complex system, we'd only sum unbilled ones.
-                $usedAmount += $tx->getAmount();
+            $cycle = new CardBillingCycle($card->getClosingDay(), $card->getDueDay());
+            $open = $cycle->openInvoice($today);
+            $paidCache = [];
+            $usedAmount = 0.0;
+            $openTotal = 0.0;
+            foreach ($this->txRepo->findAllByCardId($card->getId(), $workspaceId) as $tx) {
+                $inv = $cycle->invoiceFor(new \DateTimeImmutable($tx->getDate()));
+                $title = CardBillingCycle::title($card->getName(), $inv['month'], $inv['year']);
+                if (!array_key_exists($title, $paidCache)) {
+                    $bill = $this->billRepo->findByTitleAndWorkspaceId($title, $workspaceId);
+                    $paidCache[$title] = $bill !== null && $bill->getStatus() === 'PAID';
+                }
+                if (!$paidCache[$title]) $usedAmount += $tx->getAmount();
+                if ($inv['month'] === $open['month'] && $inv['year'] === $open['year']) $openTotal += $tx->getAmount();
             }
             $result[] = [
                 'card' => $card,
-                'usedAmount' => $usedAmount
+                'usedAmount' => round($usedAmount, 2),
+                'bestPurchaseDay' => $cycle->bestPurchaseDay(),
+                'openInvoice' => [
+                    'closingDate' => $open['closing']->format('Y-m-d'),
+                    'dueDate' => $open['due']->format('Y-m-d'),
+                    'total' => round($openTotal, 2),
+                ],
             ];
         }
         return $result;
@@ -123,33 +142,35 @@ class CreditCardService {
         return $createdTransactions;
     }
 
-    public function generateInvoice(int $cardId, int $workspaceId, int $month, int $year): ?Transaction {
+    /**
+     * Gera a conta a pagar da fatura que VENCE em $month/$year (ciclo por dia de fechamento).
+     * Sem mês informado, gera a última fatura já fechada.
+     */
+    public function generateInvoice(int $cardId, int $workspaceId, ?int $month = null, ?int $year = null, ?\DateTimeImmutable $today = null): ?Transaction {
         $card = $this->cardRepo->findByIdAndWorkspaceId($cardId, $workspaceId);
         if (!$card) throw new Exception("Credit card not found.");
 
-        $allTxs = $this->txRepo->findAllByCardId($cardId, $workspaceId);
+        $cycle = new CardBillingCycle($card->getClosingDay(), $card->getDueDay());
+        $invoice = ($month && $year) ? $cycle->invoiceDueIn($year, $month) : $cycle->lastClosedInvoice($today ?? new \DateTimeImmutable('today'));
+        $month = $invoice['month'];
+        $year = $invoice['year'];
+
         $invoiceTotal = 0;
-
-        foreach ($allTxs as $tx) {
-            $dt = new \DateTime($tx->getDate());
-            $txMonth = (int) $dt->format('n');
-            $txYear = (int) $dt->format('Y');
-
-            if ($txMonth === $month && $txYear === $year) {
+        foreach ($this->txRepo->findAllByCardId($cardId, $workspaceId) as $tx) {
+            $inv = $cycle->invoiceFor(new \DateTimeImmutable($tx->getDate()));
+            if ($inv['month'] === $month && $inv['year'] === $year) {
                 $invoiceTotal += $tx->getAmount();
             }
         }
 
         if ($invoiceTotal <= 0) return null;
 
-        $dueObj = new \DateTime();
-        $dueObj->setDate($year, $month, $card->getDueDay());
-        $dueStr = $dueObj->format('Y-m-d');
+        $dueStr = $invoice['due']->format('Y-m-d');
 
-        $title = "Fatura " . $card->getName() . " ({$month}/{$year})";
+        $title = CardBillingCycle::title($card->getName(), $month, $year);
         $existing = $this->billRepo->findByTitleAndWorkspaceId($title, $workspaceId);
         if ($existing) {
-            throw new Exception("A fatura deste cartão para {$month}/{$year} já foi gerada.");
+            throw new Exception("A fatura deste cartão com vencimento em {$month}/{$year} já foi gerada.");
         }
 
         // Find or create "Cartão de Crédito" category
@@ -173,11 +194,11 @@ class CreditCardService {
             $workspaceId,
             'bill',
             $title,
-            date('Y-m-d'),
+            $invoice['closing']->format('Y-m-d'),
             $defaultCategoryId,
             $card->getAccountId(),
             $invoiceTotal,
-            "Fatura gerada automaticamente pelo consolidado de compras do mês.",
+            "Fatura gerada pelas compras do ciclo que fechou em " . $invoice['closing']->format('d/m/Y') . ".",
             null,
             null,
             $dueStr,

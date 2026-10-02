@@ -71,7 +71,7 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
-import axios from 'axios'
+import api from '@/data/api/HttpClient'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
 
@@ -90,7 +90,7 @@ const form = reactive({
 const getQuestion = async () => {
   isSubmitting.value = true
   try {
-    const response = await axios.get('/api/auth/recovery-question', { params: { email: form.email } })
+    const response = await api.get('/api/auth/recovery-question', { params: { email: form.email } })
     recoveryQuestion.value = response.data.question
     step.value = 2
   } catch (e: any) {
@@ -108,7 +108,7 @@ const handleReset = async () => {
 
   isSubmitting.value = true
   try {
-    await axios.post('/api/auth/reset-password', {
+    await api.post('/api/auth/reset-password', {
       email: form.email,
       answer: form.answer,
       newPassword: form.newPassword

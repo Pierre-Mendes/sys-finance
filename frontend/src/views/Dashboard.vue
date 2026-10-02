@@ -61,6 +61,8 @@
 
     <SetupChecklist ref="setupChecklist" @new-transaction="openModal = true" />
 
+    <OverdueReview ref="overdueReview" @changed="onTransactionSaved" />
+
     <UpcomingBills ref="upcomingBills" @paid="fetchAnalytics" />
 
     <!-- Alerta de Saúde Financeira -->
@@ -260,7 +262,8 @@
                 </select>
             </div>
             <div class="flex-1 flex items-center justify-center relative">
-                <apexchart v-if="!isRefreshing && categoryChartSeries.length" type="donut" width="300" :options="categoryChartOpts" :series="categoryChartSeries"></apexchart>
+                <!-- Não desmontar durante a atualização: remover o gráfico no meio do desenho gera "Element not found" no ApexCharts -->
+                <apexchart v-if="categoryChartSeries.length" :class="{ 'opacity-50': isRefreshing }" type="donut" width="300" :options="categoryChartOpts" :series="categoryChartSeries"></apexchart>
                 <div v-else-if="!isRefreshing" class="text-gray-400 text-sm">Sem dados suficientes.</div>
             </div>
         </div>
@@ -306,6 +309,7 @@ import MainLayout from '@/components/layout/MainLayout.vue'
 import TransactionModal from '@/presentation/components/domain/TransactionModal.vue'
 import SetupChecklist from '@/presentation/components/domain/SetupChecklist.vue'
 import UpcomingBills from '@/presentation/components/domain/UpcomingBills.vue'
+import OverdueReview from '@/presentation/components/domain/OverdueReview.vue'
 import { escapeHtml } from '@/core/security/escapeHtml'
 import api from '@/data/api/HttpClient'
 import { useWorkspaceStore } from '@/presentation/store/workspaceStore'
@@ -458,11 +462,13 @@ const fetchAnalytics = async () => {
 
 const setupChecklist = ref<InstanceType<typeof SetupChecklist> | null>(null)
 const upcomingBills = ref<InstanceType<typeof UpcomingBills> | null>(null)
+const overdueReview = ref<InstanceType<typeof OverdueReview> | null>(null)
 
 const onTransactionSaved = () => {
     fetchAnalytics()
     setupChecklist.value?.refresh()
     upcomingBills.value?.reload()
+    overdueReview.value?.reload()
 }
 
 onMounted(() => {

@@ -169,4 +169,20 @@ class BillReminderServiceTest extends TestCase
         $this->assertSame(-3, BillReminderService::daysUntil('2026-10-10', '2026-10-07'));
         $this->assertSame(0, BillReminderService::daysUntil('2026-10-10', '2026-10-10'));
     }
+
+    public function test_bills_overdue_for_over_30_days_get_one_monthly_review_request_instead_of_daily_alerts(): void
+    {
+        $this->bill('IPTU', '2026-08-01', 'PENDING', 900);
+        $this->bill('Multa', '2026-07-15', 'PENDING', 100);
+
+        $this->service->run($this->at('2026-10-10 09:00'));
+        $this->service->run($this->at('2026-10-20 09:00'));
+        $this->service->run($this->at('2026-11-02 09:00'));
+
+        $owner = $this->notificationsFor(self::OWNER);
+        $this->assertCount(2, $owner, 'Um pedido de revisão por mês (outubro e novembro), nenhum aviso diário');
+        $this->assertSame('2 contas atrasadas há mais de 30 dias', $owner[0]['title']);
+        $this->assertStringContainsString('R$ 1.000,00', $owner[0]['message']);
+        $this->assertSame('/dashboard?review=overdue', $owner[0]['action_url']);
+    }
 }

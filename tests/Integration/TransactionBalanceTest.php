@@ -108,4 +108,27 @@ class TransactionBalanceTest extends TestCase
 
         $this->assertSame(4500.0, $this->accountBalance());
     }
+
+    public function test_overdue_bill_can_be_rescheduled_or_canceled_without_touching_the_balance(): void
+    {
+        $rent = $this->pendingRent(); // MONTHLY, vence 10/09
+        $this->txService->reschedule((int) $rent->getId(), $this->workspaceId, 'bill', '2026-10-05');
+        $this->assertSame('2026-10-05', $this->billRepo->findByIdAndWorkspaceId((int) $rent->getId(), $this->workspaceId)->getDueDate());
+
+        $this->txService->cancel((int) $rent->getId(), $this->workspaceId, 'bill');
+        $canceled = $this->billRepo->findByIdAndWorkspaceId((int) $rent->getId(), $this->workspaceId);
+        $this->assertSame('CANCELED', $canceled->getStatus(), 'Fica no histórico como desconsiderada');
+        $this->assertSame(5000.0, $this->accountBalance(), 'Desconsiderar não mexe no saldo');
+
+        $next = array_values(array_filter(
+            $this->billRepo->findAllByWorkspaceId($this->workspaceId),
+            fn ($b) => $b->getParentTransactionId() === (int) $rent->getId()
+        ));
+        $this->assertCount(1, $next, 'Recorrente: a próxima ocorrência continua');
+        $this->assertSame('PENDING', $next[0]->getStatus());
+        $this->assertSame('2026-11-05', $next[0]->getDueDate());
+
+        $this->expectExceptionMessage('Só contas pendentes podem ser desconsideradas.');
+        $this->txService->cancel((int) $rent->getId(), $this->workspaceId, 'bill');
+    }
 }

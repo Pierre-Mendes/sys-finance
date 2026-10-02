@@ -32,6 +32,7 @@ env:
     --config p/javascript
     --config p/typescript
     --config p/secrets
+    --config .semgrep/
 
 jobs:
   # ------------------------------------------------------------------ SAST
@@ -183,6 +184,11 @@ jobs:
 
       - name: Smoke test
         run: curl --fail --retry 10 --retry-delay 3 --retry-all-errors http://localhost:8080/api/health
+
+      # Sessão: cookie HttpOnly/SameSite, sem token no corpo, CSRF obrigatório, logout. Exporta o cookie
+      # (ZAP_AUTH_HEADER*) para o baseline abaixo varrer também as respostas autenticadas.
+      - name: Checagens de sessão (cookie HttpOnly + CSRF)
+        run: bash .github/dast/session-checks.sh http://localhost:8080
 
       - name: ZAP baseline (SPA + API)
         uses: zaproxy/action-baseline@v0.14.0

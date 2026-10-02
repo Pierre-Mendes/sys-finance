@@ -58,6 +58,7 @@
                             <div class="flex flex-col">
                                 <span class="text-gray-900 font-black text-sm">{{ item.title }}</span>
                                 <span v-if="item.status === 'PENDING'" class="text-[9px] font-black text-amber-500 uppercase tracking-tighter">Pendente</span>
+                                <span v-else-if="item.status === 'CANCELED'" class="text-[9px] font-black text-gray-400 uppercase tracking-tighter">Desconsiderada</span>
                             </div>
                         </td>
                         <td class="px-8 py-6">

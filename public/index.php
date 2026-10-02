@@ -119,6 +119,7 @@ $app->post('/api/auth/signup', [$authController, 'signup'])->add(new \App\Middle
 $app->post('/api/auth/login', [$authController, 'login'])->add(new \App\Middleware\RateLimiterMiddleware($db, 5, 10));
 
 $app->get('/api/auth/me', [$authController, 'me'])->add($authMiddleware);
+$app->post('/api/auth/logout', [$authController, 'logout']);
 $app->put('/api/auth/profile', [$authController, 'updateProfile'])->add($authMiddleware);
 $app->get('/api/auth/recovery-question', [$authController, 'getRecoveryQuestion'])->add(new \App\Middleware\RateLimiterMiddleware($db, 10, 15));
 $app->post('/api/auth/reset-password', [$authController, 'resetPassword'])->add(new \App\Middleware\RateLimiterMiddleware($db, 5, 15));
@@ -152,14 +153,19 @@ $app->group('/api/transactions', function (\Slim\Routing\RouteCollectorProxy $gr
     $group->put('/{id}', [$txController, 'update'])->add(\App\Middleware\GatekeeperMiddleware::requireEditor('transactions'));
     $group->delete('/{id}', [$txController, 'delete'])->add(\App\Middleware\GatekeeperMiddleware::requireEditor('transactions'));
     $group->post('/{id}/pay', [$txController, 'pay'])->add(\App\Middleware\GatekeeperMiddleware::requireEditor('transactions'));
+    $group->post('/{id}/reschedule', [$txController, 'reschedule'])->add(\App\Middleware\GatekeeperMiddleware::requireEditor('transactions'));
+    $group->post('/{id}/cancel', [$txController, 'cancel'])->add(\App\Middleware\GatekeeperMiddleware::requireEditor('transactions'));
 })->add($workspaceMiddleware)->add($authMiddleware);
 
 $app->get('/api/dashboard', [$dashController, 'index'])->add($workspaceMiddleware)->add($authMiddleware);
 
-$reportController = new \App\Controllers\ReportController($txService);
+$reportController = new \App\Controllers\ReportController($txService, new \App\Services\ReportService(new \App\Repositories\ReportRepository($db)));
 $app->group('/api/reports', function (\Slim\Routing\RouteCollectorProxy $group) use ($reportController) {
     $group->get('/pdf', [$reportController, 'generatePdf']);
     $group->get('/csv', [$reportController, 'generateCsv']);
+    $group->get('/summary', [$reportController, 'summary']);
+    $group->get('/summary/csv', [$reportController, 'summaryCsv']);
+    $group->get('/forecast', [$reportController, 'forecast']);
 })->add($workspaceMiddleware)->add($authMiddleware);
 
 $budgetRepo = new \App\Repositories\BudgetRepository($db);

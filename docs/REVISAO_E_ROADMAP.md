@@ -108,7 +108,8 @@ Arquivo: `.github/workflows/security.yml`
 | Prioridade | Item |
 |---|---|
 | ~~Alta~~ | ~~Rotas `/api/investments` sem `GatekeeperMiddleware`; `PUT/DELETE /api/workspaces/{id}` conferia o papel no workspace ativo e não no `{id}`~~ **Corrigido** (módulo `investments` + `{id}` precisa ser o workspace ativo). |
-| Alta | Token em `localStorage` fica exposto a qualquer XSS. Avaliar cookie `HttpOnly` + `SameSite` com proteção CSRF. |
+| ~~Alta~~ | ~~Token em `localStorage` exposto a XSS~~ **Corrigido**: sessão em cookie `HttpOnly` + `SameSite` + CSRF double-submit. |
+| Média | Logout apaga o cookie, mas o JWT segue válido até expirar (sem revogação no servidor). Próximo passo: versão de sessão por usuário ("sair de todos os dispositivos"). |
 | Média | Controllers devolvem `$e->getMessage()` cru ao cliente (vaza detalhes internos). Padronizar erros de domínio vs. 500 genérico. |
 | Média | `recovery-question` revela se um e-mail está cadastrado (enumeração de usuários). |
 | Média | Rate limit de login conta também tentativas bem-sucedidas; tabela `rate_limits` cresce sem limpeza. |
@@ -116,11 +117,25 @@ Arquivo: `.github/workflows/security.yml`
 | Baixa | `TransactionService::getFilteredForUser` filtra em memória e `CreditCardService::getAllCards` faz N+1. |
 | Baixa | Views antigas (`Categories.vue`, `Budgets.vue`…) usam `axios` direto em vez do `HttpClient`, duplicando headers. |
 | Baixa | SQL do Dashboard é específico de MySQL; os testes (SQLite) não cobrem esse serviço. |
-| Baixa | Dashboard dispara `Element not found` do ApexCharts no console ao carregar (gráficos aparecem normalmente). |
 
 ---
 
-## 5. Roadmap de funcionalidades (inspirado em apps como o Recta)
+## 5. Relatórios (out/2026)
+
+Tela `/reports` refeita a partir do mapeamento do Recta, sem os bugs observados lá:
+
+| Recurso | Observação |
+|---|---|
+| Mensal / Anual com KPIs, variação e taxa de poupança | variação sem base mostra "—" (o Recta mostrava 100% ou NaN%) |
+| Insights automáticos (até 3) | déficit, poupança, despesas em alta/queda, mês acima da média, categoria dominante |
+| Previsão de saldo 30/60/90 dias | inclui recorrências e compras de cartão sem fatura; alerta a data em que o saldo fica negativo |
+| Receitas × despesas e saldo acumulado | 12 meses até o mês escolhido (não até hoje); acumulado é o saldo real, não zera |
+| Pizzas por categoria + lista com valores | até 7 fatias + "Outras" |
+| Média dos 6 meses anteriores, dia da semana e calendário de gastos | só no mensal |
+| Tabela por categoria | ordenável, com total; clicar abre os lançamentos daquela categoria **no período do relatório** |
+| CSV do relatório | `;` + vírgula decimal + BOM (abre certo no Excel em português) |
+
+## 6. Roadmap de funcionalidades (inspirado em apps como o Recta)
 
 Ordenado por impacto na experiência de "registrar rápido, organizar depois":
 
@@ -129,7 +144,8 @@ Ordenado por impacto na experiência de "registrar rápido, organizar depois":
 3. **Categorias padrão por workspace** (Alimentação, Moradia, Transporte…) criadas no cadastro, editáveis depois.
 4. **Regras de categorização automática** aprendidas da importação de extratos ("UBER*" → Transporte).
 5. **Detecção de recorrências/assinaturas** a partir do histórico, com alerta de aumento de preço.
-6. **Fatura do cartão por ciclo real** (fechamento/vencimento) em vez de mês civil, com pagamento da fatura debitando a conta.
+6. ~~**Fatura do cartão por ciclo real**~~ **Feito** (`CardBillingCycle`): compra entra na fatura pelo dia de fechamento,
+   melhor dia de compra exibido no cartão, pagar a fatura libera o limite.
 7. **Transferência entre contas** como tipo próprio (hoje `transfer` existe só no tipo do frontend).
 8. **Open Finance** (agregadores como Pluggy/Belvo) para sincronizar saldos e transações sem importar arquivo.
 9. **Metas e orçamentos com alertas** via notificação/Telegram quando atingir 80%/100% do teto.

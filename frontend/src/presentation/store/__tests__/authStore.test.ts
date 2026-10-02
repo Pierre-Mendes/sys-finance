@@ -9,6 +9,12 @@ vi.mock('@/data/api/HttpClient', () => ({
     post: vi.fn(),
     get: vi.fn(),
   },
+  clearLocalSession: () => {
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    localStorage.removeItem('workspaceId')
+  },
+  logout: vi.fn(),
 }))
 
 describe('AuthStore', () => {
@@ -24,18 +30,18 @@ describe('AuthStore', () => {
     expect(store.user).toBeNull()
   })
 
-  it('setAuth should update state and storage', () => {
+  it('setUser guarda só dados de exibição, nunca o token', () => {
     const store = useAuthStore()
+    localStorage.setItem('token', 'legado')
     const mockUser = { id: 1, firstName: 'John', email: 'john@example.com' }
-    const mockToken = 'fake-token'
-    
-    store.setAuth(mockToken, mockUser)
+
+    store.setUser(mockUser)
 
     expect(store.isAuthenticated).toBe(true)
-    expect(store.token).toBe(mockToken)
     expect(store.user).toEqual(mockUser)
-    expect(localStorage.getItem('token')).toBe(mockToken)
     expect(localStorage.getItem('user')).toBe(JSON.stringify(mockUser))
+    expect(localStorage.getItem('token')).toBeNull()
+    expect('token' in store.$state).toBe(false)
   })
 
   it('logout should reset state', () => {
@@ -44,7 +50,6 @@ describe('AuthStore', () => {
     
     store.clearAuth()
 
-    expect(store.token).toBeNull()
     expect(store.user).toBeNull()
     expect(store.isAuthenticated).toBe(false)
     expect(localStorage.getItem('user')).toBeNull()

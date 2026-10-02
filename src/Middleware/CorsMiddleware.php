@@ -30,15 +30,17 @@ class CorsMiddleware
         if (in_array('*', $this->allowedOrigins, true)) {
             $response = $response->withHeader('Access-Control-Allow-Origin', '*');
         } elseif ($origin !== '' && in_array($origin, $this->allowedOrigins, true)) {
+            // Origem explícita: pode enviar o cookie de sessão (com "*" o navegador nunca envia credenciais).
             $response = $response
                 ->withHeader('Access-Control-Allow-Origin', $origin)
+                ->withHeader('Access-Control-Allow-Credentials', 'true')
                 ->withAddedHeader('Vary', 'Origin');
         } else {
             return $response;
         }
 
         return $response
-            ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization, X-Workspace-Id')
+            ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization, X-Workspace-Id, X-CSRF-Token')
             ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
     }
 }

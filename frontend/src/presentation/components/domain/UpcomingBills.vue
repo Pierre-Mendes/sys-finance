@@ -3,7 +3,7 @@
     <header class="px-5 py-4 flex items-center justify-between border-b border-gray-100">
       <div>
         <h3 class="font-bold text-gray-800">Contas a vencer</h3>
-        <p class="text-xs text-gray-500">Próximos {{ DAYS_AHEAD }} dias e atrasadas · R$ {{ formatCurrency(total) }}</p>
+        <p class="text-xs text-gray-500">Próximos {{ DAYS_AHEAD }} dias · R$ {{ formatCurrency(total) }}</p>
       </div>
       <router-link :to="{ path: '/transactions', query: { status: 'PENDING' } }" class="text-sm font-medium text-primary whitespace-nowrap">Ver todas</router-link>
     </header>
@@ -46,7 +46,7 @@ const load = async () => {
     bills.value = (all as any[])
       .filter(t => t.type === 'bill' && t.status === 'PENDING' && t.dueDate)
       .map(t => ({ ...t, daysLeft: daysUntil(t.dueDate) }))
-      .filter(t => t.daysLeft <= DAYS_AHEAD)
+      .filter(t => t.daysLeft >= 0 && t.daysLeft <= DAYS_AHEAD)
       .sort((a, b) => a.daysLeft - b.daysLeft)
   } catch {
     bills.value = []

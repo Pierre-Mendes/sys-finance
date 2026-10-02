@@ -123,51 +123,71 @@ class TransactionService {
     }
     
     public function pay(int $id, int $workspaceId, string $type): Transaction {
-        $existing = ($type === 'asset') 
-            ? $this->assetRepo->findByIdAndWorkspaceId($id, $workspaceId) 
-            : $this->billRepo->findByIdAndWorkspaceId($id, $workspaceId);
-
-        if (!$existing) throw new Exception("Transaction not found.");
-        if ($existing->getStatus() === 'PAID') throw new Exception("Transaction is already paid.");
-
-        $t = new Transaction(
-            $workspaceId, $type, $existing->getTitle(), $existing->getDate(), 
-            $existing->getCategoryId(), $existing->getAccountId(), 
-            $existing->getAmount(), $existing->getDescription(), $id,
-            $existing->getParentTransactionId(), $existing->getDueDate(), 'PAID', 
-            $existing->getPriority(), $existing->getRecurrenceType()
-        );
-
-        $savedId = ($type === 'asset') ? $this->assetRepo->save($t) : $this->billRepo->save($t);
-        
+        $existing = $this->findPending($id, $workspaceId, $type, 'Transaction is already paid.');
+        $t = $this->copyWith($existing, $type, $id, 'PAID', $existing->getDueDate());
+        $this->save($t, $type);
         $this->balances->sync($t->getAccountId(), $workspaceId);
-        
-        // Clone for recurrence
-        if ($existing->getRecurrenceType() && $existing->getRecurrenceType() !== 'NONE') {
-            $dateObj = new \DateTime($existing->getDate());
-            $dueObj = $existing->getDueDate() ? new \DateTime($existing->getDueDate()) : null;
-            
-            if ($existing->getRecurrenceType() === 'MONTHLY') {
-                $dateObj->modify('+1 month');
-                if ($dueObj) $dueObj->modify('+1 month');
-            } else if ($existing->getRecurrenceType() === 'YEARLY') {
-                $dateObj->modify('+1 year');
-                if ($dueObj) $dueObj->modify('+1 year');
-            }
-            
-            $clone = new Transaction(
-                $workspaceId, $type, $existing->getTitle(), $dateObj->format('Y-m-d'), 
-                $existing->getCategoryId(), $existing->getAccountId(), 
-                $existing->getAmount(), $existing->getDescription(), null,
-                $id, $dueObj ? $dueObj->format('Y-m-d') : null, 'PENDING', 
-                $existing->getPriority(), $existing->getRecurrenceType()
-            );
-            
-            if ($type === 'asset') $this->assetRepo->save($clone);
-            else $this->billRepo->save($clone);
-        }
-
+        $this->scheduleNextOccurrence($existing, $type, $id, $workspaceId);
         return $t;
+    }
+
+    /** Conta pendente com novo vencimento (o usuário decidiu pagar depois). */
+    public function reschedule(int $id, int $workspaceId, string $type, string $dueDate): Transaction {
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $dueDate) || !strtotime($dueDate)) throw new Exception('Data de vencimento inválida.');
+        $existing = $this->findPending($id, $workspaceId, $type, 'Só contas pendentes podem ser reagendadas.');
+        $t = $this->copyWith($existing, $type, $id, 'PENDING', $dueDate);
+        $this->save($t, $type);
+        return $t;
+    }
+
+    /**
+     * Desconsidera uma conta pendente (não vai ser paga): fica no histórico com status CANCELED e sai do saldo,
+     * da previsão e dos lembretes. Em contas recorrentes, a próxima ocorrência continua sendo criada.
+     */
+    public function cancel(int $id, int $workspaceId, string $type): Transaction {
+        $existing = $this->findPending($id, $workspaceId, $type, 'Só contas pendentes podem ser desconsideradas.');
+        $t = $this->copyWith($existing, $type, $id, 'CANCELED', $existing->getDueDate());
+        $this->save($t, $type);
+        $this->scheduleNextOccurrence($existing, $type, $id, $workspaceId);
+        return $t;
+    }
+
+    private function findPending(int $id, int $workspaceId, string $type, string $notPendingMessage): Transaction {
+        $existing = ($type === 'asset')
+            ? $this->assetRepo->findByIdAndWorkspaceId($id, $workspaceId)
+            : $this->billRepo->findByIdAndWorkspaceId($id, $workspaceId);
+        if (!$existing) throw new Exception("Transaction not found.");
+        if ($existing->getStatus() !== 'PENDING') throw new Exception($notPendingMessage);
+        return $existing;
+    }
+
+    private function copyWith(Transaction $e, string $type, int $id, string $status, ?string $dueDate): Transaction {
+        return new Transaction(
+            $e->getUserId(), $type, $e->getTitle(), $e->getDate(), // "userId" do model guarda o WorkspaceId
+            $e->getCategoryId(), $e->getAccountId(), $e->getAmount(), $e->getDescription(), $id,
+            $e->getParentTransactionId(), $dueDate, $status, $e->getPriority(), $e->getRecurrenceType()
+        );
+    }
+
+    private function save(Transaction $t, string $type): void {
+        if ($type === 'asset') $this->assetRepo->save($t);
+        else $this->billRepo->save($t);
+    }
+
+    /** Recorrência: ao encerrar uma ocorrência (paga ou desconsiderada), cria a próxima como pendente. */
+    private function scheduleNextOccurrence(Transaction $existing, string $type, int $id, int $workspaceId): void {
+        $step = ['MONTHLY' => '+1 month', 'YEARLY' => '+1 year'][$existing->getRecurrenceType() ?? 'NONE'] ?? null;
+        if (!$step) return;
+
+        $date = (new \DateTime($existing->getDate()))->modify($step);
+        $due = $existing->getDueDate() ? (new \DateTime($existing->getDueDate()))->modify($step) : null;
+        $this->save(new Transaction(
+            $workspaceId, $type, $existing->getTitle(), $date->format('Y-m-d'),
+            $existing->getCategoryId(), $existing->getAccountId(),
+            $existing->getAmount(), $existing->getDescription(), null,
+            $id, $due ? $due->format('Y-m-d') : null, 'PENDING',
+            $existing->getPriority(), $existing->getRecurrenceType()
+        ), $type);
     }
 
     private function validateData(TransactionDTO $dto): void {

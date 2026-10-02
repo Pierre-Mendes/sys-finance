@@ -304,14 +304,21 @@ const deleteCard = async (card: any) => {
 }
 
 const generateBill = async (id: number) => {
-  const month = new Date().getMonth() + 1
-  const year = new Date().getFullYear()
+  const confirm = await Swal.fire({
+    title: 'Gerar fatura fechada?',
+    text: 'Cria a conta a pagar com as compras da última fatura que já fechou (pelo dia de fechamento do cartão).',
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonText: 'Gerar',
+    cancelButtonText: 'Cancelar',
+  })
+  if (!confirm.isConfirmed) return
   try {
-    const res = await store.generateInvoice(id, month, year)
+    const res = await store.generateInvoice(id)
     if (res && res.success) {
       toast.success(res.message)
     } else {
-      toast.error(res?.error || 'Nenhuma transação encontrada no mês.')
+      toast.error(res?.error || 'Nenhuma compra na última fatura fechada.')
     }
   } catch (e) {}
 }
@@ -407,6 +414,17 @@ const formatDate = (dateStr: string) => {
                   </div>
                   <div class="w-full bg-black/40 rounded-full h-2 overflow-hidden shadow-inner">
                     <div class="bg-white rounded-full h-full transition-all duration-700 shadow-[0_0_10px_rgba(255,255,255,0.5)]" :style="{ width: getUsagePercentage(card.usedAmount, card.limitAmount) + '%' }"></div>
+                  </div>
+                </div>
+
+                <div v-if="card.openInvoice" class="mt-4 grid grid-cols-2 gap-2 text-[11px] leading-tight">
+                  <div class="bg-black/20 rounded-lg px-2.5 py-1.5">
+                    <span class="block opacity-75">Fatura aberta · vence {{ formatDate(card.openInvoice.dueDate).slice(0, 5) }}</span>
+                    <span class="block font-bold text-sm">R$ {{ Number(card.openInvoice.total).toFixed(2) }}</span>
+                  </div>
+                  <div class="bg-black/20 rounded-lg px-2.5 py-1.5">
+                    <span class="block opacity-75">Melhor dia de compra</span>
+                    <span class="block font-bold text-sm">Dia {{ card.bestPurchaseDay }} <span class="font-normal opacity-75">· fecha {{ formatDate(card.openInvoice.closingDate).slice(0, 5) }}</span></span>
                   </div>
                 </div>
 
@@ -638,6 +656,7 @@ const formatDate = (dateStr: string) => {
               <div class="col-span-1">
                 <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Vencimento (Dia)</label>
                 <input v-model.number="newCard.dueDay" type="number" min="1" max="31" class="w-full rounded-xl border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white p-2.5 border focus:ring-2 focus:ring-primary/20 outline-none transition" />
+                <p v-if="newCard.closingDay" class="text-xs text-gray-500 dark:text-gray-400 mt-1">Melhor dia de compra: dia {{ newCard.closingDay }}. Compras a partir dele vão para a fatura seguinte.</p>
               </div>
             </div>
           </div>
@@ -767,6 +786,7 @@ const formatDate = (dateStr: string) => {
               <div class="col-span-1">
                 <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Vencimento (Dia)</label>
                 <input v-model.number="editCard.dueDay" type="number" min="1" max="31" class="w-full rounded-xl border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white p-2.5 border focus:ring-2 focus:ring-primary/20 outline-none transition" />
+                <p v-if="editCard.closingDay" class="text-xs text-gray-500 dark:text-gray-400 mt-1">Melhor dia de compra: dia {{ editCard.closingDay }}. Compras a partir dele vão para a fatura seguinte.</p>
               </div>
             </div>
           </div>

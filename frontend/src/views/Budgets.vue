@@ -106,7 +106,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
+import api from '@/data/api/HttpClient'
 import { toast } from 'vue3-toastify'
 import Swal from 'sweetalert2'
 import MainLayout from '@/components/layout/MainLayout.vue'
@@ -145,13 +145,11 @@ const getProgressColor = (spent: number, amount: number) => {
 const fetchData = async () => {
     isLoading.value = true;
     try {
-        const token = localStorage.getItem('token')
-        const hd = { headers: { Authorization: `Bearer ${token}` } }
         
         const [budRes, catRes, dashRes] = await Promise.all([
-            axios.get('/api/budgets', hd),
-            axios.get('/api/categories?type=expense', hd),
-            axios.get('/api/dashboard', hd)
+            api.get('/api/budgets'),
+            api.get('/api/categories?type=expense'),
+            api.get('/api/dashboard')
         ])
 
         budgets.value = budRes.data.data
@@ -186,14 +184,12 @@ const openEditModal = (b: any) => {
 
 const saveBudget = async () => {
     try {
-        const token = localStorage.getItem('token')
-        const hd = { headers: { Authorization: `Bearer ${token}` } }
         
         if (editingId.value) {
-            await axios.put(`/api/budgets/${editingId.value}`, { amount: form.value.amount }, hd)
+            await api.put(`/api/budgets/${editingId.value}`, { amount: form.value.amount })
             toast.success('Meta atualizada!')
         } else {
-            await axios.post('/api/budgets', form.value, hd)
+            await api.post('/api/budgets', form.value)
             toast.success('Orçamento criado!')
         }
         openModal.value = false
@@ -217,8 +213,7 @@ const deleteBudget = async (b: any) => {
     if (!result.isConfirmed) return;
 
     try {
-        const token = localStorage.getItem('token')
-        await axios.delete(`/api/budgets/${b.id}`, { headers: { Authorization: `Bearer ${token}` }})
+        await api.delete(`/api/budgets/${b.id}`)
         toast.success('Orçamento removido.')
         fetchData()
     } catch (e: any) {

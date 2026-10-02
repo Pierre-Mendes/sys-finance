@@ -1,0 +1,54 @@
+# Regras próprias do projeto (rodam junto com os pacotes OWASP no job SAST · Semgrep).
+# Protegem decisões de segurança que os pacotes genéricos não conhecem.
+rules:
+  - id: sweetalert-html-with-interpolation
+    languages: [generic]
+    severity: ERROR
+    message: >-
+      SweetAlert2 interpreta `title`, `html` e `footer` como HTML. Com dado interpolado vira XSS.
+      Use `text`/`titleText` ou monte o nó com textContent (veja Workspaces.vue).
+    paths:
+      include: ["frontend/src/**/*.vue", "frontend/src/**/*.ts"]
+    pattern-regex: 'Swal\.fire\(\s*\{[\s\S]{0,600}?\b(title|html|footer)\s*:\s*`[^`]*\$\{'
+
+  - id: vue-v-html
+    languages: [generic]
+    severity: ERROR
+    message: >-
+      v-html injeta HTML sem escapar. Use interpolação {{ }} ou, para ícones fixos, um componente.
+      Exceção revisada: Help.vue (SVGs constantes do próprio código).
+    paths:
+      include: ["frontend/src/**/*.vue"]
+      exclude: ["frontend/src/views/Help.vue"]
+    pattern-regex: '\bv-html\s*='
+
+  - id: session-token-in-web-storage
+    languages: [generic]
+    severity: ERROR
+    message: >-
+      A sessão fica num cookie HttpOnly. Não guarde token em localStorage/sessionStorage:
+      qualquer XSS conseguiria ler.
+    paths:
+      include: ["frontend/src/**/*.vue", "frontend/src/**/*.ts"]
+      exclude: ["frontend/src/**/__tests__/**"]
+    pattern-regex: '(localStorage|sessionStorage)\.setItem\(\s*[''"](token|jwt|access_token|auth)[''"]'
+
+  - id: bearer-header-from-storage
+    languages: [generic]
+    severity: ERROR
+    message: >-
+      Use o HttpClient (cookie HttpOnly + CSRF). Montar "Authorization: Bearer" a partir do navegador
+      reintroduz o token no JavaScript.
+    paths:
+      include: ["frontend/src/**/*.vue", "frontend/src/**/*.ts"]
+    pattern-regex: 'Authorization\s*:\s*`Bearer'
+
+  - id: apexcharts-unescaped-user-labels
+    languages: [generic]
+    severity: WARNING
+    message: >-
+      ApexCharts monta legenda/tooltip com innerHTML. Rótulos com nome digitado pelo usuário
+      precisam de escapeHtml().
+    paths:
+      include: ["frontend/src/**/*.vue"]
+    pattern-regex: 'labels\s*:\s*(?![^\n]*escapeHtml)[^\n]*\.map\([^\n]*\.name\)'

@@ -17,3 +17,7 @@
 40014	FAIL	Cross Site Scripting (Persistent)
 40018	FAIL	SQL Injection
 90022	FAIL	Application Error Disclosure
+10010	FAIL	Cookie No HttpOnly Flag (o cookie de sessão precisa ser HttpOnly)
+10054	FAIL	Cookie without SameSite Attribute
+10011	WARN	Cookie Without Secure Flag (o DAST roda em HTTP; em HTTPS o Secure é automático)
+10202	INFO	Absence of Anti-CSRF Tokens (API JSON usa double-submit cookie + header X-CSRF-Token)

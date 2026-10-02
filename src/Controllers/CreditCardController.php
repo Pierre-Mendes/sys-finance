@@ -30,7 +30,9 @@ class CreditCardController {
                 "closingDay" => $item['card']->getClosingDay(),
                 "dueDay" => $item['card']->getDueDay(),
                 "color" => $item['card']->getColor(),
-                "usedAmount" => $item['usedAmount']
+                "usedAmount" => $item['usedAmount'],
+                "bestPurchaseDay" => $item['bestPurchaseDay'],
+                "openInvoice" => $item['openInvoice'],
             ], $cardsData);
 
             $response->getBody()->write(json_encode(["success" => true, "data" => $data]));
@@ -121,15 +123,22 @@ class CreditCardController {
         $workspaceId = $request->getAttribute('workspaceId');
         $id = (int) ($args['id'] ?? 0);
         $input = (array) $request->getParsedBody();
-        $month = (int) ($input['month'] ?? date('n'));
-        $year = (int) ($input['year'] ?? date('Y'));
+        // Sem mês/ano: a última fatura já fechada. Com mês/ano: a fatura que vence nesse mês.
+        $month = isset($input['month']) ? (int) $input['month'] : null;
+        $year = isset($input['year']) ? (int) $input['year'] : null;
+        if (($month !== null && ($month < 1 || $month > 12)) || ($year !== null && ($year < 2000 || $year > 2100))) {
+            $response->getBody()->write(json_encode(["success" => false, "error" => "Mês ou ano inválido."]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
 
         try {
             $bill = $this->cardService->generateInvoice($id, $workspaceId, $month, $year);
             $response->getBody()->write(json_encode([
                 "success" => true, 
-                "message" => $bill ? "Invoice generated successfully." : "No transactions found for this period.", 
-                "data" => ["billId" => $bill ? $bill->getId() : null]
+                "message" => $bill
+                    ? "Fatura gerada: vence em " . date('d/m/Y', strtotime((string) $bill->getDueDate())) . "."
+                    : "Nenhuma compra nesta fatura.",
+                "data" => ["billId" => $bill ? $bill->getId() : null, "dueDate" => $bill ? $bill->getDueDate() : null]
             ]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
         } catch (Exception $e) {
