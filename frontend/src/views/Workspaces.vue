@@ -481,10 +481,10 @@ const generateInvite = async () => {
             title: 'Código Criado!',
             html: `Use a credencial de segurança abaixo:<br><br>
                    <button type="button" id="invite-code-copy" class="bg-gray-100 hover:bg-indigo-50 border border-gray-200 cursor-pointer inline-block px-6 py-4 rounded-xl transition" title="Clique para copiar">
-                      <b id="invite-code-value" style="font-size: 28px; color: #4338ca; font-family: monospace; letter-spacing: 2px;"></b>
-                      <br><small style="color: #6366f1; font-weight: bold;">📋 Clicar aqui para copiar</small>
+                      <b id="invite-code-value" class="text-[28px] text-indigo-700 font-mono tracking-[2px]"></b>
+                      <br><small class="text-indigo-500 font-bold">📋 Clicar aqui para copiar</small>
                    </button>
-                   <br><br><span style="font-size: 13px; color: #666;">Passe verbalmente sua palavra-passe para o convidado autenticar!</span>`,
+                   <br><br><span class="text-[13px] text-gray-500">Passe verbalmente sua palavra-passe para o convidado autenticar!</span>`,
             icon: 'success',
             didOpen: (popup) => {
                 const code = String(data.inviteCode ?? '')

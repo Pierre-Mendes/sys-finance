@@ -47,7 +47,6 @@ import { ref } from 'vue'
 import api from '@/data/api/HttpClient'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
-import 'vue3-toastify/dist/index.css'
 
 const email = ref('')
 const password = ref('')

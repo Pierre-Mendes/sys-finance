@@ -4,7 +4,7 @@
 10020	FAIL	Anti-clickjacking Header
 10021	FAIL	X-Content-Type-Options Header Missing
 10038	FAIL	Content Security Policy (CSP) Header Not Set
-10055	WARN	CSP (style-src 'unsafe-inline' é necessário para ApexCharts/SweetAlert2)
+10055	WARN	CSP (style-src sem 'unsafe-inline'; WARN porque a regra agrupa variantes como directives sem fallback)
 10035	INFO	Strict-Transport-Security Header (TLS é terminado fora do container)
 10036	FAIL	Server Leaks Version Information via "Server" HTTP Response Header Field
 10037	FAIL	Server Leaks Information via "X-Powered-By" HTTP Response Header Field(s)
@@ -21,3 +21,5 @@
 10054	FAIL	Cookie without SameSite Attribute
 10011	WARN	Cookie Without Secure Flag (o DAST roda em HTTP; em HTTPS o Secure é automático)
 10202	INFO	Absence of Anti-CSRF Tokens (API JSON usa double-submit cookie + header X-CSRF-Token)
+90004	WARN	Insufficient Site Isolation Against Spectre (COEP/CORP/COOP no .htaccess)
+90005	IGNORE	Sec-Fetch-* Header is Missing (headers de requisição enviados pelo navegador; o spider do ZAP não os envia)
