@@ -10,7 +10,9 @@ describe('NAV_GROUPS', () => {
 
   it('cobre todas as telas internas do app, sem repetir', () => {
     const publicRoutes = ['/', '/signup', '/forgot-password']
-    const expected = [...routes].filter((r) => !publicRoutes.includes(r)).sort()
+    // Páginas de erro (/erro/:code e o 404 de rota desconhecida) não são telas do menu.
+    const isErrorRoute = (r: string) => r.startsWith('/erro/') || r.startsWith('/:pathMatch')
+    const expected = [...routes].filter((r) => !publicRoutes.includes(r) && !isErrorRoute(r)).sort()
     expect(items.map((i) => i.to).sort()).toEqual(expected)
   })
 
