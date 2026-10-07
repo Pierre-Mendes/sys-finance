@@ -14,8 +14,16 @@ jobs:
       issues: write
       pull-requests: write
       contents: write
+    env:
+      # Sem o secret OPENAI_API_KEY o PR-Agent falha por autenticação: nesse caso o review é pulado.
+      HAS_OPENAI_KEY: ${{ secrets.OPENAI_API_KEY != '' }}
     steps:
+      - name: Skip notice (OPENAI_API_KEY not configured)
+        if: env.HAS_OPENAI_KEY != 'true'
+        run: 'echo "::notice::AI review pulado - configure o secret OPENAI_API_KEY para ativar."'
+
       - name: PR Agent Action
+        if: env.HAS_OPENAI_KEY == 'true'
         uses: Codium-ai/pr-agent@821c6ad173194d443a3f768b5a1087924025e90f # main
         env:
           OPENAI_KEY: ${{ secrets.OPENAI_API_KEY }}
