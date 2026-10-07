@@ -9,6 +9,11 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
+// Falha do agendador (exceção não tratada) vai para o Sentry/GlitchTip, como os erros da API.
+if ($sentryDsn = getenv('SENTRY_DSN')) {
+    \Sentry\init(['dsn' => $sentryDsn, 'environment' => getenv('APP_ENV') ?: 'production']);
+}
+
 use App\Database;
 use App\Notifications\WebPushSender;
 use App\Repositories\BillReminderRepository;

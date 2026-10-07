@@ -13,6 +13,9 @@ COPY frontend/ ./
 # Passar a URL da API para o build do frontend (usando o IP do servidor)
 ARG VITE_API_BASE_URL
 ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
+# DSN do Sentry/GlitchTip do frontend (público por natureza; os eventos passam pelo túnel /api/monitoring/sentry)
+ARG VITE_SENTRY_DSN
+ENV VITE_SENTRY_DSN=$VITE_SENTRY_DSN
 RUN npm run build
 
 # --- ESTÁGIO 2: Base PHP/Apache ---
@@ -49,7 +52,7 @@ RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf
 # Configurar Apache para não remover variáveis de ambiente
 # CSP_CONNECT_SRC precisa de um valor padrão: o Apache escreve "(null)" no CSP se a variável não existir.
 ENV CSP_CONNECT_SRC="https://*.sentry.io"
-RUN echo "PassEnv DB_HOST DB_USER DB_PASS DB_NAME APP_ENV APP_TIMEZONE JWT_SECRET JWT_TTL SENTRY_DSN CORS_ALLOWED_ORIGINS CSP_CONNECT_SRC VAPID_SUBJECT VAPID_PUBLIC_KEY VAPID_PRIVATE_KEY COOKIE_SECURE COOKIE_SAMESITE" > /etc/apache2/conf-available/passenv.conf \
+RUN echo "PassEnv DB_HOST DB_USER DB_PASS DB_NAME APP_ENV APP_TIMEZONE JWT_SECRET JWT_TTL SENTRY_DSN SENTRY_FRONTEND_DSN SENTRY_TRACES_SAMPLE_RATE APP_RELEASE CORS_ALLOWED_ORIGINS CSP_CONNECT_SRC VAPID_SUBJECT VAPID_PUBLIC_KEY VAPID_PRIVATE_KEY COOKIE_SECURE COOKIE_SAMESITE" > /etc/apache2/conf-available/passenv.conf \
     && a2enconf passenv
 
 # --- ESTÁGIO 3: Desenvolvimento (docker-compose.yml) ---

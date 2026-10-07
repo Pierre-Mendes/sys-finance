@@ -34,6 +34,10 @@ jobs:
               git clone https://github.com/Pierre-Mendes/sys-finance.git .
             fi
             COMPOSE="docker compose -f docker-compose.prod.yml"
+            # GlitchTip (monitoramento de erros) entra quando configurado no .env da VPS
+            if grep -Eq '^GLITCHTIP_SECRET_KEY=.+' .env 2>/dev/null; then
+              COMPOSE="$COMPOSE -f docker-compose.monitoring.yml"
+            fi
 
             # Versão que está no ar agora (para voltar atrás se a nova falhar)
             PREV=$(cat .last_good_deploy 2>/dev/null || git rev-parse HEAD)

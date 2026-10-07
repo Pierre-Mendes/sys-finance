@@ -34,7 +34,11 @@ if (sentryDsn) {
         app,
         dsn: sentryDsn,
         environment: import.meta.env.MODE,
-        tracesSampleRate: 1.0, 
+        // Eventos vão para a própria API, que repassa ao GlitchTip/Sentry (sem expor o servidor de erros e sem CSP extra).
+        tunnel: `${import.meta.env.VITE_API_BASE_URL || ''}/api/monitoring/sentry`,
+        integrations: [Sentry.browserTracingIntegration({ router })],
+        tracesSampleRate: 0.1,
+        sendDefaultPii: false,
     });
 }
 

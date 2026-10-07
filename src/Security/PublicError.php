@@ -43,8 +43,13 @@ final class PublicError {
     private static function report(Throwable $e, string $reference): void {
         $context = ['ref' => $reference, 'exception' => $e];
         if (self::$logger !== null) {
-            // O logger da aplicação já encaminha para o Sentry quando SENTRY_DSN está configurado.
-            self::$logger->error($e->getMessage(), $context);
+            // O logger da aplicação já encaminha para o Sentry quando SENTRY_DSN está configurado;
+            // a tag "ref" deixa o evento pesquisável pelo código que o usuário vê na tela.
+            $logger = self::$logger;
+            \Sentry\withScope(function (\Sentry\State\Scope $scope) use ($logger, $e, $context, $reference): void {
+                $scope->setTag('ref', $reference);
+                $logger->error($e->getMessage(), $context);
+            });
             return;
         }
         error_log(sprintf('[ref %s] %s: %s', $reference, get_class($e), $e->getMessage()));

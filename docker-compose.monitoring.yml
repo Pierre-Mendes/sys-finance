@@ -1,0 +1,51 @@
+# Monitoramento de erros self-hosted com GlitchTip (compatível com o Sentry: mesmo SDK, mesmo DSN).
+# O Sentry oficial self-hosted pede ~16 GB de RAM; o GlitchTip roda em ~512 MB (web + worker num container só).
+#
+# Uso (somado ao compose do ambiente, no mesmo projeto/rede):
+#   produção:        docker compose -f docker-compose.prod.yml -f docker-compose.monitoring.yml up -d
+#   desenvolvimento: docker compose -f docker-compose.yml -f docker-compose.monitoring.yml up
+#
+# Painel: http://localhost:8000 (só em 127.0.0.1; na VPS use túnel SSH: ssh -L 8000:127.0.0.1:8000 usuario@vps).
+# Passo a passo (criar usuário, projetos e DSNs): docs/guides/monitoring.md
+services:
+  glitchtip-db:
+    image: postgres:17-alpine
+    container_name: financas-glitchtip-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: glitchtip
+      POSTGRES_PASSWORD: ${GLITCHTIP_DB_PASSWORD:-glitchtip}
+      POSTGRES_DB: glitchtip
+    volumes:
+      - glitchtip-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U glitchtip -d glitchtip"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  glitchtip:
+    image: glitchtip/glitchtip:6
+    container_name: financas-glitchtip
+    restart: unless-stopped
+    command: ./bin/run-all-in-one.sh
+    environment:
+      DATABASE_URL: postgres://glitchtip:${GLITCHTIP_DB_PASSWORD:-glitchtip}@glitchtip-db:5432/glitchtip
+      VALKEY_URL: ""  # sem Valkey/Redis: fila no próprio Postgres (suficiente para um app pequeno)
+      SECRET_KEY: ${GLITCHTIP_SECRET_KEY:?Defina GLITCHTIP_SECRET_KEY no .env (openssl rand -hex 32)}
+      PORT: 8000
+      # Endereço pelo qual VOCÊ abre o painel (túnel SSH ou domínio). Aparece nos links e nos DSNs exibidos.
+      GLITCHTIP_DOMAIN: ${GLITCHTIP_DOMAIN:-http://localhost:8000}
+      CSRF_TRUSTED_ORIGINS: ${GLITCHTIP_DOMAIN:-http://localhost:8000}
+      DEFAULT_FROM_EMAIL: ${GLITCHTIP_FROM_EMAIL:-glitchtip@localhost}
+      EMAIL_URL: ${GLITCHTIP_EMAIL_URL:-consolemail://}  # ex.: smtp://usuario:senha@smtp.gmail.com:587 para alertas por e-mail
+      ENABLE_USER_REGISTRATION: ${GLITCHTIP_OPEN_REGISTRATION:-false}  # contas só via createsuperuser
+      GLITCHTIP_MAX_EVENT_LIFE_DAYS: ${GLITCHTIP_RETENTION_DAYS:-30}
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      glitchtip-db:
+        condition: service_healthy
+
+volumes:
+  glitchtip-db-data:
