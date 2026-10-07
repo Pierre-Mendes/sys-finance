@@ -45,19 +45,19 @@ jobs:
     container:
       image: semgrep/semgrep:latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Semgrep (relatório completo em SARIF)
         run: semgrep scan $SEMGREP_RULES --sarif --output semgrep.sarif --metrics off || true
 
       - name: Publicar SARIF em Security › Code scanning
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@1190a975f95ce23525efb6a3fc21ea29567c1b52 # v3
         continue-on-error: true # repositórios privados sem GitHub Advanced Security não aceitam SARIF
         with:
           sarif_file: semgrep.sarif
           category: semgrep
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: semgrep-sarif
           path: semgrep.sarif
@@ -72,14 +72,14 @@ jobs:
       contents: read
       security-events: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
-      - uses: github/codeql-action/init@v3
+      - uses: github/codeql-action/init@1190a975f95ce23525efb6a3fc21ea29567c1b52 # v3
         with:
           languages: javascript-typescript
           queries: security-extended
 
-      - uses: github/codeql-action/analyze@v3
+      - uses: github/codeql-action/analyze@1190a975f95ce23525efb6a3fc21ea29567c1b52 # v3
         continue-on-error: true # requer GitHub Advanced Security em repositórios privados
         with:
           category: codeql-js
@@ -89,9 +89,9 @@ jobs:
     name: SCA · composer audit + npm audit
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
-      - uses: shivammathur/setup-php@v2
+      - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
         with:
           php-version: '8.4'
           tools: composer:v2
@@ -99,7 +99,7 @@ jobs:
       - name: composer audit (PHP)
         run: composer audit --locked --no-dev --abandoned=report
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '20'
 
@@ -113,9 +113,9 @@ jobs:
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '20'
 
@@ -125,7 +125,7 @@ jobs:
           npm ci --prefix frontend --no-audit --no-fund
 
       - name: OWASP Dependency-Check
-        uses: dependency-check/Dependency-Check_Action@main
+        uses: dependency-check/Dependency-Check_Action@1e54355a8b4c8abaa8cc7d0b70aa655a3bb15a6c # main
         env:
           JAVA_HOME: /opt/jdk
         with:
@@ -139,7 +139,7 @@ jobs:
             --exclude "**/node_modules/**/test/**"
             ${{ secrets.NVD_API_KEY != '' && format('--nvdApiKey {0}', secrets.NVD_API_KEY) || '' }}
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always()
         with:
           name: dependency-check-report
@@ -153,11 +153,11 @@ jobs:
       contents: read
       pull-requests: read # a action lista os commits da PR pela API
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           fetch-depth: 0
 
-      - uses: gitleaks/gitleaks-action@v2
+      - uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITLEAKS_ENABLE_COMMENTS: false
@@ -174,7 +174,7 @@ jobs:
     env:
       COMPOSE_FILE: .github/dast/docker-compose.dast.yml
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Subir aplicação (MySQL + API + SPA)
         run: docker compose up -d --build --wait --wait-timeout 300
@@ -191,7 +191,7 @@ jobs:
         run: bash .github/dast/session-checks.sh http://localhost:8080
 
       - name: ZAP baseline (SPA + API)
-        uses: zaproxy/action-baseline@v0.14.0
+        uses: zaproxy/action-baseline@7c4deb10e6261301961c86d65d54a516394f9aed # v0.14.0
         with:
           target: 'http://localhost:8080'
           rules_file_name: '.zap/rules.tsv'
@@ -219,14 +219,14 @@ jobs:
         if: env.SONAR_TOKEN == ''
         run: echo "::notice::Defina o secret SONAR_TOKEN (e SONAR_ORGANIZATION em vars) para habilitar o Quality Gate do SonarCloud."
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         if: env.SONAR_TOKEN != ''
         with:
           fetch-depth: 0
 
       - name: SonarCloud scan + Quality Gate
         if: env.SONAR_TOKEN != ''
-        uses: SonarSource/sonarqube-scan-action@v5
+        uses: SonarSource/sonarqube-scan-action@2f77a1ec69fb1d595b06f35ab27e97605bdef703 # v5
         env:
           SONAR_HOST_URL: https://sonarcloud.io
         with:

@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to VPS via SSH
-        uses: appleboy/ssh-action@v1.0.3
+        uses: appleboy/ssh-action@029f5b4aeeeb58fdfe1410a5d17f967dacf36262 # v1.0.3
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
@@ -22,9 +22,12 @@ jobs:
             # Se não for um repositório git, tenta inicializar (pode precisar de Deploy Key)
             if [ ! -d ".git" ]; then
               git clone https://github.com/Pierre-Mendes/sys-finance.git .
-            else
-              git pull origin main
             fi
+            # Checkout destacado (o deploy de produção também usa esta pasta e deixa o HEAD destacado)
+            git fetch origin main
+            git checkout -q --detach origin/main
+            # phpMyAdmin de staging agora só sobe sob demanda (profile "admin", em 127.0.0.1)
+            docker rm -f financas-pma-staging >/dev/null 2>&1 || true
             # Build and up the STAGING environment (Port 8082)
             docker compose -f docker-compose.staging.yml up -d --build
             # Run migrations for staging

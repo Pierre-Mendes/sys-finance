@@ -131,4 +131,28 @@ class TransactionBalanceTest extends TestCase
         $this->expectExceptionMessage('Só contas pendentes podem ser desconsideradas.');
         $this->txService->cancel((int) $rent->getId(), $this->workspaceId, 'bill');
     }
+
+    public function test_failed_split_rolls_back_the_main_transaction(): void
+    {
+        // Segundo workspace do mesmo usuário; o rateio aponta uma conta que NÃO pertence a ele.
+        $otherWorkspaceId = (new WorkspaceService($this->db))->createDefaultWorkspace(1, 'Ana');
+        $countBills = fn () => (int) $this->db->query(
+            "SELECT COUNT(*) FROM bills WHERE WorkspaceId = {$this->workspaceId}"
+        )->fetchColumn();
+        $before = $countBills();
+
+        try {
+            $this->txService->create($this->workspaceId, new TransactionDTO([
+                'type' => 'bill', 'title' => 'Mercado', 'amount' => 300, 'date' => '2026-09-05',
+                'accountId' => $this->accountId, 'categoryName' => 'Alimentação', 'status' => 'PAID',
+                'splits' => [['workspaceId' => $otherWorkspaceId, 'accountId' => $this->accountId, 'amount' => 150]],
+            ]), 1);
+            $this->fail('O rateio com conta de outro workspace deveria falhar.');
+        } catch (\Exception $e) {
+            $this->assertStringNotContainsString('deveria falhar', $e->getMessage());
+        }
+
+        $this->assertSame($before, $countBills(), 'Lançamento principal não pode ficar gravado sem o rateio');
+        $this->assertSame(5000.0, $this->accountBalance(), 'Saldo não pode ser descontado por um lançamento desfeito');
+    }
 }

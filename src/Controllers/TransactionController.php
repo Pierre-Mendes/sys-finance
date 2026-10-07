@@ -42,7 +42,7 @@ class TransactionController {
             $response->getBody()->write(json_encode(["success" => true, "data" => $data]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
         } catch (Exception $e) {
-            $response->getBody()->write(json_encode(["success" => false, "error" => $e->getMessage()]));
+            $response->getBody()->write(json_encode(["success" => false, "error" => \App\Security\PublicError::message($e)]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
     }
@@ -64,7 +64,7 @@ class TransactionController {
             ]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(201);
         } catch (Exception $e) {
-            $response->getBody()->write(json_encode(["success" => false, "error" => $e->getMessage()]));
+            $response->getBody()->write(json_encode(["success" => false, "error" => \App\Security\PublicError::message($e)]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
     }
@@ -87,7 +87,7 @@ class TransactionController {
             ]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
         } catch (Exception $e) {
-            $response->getBody()->write(json_encode(["success" => false, "error" => $e->getMessage()]));
+            $response->getBody()->write(json_encode(["success" => false, "error" => \App\Security\PublicError::message($e)]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
     }
@@ -104,7 +104,7 @@ class TransactionController {
             $response->getBody()->write(json_encode(["success" => true, "message" => "Transaction deleted."]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
         } catch (Exception $e) {
-            $response->getBody()->write(json_encode(["success" => false, "error" => $e->getMessage()]));
+            $response->getBody()->write(json_encode(["success" => false, "error" => \App\Security\PublicError::message($e)]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
     }
@@ -123,7 +123,7 @@ class TransactionController {
             ]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
         } catch (Exception $e) {
-            $response->getBody()->write(json_encode(["success" => false, "error" => $e->getMessage()]));
+            $response->getBody()->write(json_encode(["success" => false, "error" => \App\Security\PublicError::message($e)]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
     }
@@ -152,7 +152,7 @@ class TransactionController {
             $response->getBody()->write(json_encode(["success" => true, "message" => $message, "data" => ["id" => $t->getId(), "status" => $t->getStatus(), "dueDate" => $t->getDueDate()]]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
         } catch (Exception $e) {
-            $response->getBody()->write(json_encode(["success" => false, "error" => $e->getMessage()]));
+            $response->getBody()->write(json_encode(["success" => false, "error" => \App\Security\PublicError::message($e)]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
     }

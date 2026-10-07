@@ -35,3 +35,4 @@ Para **código**, prefira CodeGraph/Serena em vez de ler arquivos (veja [convent
 | Arquivo | Assunto |
 |---|---|
 | [REVISAO_E_ROADMAP.md](REVISAO_E_ROADMAP.md) | Revisão de set/2026: correções de segurança, pendências e roadmap |
+| [CHECKLIST_LANCAMENTO.md](CHECKLIST_LANCAMENTO.md) | Out/2026: 20 perguntas de prontidão da v1, o que foi corrigido e o que falta antes de usar |

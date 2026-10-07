@@ -34,7 +34,7 @@ class NotificationController {
             ]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
         } catch (Exception $e) {
-            $response->getBody()->write(json_encode(["success" => false, "error" => $e->getMessage()]));
+            $response->getBody()->write(json_encode(["success" => false, "error" => \App\Security\PublicError::message($e)]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
     }
@@ -53,7 +53,7 @@ class NotificationController {
             ]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
         } catch (Exception $e) {
-            $response->getBody()->write(json_encode(["success" => false, "error" => $e->getMessage()]));
+            $response->getBody()->write(json_encode(["success" => false, "error" => \App\Security\PublicError::message($e)]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
     }
@@ -71,7 +71,7 @@ class NotificationController {
             ]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
         } catch (Exception $e) {
-            $response->getBody()->write(json_encode(["success" => false, "error" => $e->getMessage()]));
+            $response->getBody()->write(json_encode(["success" => false, "error" => \App\Security\PublicError::message($e)]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
     }
@@ -89,7 +89,7 @@ class NotificationController {
             ]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
         } catch (Exception $e) {
-            $response->getBody()->write(json_encode(["success" => false, "error" => $e->getMessage()]));
+            $response->getBody()->write(json_encode(["success" => false, "error" => \App\Security\PublicError::message($e)]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
     }
@@ -108,7 +108,7 @@ class NotificationController {
             ]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
         } catch (Exception $e) {
-            $response->getBody()->write(json_encode(["success" => false, "error" => $e->getMessage()]));
+            $response->getBody()->write(json_encode(["success" => false, "error" => \App\Security\PublicError::message($e)]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
     }

@@ -68,7 +68,7 @@ class WorkspaceController
             $response->getBody()->write(json_encode(['message' => 'Workspace criado com sucesso!', 'workspaceId' => $workspaceId]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(201);
         } catch (\Exception $e) {
-            $response->getBody()->write(json_encode(['error' => $e->getMessage()]));
+            $response->getBody()->write(json_encode(['error' => \App\Security\PublicError::message($e)]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(500);
         }
     }
@@ -203,7 +203,7 @@ class WorkspaceController
             return $response->withStatus(200);
         } catch (\Exception $e) {
             $this->pdo->rollBack();
-            $response->getBody()->write(json_encode(['error' => 'Erro ao excluir o workspace: ' . $e->getMessage()]));
+            $response->getBody()->write(json_encode(['error' => 'Erro ao excluir o workspace: ' . \App\Security\PublicError::message($e)]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(500);
         }
     }
@@ -238,7 +238,7 @@ class WorkspaceController
             return $response->withStatus(200);
         } catch (\Exception $e) {
             $this->pdo->rollBack();
-            $response->getBody()->write(json_encode(['error' => 'Erro ao transferir: ' . $e->getMessage()]));
+            $response->getBody()->write(json_encode(['error' => 'Erro ao transferir: ' . \App\Security\PublicError::message($e)]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(500);
         }
     }

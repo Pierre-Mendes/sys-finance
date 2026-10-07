@@ -27,3 +27,7 @@ db/mysql_logs/
 Thumbs.db
 .history/
 database.sqlite
+
+# Backups do banco (gerados pelo serviço "backup" em produção)
+/backups/
+/.last_good_deploy

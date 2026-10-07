@@ -49,7 +49,7 @@ class AuthController {
         } catch (Exception $e) {
             $response->getBody()->write(json_encode([
                 "success" => false,
-                "error" => $e->getMessage()
+                "error" => \App\Security\PublicError::message($e)
             ]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
@@ -84,7 +84,7 @@ class AuthController {
         } catch (Exception $e) {
             $response->getBody()->write(json_encode([
                 "success" => false,
-                "error" => $e->getMessage()
+                "error" => \App\Security\PublicError::message($e)
             ]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
         }
@@ -110,7 +110,7 @@ class AuthController {
              ]]));
              return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
         } catch (Exception $e) {
-             $response->getBody()->write(json_encode(["success" => false, "error" => $e->getMessage()]));
+             $response->getBody()->write(json_encode(["success" => false, "error" => \App\Security\PublicError::message($e)]));
              return $response->withHeader('Content-Type', 'application/json')->withStatus(400); 
         }
     }
@@ -123,7 +123,7 @@ class AuthController {
              $response->getBody()->write(json_encode(["success" => true, "message" => "Perfil atualizado!"]));
              return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
         } catch (Exception $e) {
-             $response->getBody()->write(json_encode(["success" => false, "error" => $e->getMessage()]));
+             $response->getBody()->write(json_encode(["success" => false, "error" => \App\Security\PublicError::message($e)]));
              return $response->withHeader('Content-Type', 'application/json')->withStatus(400); 
         }
     }
@@ -137,7 +137,7 @@ class AuthController {
             $response->getBody()->write(json_encode(["success" => true, "question" => $question]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
         } catch (Exception $e) {
-            $response->getBody()->write(json_encode(["success" => false, "error" => $e->getMessage()]));
+            $response->getBody()->write(json_encode(["success" => false, "error" => \App\Security\PublicError::message($e)]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400); 
         }
     }
@@ -158,7 +158,7 @@ class AuthController {
             $response->getBody()->write(json_encode(["success" => true, "message" => "Senha redefinida com sucesso!"]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
         } catch (Exception $e) {
-            $response->getBody()->write(json_encode(["success" => false, "error" => $e->getMessage()]));
+            $response->getBody()->write(json_encode(["success" => false, "error" => \App\Security\PublicError::message($e)]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400); 
         }
     }

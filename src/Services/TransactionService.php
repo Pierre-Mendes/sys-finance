@@ -67,10 +67,14 @@ class TransactionService {
 
     public function create(int $workspaceId, TransactionDTO $dto, ?int $userId = null): Transaction {
         $this->validateData($dto);
-        return $this->createUseCase->execute($workspaceId, $dto, null, $userId);
+        return $this->atomic(fn () => $this->createUseCase->execute($workspaceId, $dto, null, $userId));
     }
 
     public function update(int $id, int $workspaceId, TransactionDTO $dto): Transaction {
+        return $this->atomic(fn () => $this->doUpdate($id, $workspaceId, $dto));
+    }
+
+    private function doUpdate(int $id, int $workspaceId, TransactionDTO $dto): Transaction {
         $this->validateData($dto);
         $type = $dto->type;
 
@@ -109,6 +113,10 @@ class TransactionService {
     }
 
     public function delete(int $id, int $workspaceId, string $type): void {
+        $this->atomic(fn () => $this->doDelete($id, $workspaceId, $type));
+    }
+
+    private function doDelete(int $id, int $workspaceId, string $type): void {
         $existing = ($type === 'asset') 
             ? $this->assetRepo->findByIdAndWorkspaceId($id, $workspaceId) 
             : $this->billRepo->findByIdAndWorkspaceId($id, $workspaceId);
@@ -123,12 +131,14 @@ class TransactionService {
     }
     
     public function pay(int $id, int $workspaceId, string $type): Transaction {
-        $existing = $this->findPending($id, $workspaceId, $type, 'Transaction is already paid.');
-        $t = $this->copyWith($existing, $type, $id, 'PAID', $existing->getDueDate());
-        $this->save($t, $type);
-        $this->balances->sync($t->getAccountId(), $workspaceId);
-        $this->scheduleNextOccurrence($existing, $type, $id, $workspaceId);
-        return $t;
+        return $this->atomic(function () use ($id, $workspaceId, $type) {
+            $existing = $this->findPending($id, $workspaceId, $type, 'Transaction is already paid.');
+            $t = $this->copyWith($existing, $type, $id, 'PAID', $existing->getDueDate());
+            $this->save($t, $type);
+            $this->balances->sync($t->getAccountId(), $workspaceId);
+            $this->scheduleNextOccurrence($existing, $type, $id, $workspaceId);
+            return $t;
+        });
     }
 
     /** Conta pendente com novo vencimento (o usuário decidiu pagar depois). */
@@ -145,11 +155,29 @@ class TransactionService {
      * da previsão e dos lembretes. Em contas recorrentes, a próxima ocorrência continua sendo criada.
      */
     public function cancel(int $id, int $workspaceId, string $type): Transaction {
-        $existing = $this->findPending($id, $workspaceId, $type, 'Só contas pendentes podem ser desconsideradas.');
-        $t = $this->copyWith($existing, $type, $id, 'CANCELED', $existing->getDueDate());
-        $this->save($t, $type);
-        $this->scheduleNextOccurrence($existing, $type, $id, $workspaceId);
-        return $t;
+        return $this->atomic(function () use ($id, $workspaceId, $type) {
+            $existing = $this->findPending($id, $workspaceId, $type, 'Só contas pendentes podem ser desconsideradas.');
+            $t = $this->copyWith($existing, $type, $id, 'CANCELED', $existing->getDueDate());
+            $this->save($t, $type);
+            $this->scheduleNextOccurrence($existing, $type, $id, $workspaceId);
+            return $t;
+        });
+    }
+
+    /** Tudo ou nada: uma falha no meio (rateio, saldo, recorrência) não deixa o lançamento pela metade. */
+    private function atomic(callable $operation): mixed {
+        if ($this->db->inTransaction()) {
+            return $operation();
+        }
+        $this->db->beginTransaction();
+        try {
+            $result = $operation();
+            $this->db->commit();
+            return $result;
+        } catch (\Throwable $e) {
+            $this->db->rollBack();
+            throw $e;
+        }
     }
 
     private function findPending(int $id, int $workspaceId, string $type, string $notPendingMessage): Transaction {
