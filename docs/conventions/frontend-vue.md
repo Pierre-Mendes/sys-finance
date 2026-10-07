@@ -23,7 +23,7 @@
 ## Segurança na UI
 
 - Interpolação `{{ }}` já escapa. **Nunca** passe dado do usuário para `v-html`, `innerHTML`, SweetAlert `html`,
-  títulos do SweetAlert ou labels do ApexCharts sem `escapeHtml()` (`@/core/security/escapeHtml`).
+  títulos do SweetAlert sem `escapeHtml()` (`@/core/security/escapeHtml`).
 - Sem handlers inline em HTML gerado (`onclick="..."`): o CSP bloqueia. Use `didOpen` + `addEventListener`.
 - Navegação vinda de dados do servidor: só rotas internas que começam com `/`.
 
@@ -38,9 +38,14 @@ npx vitest run         # testes
 npm run build
 ```
 
-## Gráficos (ApexCharts)
+## Gráficos (Apache ECharts)
 
-- Não desmonte um `<apexchart>` com `v-if` enquanto os dados recarregam: se o elemento sai do DOM no meio do
-  desenho, o ApexCharts rejeita com `Element not found`. Mantenha montado e sinalize a recarga (ex.: `opacity-50`).
-- Nomes vindos do usuário em `labels`/tooltip sempre com `escapeHtml` (o ApexCharts usa `innerHTML`).
+- Use `<BaseChart :option="..." label="..." :height="...">` (`components/ui/BaseChart.vue`): registra só os tipos
+  usados (linha, barra, pizza), redimensiona sozinho e expõe `label` para leitores de tela (o canvas não tem texto).
+- Monte a opção com os helpers de `presentation/charts/chartOptions.ts` (`cartesian`, `areaSeries`, `barSeries`,
+  `donutOption`, `axisTooltip`, `referenceLine`) dentro de um `computed` que lê `chartTheme(isDark)`: assim cores,
+  eixos e tooltip seguem o design system e o modo escuro sem código repetido.
+- Tooltip só pelos helpers: eles montam DOM com `textContent` (nome do usuário nunca vira HTML) e sem `style=`
+  (a CSP bloqueia). String com HTML num `formatter` é barrada pelo Semgrep (`echarts-html-string-formatter`).
+- Ao recarregar dados, mantenha o gráfico montado e sinalize a recarga (ex.: `opacity-50`) em vez de piscar.
 - Valores em R$ com `formatBRL`/`formatBRLCompact` (`core/domain/money.ts`); variação sem base é `null` → "—".

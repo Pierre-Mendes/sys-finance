@@ -42,7 +42,8 @@ Checklist para qualquer mudança que toque entrada do usuário, dados de outro t
 
 - Nada de `v-html` (exceção revisada: ícones SVG fixos de `Help.vue`).
 - SweetAlert2: `title`, `html` e `footer` são HTML. Dado do usuário só em `text`/`titleText` ou via `textContent`.
-- ApexCharts: rótulos com nome digitado pelo usuário passam por `escapeHtml`.
+- Gráficos (ECharts): o tooltip é montado em DOM com `textContent` (`presentation/charts/chartOptions.ts`); nunca
+  devolva HTML em string num `formatter` (regra `echarts-html-string-formatter` do Semgrep).
 
 ## Requisições do servidor para fora (A10, SSRF)
 
@@ -60,7 +61,8 @@ Checklist para qualquer mudança que toque entrada do usuário, dados de outro t
 - Headers: `SecurityHeadersMiddleware` (API) e `public/.htaccess` (estáticos). CSP sem `unsafe-eval` e sem
   `unsafe-inline` em `style-src`; COOP `same-origin`, COEP `require-corp`, CORP `same-origin` (API: `same-site`).
 - CSS de libs entra como arquivo importado em `main.ts`, nunca via `<style>` injetado em runtime:
-  ApexCharts com `injectStyleSheet: false`, SweetAlert2 pelo build `sweetalert2.esm.js` (alias no Vite).
+  SweetAlert2 pelo build `sweetalert2.esm.js` (alias no Vite). O `vue-echarts` aplica o CSS via `CSSStyleSheet`
+  (permitido) e o tooltip dos gráficos usa classes (`.sf-chart-tooltip`), sem `style=` no markup.
   No HTML de SweetAlert use classes Tailwind, nunca o atributo `style=` (a CSP bloqueia).
 - CORS por `CORS_ALLOWED_ORIGINS`; origens extras do front em `CSP_CONNECT_SRC`.
 - SRI: o build do Vite grava `integrity="sha384-…"` nos `<script>`/`<link>` do `index.html`

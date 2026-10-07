@@ -7,7 +7,7 @@ SaaS multi-tenant de finanças pessoais. Tudo gira em torno do **workspace** (bo
 | Parte | Stack | Pasta |
 |---|---|---|
 | API | PHP 8.4, Slim 4, PDO, Phinx, Monolog, dompdf | `src/`, `public/index.php`, `db/migrations/` |
-| SPA | Vue 3 (Composition API + TS), Vite, Pinia, Tailwind 4, ApexCharts | `frontend/src/` |
+| SPA | Vue 3 (Composition API + TS), Vite, Pinia, Tailwind 4, Apache ECharts | `frontend/src/` |
 | Banco | MySQL 8 (produção), SQLite (testes) | `db/migrations/` |
 | Deploy | Docker (Apache + PHP), GitHub Actions via SSH | `Dockerfile`, `docker-compose*.yml`, `.github/workflows/` |
 

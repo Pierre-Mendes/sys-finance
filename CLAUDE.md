@@ -30,6 +30,7 @@ npx -y @colbymchenry/codegraph@1.6.1 affected <arquivos>   # testes afetados por
 - SQL só em `Repositories/`, sempre com parâmetros ligados e filtro por `WorkspaceId` do middleware.
 - Rotas de escrita com `GatekeeperMiddleware::requireEditor(...)`; IDs do usuário validados contra o workspace
   (`ReferenceResolver`). Nunca IDs fixos.
-- Dado do usuário em HTML/PDF/CSV/ApexCharts/SweetAlert sempre escapado (`docs/conventions/security.md`).
+- Dado do usuário em HTML/PDF/CSV/SweetAlert sempre escapado; gráficos só pelos helpers de
+  `presentation/charts/chartOptions.ts` (tooltip em DOM com `textContent`) (`docs/conventions/security.md`).
 - Bug corrigido vem com teste que falha sem a correção.
 - Não versionar `.codegraph/`, `.serena/cache/`, `vendor/`, `node_modules/`.

@@ -23,5 +23,5 @@
 10202	INFO	Absence of Anti-CSRF Tokens (API JSON usa double-submit cookie + header X-CSRF-Token)
 90004	WARN	Insufficient Site Isolation Against Spectre (COEP/CORP/COOP no .htaccess)
 90005	IGNORE	Sec-Fetch-* Header is Missing (headers de requisição enviados pelo navegador; o spider do ZAP não os envia)
-10094	IGNORE	Base64 Disclosure (falso positivo: fonte woff2 pequena embutida no CSS pelo Vite e a chave PÚBLICA de licença do ApexCharts no JS; nenhum segredo)
-90003	WARN	Sub Resource Integrity Attribute Missing (o index.html tem integrity sha384, conferido no CI por frontend/build/check-sri.mjs; o alerta restante vem de textos de ajuda do ApexCharts 7 dentro do JS, ex. <script src='.../dist/features/trellis.js'>)
+10094	IGNORE	Base64 Disclosure (falso positivo: fonte woff2 pequena embutida no CSS pelo Vite; nenhum segredo)
+90003	FAIL	Sub Resource Integrity Attribute Missing (o build grava integrity sha384 no index.html, conferido no CI por frontend/build/check-sri.mjs)

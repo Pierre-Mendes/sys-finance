@@ -58,7 +58,8 @@ montado em `App.vue`). Use só para conquista real: conta paga, conta atrasada q
 - `styles/dark.css` traduz as classes claras comuns (superfícies, textos, bordas, fundos `*-50`, texto `*-600..900`)
   para a paleta `--dk-*`. Classe nova sem tradução: use `dark:` no componente.
 - Texto escuro fixo em hex (`text-[#7C2D12]`) não muda no escuro: use token (`text-expense-900`).
-- ApexCharts: `useTheme` ajusta `window.Apex` (texto, grade, tooltip) para gráficos criados depois da troca.
+- Gráficos: `chartTheme(isDark)` (`presentation/charts/chartOptions.ts`) dá as cores de texto, grade e tooltip;
+  as opções são `computed` e se refazem na hora ao trocar o tema.
 
 ## Movimento
 

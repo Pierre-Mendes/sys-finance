@@ -7,7 +7,7 @@ const HTML_ESCAPES: Record<string, string> = {
 }
 
 /**
- * Escapa texto para uso em APIs que interpretam HTML (innerHTML, SweetAlert `html`, ApexCharts).
+ * Escapa texto para uso em APIs que interpretam HTML (innerHTML, SweetAlert `html`).
  * Templates Vue ({{ }}) já escapam sozinhos; use isto apenas fora deles.
  */
 export function escapeHtml(value: unknown): string {

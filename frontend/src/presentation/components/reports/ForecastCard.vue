@@ -14,7 +14,7 @@
     </header>
 
     <div v-if="!data && loading" class="h-64 flex items-center justify-center text-sm text-gray-500">Calculando previsão...</div>
-    <!-- Ao trocar o horizonte o gráfico continua montado (desmontar no meio do desenho gera "Element not found") -->
+    <!-- Ao trocar o horizonte o gráfico continua montado e só atualiza (sem piscar) -->
     <div v-else-if="data" :class="{ 'opacity-60 pointer-events-none': loading }">
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
         <div class="rounded-xl bg-gray-50 p-3">
@@ -51,7 +51,7 @@
         <router-link :to="{ path: '/dashboard', query: { review: 'overdue' } }" class="font-semibold underline">Revisar</router-link>
       </p>
 
-      <apexchart type="area" height="260" :options="chartOptions" :series="series" />
+      <BaseChart :height="260" :option="chartOption" label="Gráfico do saldo realizado (linha sólida) e previsto (tracejada) por dia" />
 
       <details v-if="data.events.length" class="mt-4 group">
         <summary class="cursor-pointer text-sm font-medium text-primary select-none">Ver os {{ data.events.length }} lançamentos previstos</summary>
@@ -73,6 +73,9 @@ import { ref, computed, watch, onMounted } from 'vue'
 import { toast } from 'vue3-toastify'
 import { fetchForecast } from '@/data/api/reportApi'
 import { formatBRL, formatBRLCompact } from '@/core/domain/money'
+import BaseChart from '@/components/ui/BaseChart.vue'
+import { areaSeries, axisTooltip, cartesian, chartTheme, referenceLine } from '@/presentation/charts/chartOptions'
+import { useTheme } from '@/presentation/composables/useTheme'
 
 const HORIZONS = [30, 60, 90] as const
 const KIND_LABEL: Record<string, string> = { pending: 'A vencer', overdue: 'Atrasada', recurring: 'Recorrente', card: 'Cartão' }
@@ -97,29 +100,47 @@ const load = async () => {
 }
 
 // Duas séries no mesmo eixo de tempo: identidade pelo traço (sólido x tracejado) + legenda, não só pela cor.
-const series = computed(() => [
-  { name: 'Realizado (linha sólida)', data: (data.value?.history ?? []).map((p: any) => ({ x: localDay(p.date), y: p.balance })) },
-  { name: 'Previsto (tracejado)', data: (data.value?.points ?? []).map((p: any) => ({ x: localDay(p.date), y: p.balance })) },
-])
+const COLOR = '#2346D8'
+const { isDark } = useTheme()
+const toPoints = (list: any[] | undefined) => (list ?? []).map((p: any) => [localDay(p.date), p.balance])
 const todayTs = computed(() => (data.value?.points?.[0] ? localDay(data.value.points[0].date) : Date.now()))
+const formatTs = (ts: number, withYear = false) => {
+  const d = new Date(ts)
+  const dm = `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}`
+  return withYear ? `${dm}/${d.getFullYear()}` : dm
+}
 
-const chartOptions = computed(() => ({
-  chart: { toolbar: { show: false }, zoom: { enabled: false }, fontFamily: 'inherit' },
-  colors: ['#2a78d6', '#2a78d6'],
-  stroke: { width: [2, 2], curve: ['straight', 'stepline'], dashArray: [0, 6] },
-  fill: { type: ['gradient', 'solid'], opacity: [1, 0], gradient: { opacityFrom: 0.25, opacityTo: 0.02 } },
-  markers: { size: [4, 0], strokeColors: '#fff', strokeWidth: 2, hover: { size: 5 } },
-  legend: { position: 'top', horizontalAlign: 'left' },
-  dataLabels: { enabled: false },
-  xaxis: { type: 'datetime', labels: { datetimeUTC: false, format: 'dd/MM', style: { colors: '#6b7280' } }, tooltip: { enabled: false } },
-  yaxis: { labels: { formatter: formatBRLCompact, style: { colors: '#6b7280' } } },
-  grid: { borderColor: '#f1f1f1', strokeDashArray: 4 },
-  annotations: {
-    yaxis: [{ y: 0, borderColor: '#9ca3af', strokeDashArray: 4 }],
-    xaxis: [{ x: todayTs.value, borderColor: '#6b7280', strokeDashArray: 0, label: { text: 'Hoje', orientation: 'horizontal', style: { color: '#fff', background: '#6b7280' } } }],
-  },
-  tooltip: { shared: false, intersect: false, x: { format: 'dd/MM/yyyy' }, y: { formatter: (v: number) => formatBRL(v) } },
-}))
+const chartOption = computed(() => {
+  const t = chartTheme(isDark.value)
+  return {
+    ...cartesian(t, { time: true, xFormatter: (v: number) => formatTs(v), yFormatter: formatBRLCompact, legend: 'left' }),
+    tooltip: axisTooltip(t, [COLOR, COLOR], formatBRL, (ts: number) => formatTs(ts, true)),
+    series: [
+      areaSeries('Realizado (linha sólida)', COLOR, toPoints(data.value?.history), t, {
+        smooth: false,
+        markLine: {
+          ...referenceLine(t, 0),
+          data: [
+            { yAxis: 0 },
+            // "Hoje": separa o realizado da previsão
+            { xAxis: todayTs.value, lineStyle: { color: t.text, type: 'solid', width: 1 },
+              label: { show: true, formatter: 'Hoje', position: 'insideEndTop', color: t.text, fontFamily: 'inherit', fontWeight: 600 } },
+          ],
+        },
+      }),
+      {
+        type: 'line',
+        name: 'Previsto (tracejado)',
+        data: toPoints(data.value?.points),
+        step: 'end',
+        showSymbol: false,
+        symbol: 'circle',
+        lineStyle: { width: 2, type: [6, 6], color: COLOR },
+        itemStyle: { color: COLOR },
+      },
+    ],
+  }
+})
 
 watch(days, load)
 onMounted(load)

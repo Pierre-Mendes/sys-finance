@@ -45,3 +45,8 @@ updates:
     groups:
       npm-minor-patch:
         update-types: ["minor", "patch"]
+    ignore:
+      # TypeScript 7 (compilador nativo) não exporta mais "typescript/lib/tsc", que o vue-tsc usa:
+      # `vue-tsc -b` e o build quebram. Remova quando o vue-tsc suportar o TS 7.
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]

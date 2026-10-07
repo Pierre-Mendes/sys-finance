@@ -41,7 +41,10 @@ abstract class TestCase extends BaseTestCase
         if (class_exists('VCR\VCR')) {
             \VCR\VCR::configure()
                 ->setCassettePath(__DIR__ . '/fixtures/vcr')
-                ->enableLibraryHooks(['stream_wrapper', 'curl']);
+                ->enableLibraryHooks(['stream_wrapper', 'curl'])
+                // Sem o matcher de headers: o User-Agent muda a cada versão da Guzzle ("GuzzleHttp/7" -> "/8")
+                // e invalidaria todos os cassetes gravados. Método, URL, query e corpo continuam conferidos.
+                ->enableRequestMatchers(['method', 'url', 'query_string', 'host', 'body', 'post_fields']);
             \VCR\VCR::turnOn();
         }
     }
