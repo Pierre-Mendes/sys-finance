@@ -27,7 +27,10 @@ if ($sentryDsn) {
     \Sentry\init([
         'dsn' => $sentryDsn,
         'environment' => getenv('APP_ENV') ?: 'production',
-        'traces_sample_rate' => 1.0,
+        'release' => getenv('APP_RELEASE') ?: null,
+        // Desempenho por amostragem (padrão 10%): o suficiente para ver lentidão sem encher o GlitchTip.
+        'traces_sample_rate' => (float) (getenv('SENTRY_TRACES_SAMPLE_RATE') ?: 0.1),
+        'send_default_pii' => false,
     ]);
 }
 
@@ -57,7 +60,7 @@ if (!is_writable($logDir)) {
 }
 if ($sentryDsn) {
     // Erros registrados no log (inclusive os capturados pelo ErrorMiddleware do Slim) também vão para o Sentry.
-    $logger->pushHandler(new \Sentry\Monolog\Handler(\Sentry\SentrySdk::getCurrentHub(), Logger::ERROR));
+    $logger->pushHandler(new \Sentry\Monolog\Handler(\Sentry\SentrySdk::getCurrentHub(), Logger::ERROR, true, true));
 }
 \App\Security\PublicError::setLogger($logger);
 
@@ -119,6 +122,10 @@ $app->get('/api/health', function ($request, $response) {
 
 $healthController = new \App\Controllers\HealthController($db);
 $app->get('/api/metrics', [$healthController, 'metrics']);
+
+// Túnel do Sentry do frontend: público (erros na tela de login também contam), com limite por IP.
+$monitoringController = new \App\Controllers\MonitoringController(new \App\Monitoring\SentryTunnel(getenv('SENTRY_FRONTEND_DSN') ?: null));
+$app->post('/api/monitoring/sentry', [$monitoringController, 'sentryTunnel'])->add(new \App\Middleware\RateLimiterMiddleware($db, 120, 15));
 
 $app->post('/api/auth/signup', [$authController, 'signup'])->add(new \App\Middleware\RateLimiterMiddleware($db, 10, 15));
 $app->post('/api/auth/login', [$authController, 'login'])->add(new \App\Middleware\RateLimiterMiddleware($db, 5, 10));
@@ -288,6 +295,26 @@ $app->group('/api/goals', function (\Slim\Routing\RouteCollectorProxy $group) us
     $group->delete('/{id}', [$goalController, 'delete'])->add(\App\Middleware\GatekeeperMiddleware::requireEditor('goals'));
     $group->post('/contributions', [$goalController, 'contribute'])->add(\App\Middleware\GatekeeperMiddleware::requireEditor('goals'));
     $group->get('/{id}/forecast', [$goalController, 'forecast']);
+})->add($workspaceMiddleware)->add($authMiddleware);
+
+// Bot do Telegram: lançar e consultar pelo chat (docs/guides/telegram.md)
+$telegramLinks = new \App\Repositories\TelegramLinkRepository($db);
+$telegramBot = new \App\Telegram\TelegramBot(
+    $telegramLinks, $txService, $accountRepo, $categoryRepo, new \App\Repositories\ReportRepository($db), $workspaceService
+);
+$telegramSecretStore = new \App\Security\SecretStore($db);
+$telegramController = new \App\Controllers\TelegramController(
+    $telegramBot,
+    $telegramLinks,
+    \App\Telegram\TelegramConfig::isEnabled() ? fn () => \App\Telegram\TelegramConfig::webhookSecret($telegramSecretStore) : null,
+    \App\Telegram\TelegramConfig::botUsername()
+);
+// Webhook: autenticado pelo secret do setWebhook (header X-Telegram-Bot-Api-Secret-Token), não por sessão.
+$app->post('/api/telegram/webhook', [$telegramController, 'webhook']);
+$app->group('/api/telegram', function (\Slim\Routing\RouteCollectorProxy $group) use ($telegramController) {
+    $group->get('', [$telegramController, 'status']);
+    $group->post('/link', [$telegramController, 'createLink']);
+    $group->delete('/link', [$telegramController, 'deleteLink']);
 })->add($workspaceMiddleware)->add($authMiddleware);
 
 // Add Error Middleware last

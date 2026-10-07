@@ -111,6 +111,7 @@
     </div>
 
     <ReminderSettings v-if="!isLoadingData" />
+    <TelegramSettings v-if="!isLoadingData" />
   </MainLayout>
 </template>
 
@@ -119,6 +120,7 @@ import { ref, onMounted } from 'vue'
 import { toast } from 'vue3-toastify'
 import MainLayout from '@/components/layout/MainLayout.vue'
 import ReminderSettings from '@/presentation/components/domain/ReminderSettings.vue'
+import TelegramSettings from '@/presentation/components/domain/TelegramSettings.vue'
 import { useRouter } from 'vue-router'
 import api from '@/data/api/HttpClient'
 

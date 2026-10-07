@@ -9,6 +9,11 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
+// Falha do agendador (exceção não tratada) vai para o Sentry/GlitchTip, como os erros da API.
+if ($sentryDsn = getenv('SENTRY_DSN')) {
+    \Sentry\init(['dsn' => $sentryDsn, 'environment' => getenv('APP_ENV') ?: 'production']);
+}
+
 use App\Database;
 use App\Notifications\WebPushSender;
 use App\Repositories\BillReminderRepository;
@@ -27,6 +32,10 @@ $service = new BillReminderService(
     new PushSubscriptionRepository($db),
     new NotificationService($db),
     new WebPushSender(new SecretStore($db)),
+    // Avisos também no Telegram de quem vinculou o bot (Configurações → Telegram).
+    \App\Telegram\TelegramConfig::token()
+        ? new \App\Notifications\TelegramNotifier(new \App\Repositories\TelegramLinkRepository($db), \App\Telegram\TelegramConfig::token())
+        : null,
 );
 
 $now = new DateTimeImmutable('now', $timezone);

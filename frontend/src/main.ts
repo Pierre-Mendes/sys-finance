@@ -13,6 +13,7 @@ import 'vue3-toastify/dist/index.css'
 import App from './App.vue'
 import { initTheme } from './presentation/composables/useTheme'
 import router from './router'
+import { isRenderError, showError } from './core/errors/appError'
 
 import VueApexCharts from 'vue3-apexcharts'
 
@@ -25,13 +26,26 @@ initTheme()
 const pinia = createPinia()
 const app = createApp(App)
 
+// Erro ao montar uma tela (render/setup) troca a tela pela página de erro 500 em vez de deixá-la em branco.
+// Definido antes do Sentry.init: o Sentry encadeia este handler e continua reportando o erro.
+app.config.errorHandler = (err, _instance, info) => {
+    console.error(err)
+    // Falha de API já foi tratada pelo HttpClient (com o código certo: 403, 503...).
+    if ((err as any)?.isAxiosError) return
+    if (isRenderError(String(info))) showError({ code: 500 })
+}
+
 const sentryDsn = import.meta.env.VITE_SENTRY_DSN;
 if (sentryDsn) {
     Sentry.init({
         app,
         dsn: sentryDsn,
         environment: import.meta.env.MODE,
-        tracesSampleRate: 1.0, 
+        // Eventos vão para a própria API, que repassa ao GlitchTip/Sentry (sem expor o servidor de erros e sem CSP extra).
+        tunnel: `${import.meta.env.VITE_API_BASE_URL || ''}/api/monitoring/sentry`,
+        integrations: [Sentry.browserTracingIntegration({ router })],
+        tracesSampleRate: 0.1,
+        sendDefaultPii: false,
     });
 }
 

@@ -30,6 +30,7 @@ Para **código**, prefira CodeGraph/Serena em vez de ler arquivos (veja [convent
 |---|---|
 | [guides/vps.md](guides/vps.md) | Preparar a VPS e deploy |
 | [guides/telegram.md](guides/telegram.md) | Configurar o bot do Telegram |
+| [guides/monitoring.md](guides/monitoring.md) | Sentry/GlitchTip no Docker: erros da API, do agendador e do navegador |
 
 ## Histórico e decisões
 

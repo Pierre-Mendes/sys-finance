@@ -46,6 +46,11 @@ services:
       JWT_SECRET: ${JWT_SECRET:-}  # opcional: sem ele a chave é gerada e guardada no banco
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:5173}
       CSP_CONNECT_SRC: ${CSP_CONNECT_SRC:-https://*.sentry.io}
+      # Monitoramento opcional (GlitchTip local: docker compose -f docker-compose.yml -f docker-compose.monitoring.yml up)
+      SENTRY_DSN: ${SENTRY_DSN:-}
+      SENTRY_FRONTEND_DSN: ${SENTRY_FRONTEND_DSN:-}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+      TELEGRAM_BOT_USERNAME: ${TELEGRAM_BOT_USERNAME:-}
     depends_on:
       db:
         condition: service_healthy
@@ -72,6 +77,7 @@ services:
       VITE_PROXY_TARGET: http://backend:8080
       # Polling para o hot reload funcionar com volumes no Docker Desktop (Windows/macOS).
       VITE_USE_POLLING: ${VITE_USE_POLLING:-true}
+      VITE_SENTRY_DSN: ${SENTRY_FRONTEND_DSN:-}
     depends_on:
       backend:
         condition: service_healthy
@@ -95,6 +101,7 @@ services:
       APP_ENV: development
       APP_TIMEZONE: ${APP_TIMEZONE:-America/Sao_Paulo}
       RUN_MIGRATIONS: "0"  # quem migra é o backend
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
     depends_on:
       backend:
         condition: service_healthy

@@ -33,6 +33,7 @@ class BillReminderService {
         private PushSubscriptionRepository $subscriptions,
         private NotificationService $notifications,
         private PushSender $push,
+        private ?\App\Notifications\ChatNotifier $chat = null,
     ) {}
 
     /**
@@ -53,6 +54,7 @@ class BillReminderService {
 
         $created = 0;
         $pushByUser = [];
+        $chatByUser = [];
         foreach ($rows as $bill) {
             $prefs = $settings[$bill['userId']];
             if ($hour < $prefs['reminderHour']) continue;
@@ -65,13 +67,22 @@ class BillReminderService {
             $this->notifications->notify($bill['userId'], $title, $message, 'SLA_WARNING', $bill['billId'], '/transactions?status=PENDING');
             $created++;
 
+            $item = ['bill' => $bill, 'kind' => $kind, 'title' => $title, 'message' => $message];
             if ($prefs['pushEnabled']) {
-                $pushByUser[$bill['userId']][] = ['bill' => $bill, 'kind' => $kind, 'title' => $title, 'message' => $message];
+                $pushByUser[$bill['userId']][] = $item;
             }
+            $chatByUser[$bill['userId']][] = $item;
         }
 
         foreach ($pushByUser as $userId => $items) {
             $this->pushTo($userId, self::pushPayload($items));
+        }
+        // Telegram vinculado recebe o mesmo resumo (uma mensagem por usuário).
+        if ($this->chat !== null) {
+            foreach ($chatByUser as $userId => $items) {
+                $payload = self::pushPayload($items);
+                $this->chat->notify($userId, $payload['title'], $payload['body']);
+            }
         }
 
         $created += $staleCreated;

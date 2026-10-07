@@ -22,7 +22,7 @@ Legenda: ✅ ok · 🔧 corrigido nesta revisão · ⚠️ pendente (não bloque
 
 | # | Pergunta | Status | Resposta |
 |---|---|---|---|
-| 1 | O que ainda parece protótipo? | ⚠️ | **Bot do Telegram** (`TelegramService`): não tem rota, `/resumo` responde "R$ XXX,XX" e a mensagem diz "registrei" sem gravar nada — não divulgar. **Importação de extrato** (marcada BETA): adapters fixos para Itaú/Sicoob/CSV/OFX, o resto cai na heurística. Restante (lançamentos, contas, cartões, metas, relatórios) está maduro e testado |
+| 1 | O que ainda parece protótipo? | ✅/⚠️ | ~~Bot do Telegram~~ **refeito** (out/2026): vincula a conta por código, lança receitas/despesas em texto livre, consulta saldo/mês/contas e manda os lembretes (`guides/telegram.md`). **Importação de extrato** (BETA): adapters fixos para Itaú/Sicoob/CSV/OFX, o resto cai na heurística |
 | 2 | O que pode quebrar com o primeiro cliente real? | 🔧/⚠️ | Rateio parcial (corrigido). Ainda: SQL do Dashboard é específico de MySQL e não tem teste (os testes rodam em SQLite); `getFilteredForUser` filtra em memória (fica lento com muitos anos de dados) |
 | 3 | Fluxos sem tratamento de erro? | 🔧 | Todos os controllers tratam exceção; erros internos agora são registrados e não vazam detalhes. Exceções não previstas caem no `ErrorMiddleware` (log + Sentry) |
 | 4 | E se uma API externa falhar? | ✅ | Brapi (cotações): timeout de 10 s e retorno vazio, a tela segue funcionando. Web Push: falha por dispositivo não derruba o agendador. Telegram: timeout adicionado. Sentry é opcional |
@@ -35,7 +35,7 @@ Legenda: ✅ ok · 🔧 corrigido nesta revisão · ⚠️ pendente (não bloque
 | 11 | Cancelamento sem intervenção manual? | N/A / ⚠️ | Sem assinatura. ⚠️ Não existe "excluir minha conta" (só excluir workspace) — necessário antes de abrir para terceiros (LGPD) |
 | 12 | Permissões entre usuários bem separadas? | ✅ | Todo SQL filtra por `WorkspaceId` do middleware; escrita exige `GatekeeperMiddleware::requireEditor`; IDs validados no workspace (`ReferenceResolver`); rateio exige permissão no destino; testes de isolamento (`WorkspaceOwnershipTest`, `ReferenceResolverTest`) |
 | 13 | Dado sensível no front-end? | 🔧/❌ | Sessão em cookie `HttpOnly`, sem token no `localStorage`, erros internos não vazam mais. ❌ **Produção roda em HTTP puro** (porta 80): senha e cookie trafegam sem criptografia. Ver "Antes de usar" |
-| 14 | Erros importantes registrados? | 🔧 | Monolog em `logs/app.log` (JSON, 14 dias) + Sentry quando `SENTRY_DSN` está definido — agora inclusive os erros que os controllers capturavam. **Configure o `SENTRY_DSN`** (plano grátis basta) |
+| 14 | Erros importantes registrados? | 🔧 | Monolog em `logs/app.log` (JSON, 14 dias) + **GlitchTip (Sentry self-hosted) no Docker** para API, agendador e navegador (`guides/monitoring.md`), inclusive os erros que os controllers capturavam. O usuário vê telas de erro 400/403/404/500/503 com código de referência |
 | 15 | Backup do que importa? | 🔧 | Banco: diário + antes de cada deploy, 14 dias. ⚠️ Os backups ficam na própria VPS: copie para fora (rsync/rclone, ver `guides/vps.md`) |
 | 16 | Deu errado em produção, como volto? | 🔧 | Deploy falhou → volta sozinho para a última versão boa. Manual: rodar o workflow com o SHA/tag anterior. Banco: `restore.sh` com o backup feito antes do deploy |
 | 17 | O produto deixa claro o próximo passo? | ✅ | Toasts após cada ação, checklist inicial, lembretes de contas a vencer, alerta de saldo previsto negativo |

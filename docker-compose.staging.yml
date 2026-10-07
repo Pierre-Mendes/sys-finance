@@ -19,6 +19,7 @@ services:
       context: .
       args:
         - VITE_API_BASE_URL=http://localhost:8082
+        - VITE_SENTRY_DSN=${SENTRY_FRONTEND_DSN:-}
     container_name: financas-web-staging
     ports:
       - "8082:80"
@@ -33,7 +34,9 @@ services:
       - COOKIE_SECURE=${COOKIE_SECURE:-auto}  # auto: Secure quando a requisição chega por HTTPS
       - COOKIE_SAMESITE=${COOKIE_SAMESITE:-Strict}
       - CSP_CONNECT_SRC=${CSP_CONNECT_SRC:-https://*.sentry.io}
-      - SENTRY_DSN=${SENTRY_DSN:-}
+      - SENTRY_DSN=${SENTRY_DSN:-}  # erros da API (PHP); com GlitchTip no Docker: http://<chave>@glitchtip:8000/<id>
+      - SENTRY_FRONTEND_DSN=${SENTRY_FRONTEND_DSN:-}  # erros do navegador (Vue), repassados pelo túnel /api/monitoring/sentry
+      # Sem bot do Telegram no staging: um token só pode ter um webhook (o de produção).
       - APP_TIMEZONE=${APP_TIMEZONE:-America/Sao_Paulo}
       - VAPID_SUBJECT=${VAPID_SUBJECT:-}  # opcional: mailto: ou https:// de contato para os serviços de push
     depends_on:
@@ -47,6 +50,7 @@ services:
       context: .
       args:
         - VITE_API_BASE_URL=http://localhost:8082
+        - VITE_SENTRY_DSN=${SENTRY_FRONTEND_DSN:-}
     container_name: financas-scheduler-staging
     restart: always
     entrypoint: ["sh", "-c", "while true; do php bin/reminders.php || true; sleep 900; done"]
@@ -57,6 +61,7 @@ services:
       - DB_NAME=money_manager_staging
       - APP_ENV=staging
       - APP_TIMEZONE=${APP_TIMEZONE:-America/Sao_Paulo}
+      - SENTRY_DSN=${SENTRY_DSN:-}
       - VAPID_SUBJECT=${VAPID_SUBJECT:-}
     depends_on:
       db-staging:
