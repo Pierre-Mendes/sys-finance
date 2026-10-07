@@ -64,7 +64,7 @@ Checklist para qualquer mudança que toque entrada do usuário, dados de outro t
   No HTML de SweetAlert use classes Tailwind, nunca o atributo `style=` (a CSP bloqueia).
 - CORS por `CORS_ALLOWED_ORIGINS`; origens extras do front em `CSP_CONNECT_SRC`.
 - SRI: o build do Vite grava `integrity="sha384-…"` nos `<script>`/`<link>` do `index.html`
-  (`frontend/build/subresourceIntegrity.ts`). Não altere os arquivos de `dist/assets` depois do build
+  (`frontend/build/subresourceIntegrity.ts`, conferido no CI por `build/check-sri.mjs`). Não altere os arquivos de `dist/assets` depois do build
   (minificação/injeção por proxy ou CDN), senão o navegador bloqueia o app.
 - Apache sem versão (`ServerTokens Prod`), PHP sem `X-Powered-By`.
 

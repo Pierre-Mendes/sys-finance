@@ -64,3 +64,7 @@ jobs:
       - name: Build Check
         working-directory: frontend
         run: npm run build
+
+      - name: SRI Check (integrity do index.html confere com os arquivos)
+        working-directory: frontend
+        run: node build/check-sri.mjs dist
