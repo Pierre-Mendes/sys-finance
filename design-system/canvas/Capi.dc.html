@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Capi, a mascote</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: {{size}}px; height: {{size}}px; display: flex; align-items: center; justify-content: center">
+<svg viewBox="0 0 200 200" width="100%" height="100%" role="img" aria-label="{{label}}">
+<ellipse cx="100" cy="188" rx="56" ry="6" fill="#0B1324" opacity="0.10"></ellipse>
+<g>
+<animateTransform attributeName="transform" type="translate" values="{{bob}}" dur="{{bobDur}}" repeatCount="indefinite"></animateTransform>
+<ellipse cx="72" cy="178" rx="16" ry="8" fill="#7E5235"></ellipse>
+<ellipse cx="128" cy="178" rx="16" ry="8" fill="#7E5235"></ellipse>
+<ellipse cx="100" cy="140" rx="66" ry="42" fill="#A8724A"></ellipse>
+<ellipse cx="100" cy="152" rx="38" ry="24" fill="#D9A877"></ellipse>
+<g opacity="{{sparkles}}">
+<ellipse cx="160" cy="116" rx="9" ry="18" fill="#A8724A">
+<animateTransform attributeName="transform" type="rotate" values="-25 152 132; 15 152 132; -25 152 132" dur="0.8s" repeatCount="indefinite"></animateTransform>
+</ellipse>
+</g>
+<circle cx="58" cy="66" r="11" fill="#7E5235"></circle>
+<circle cx="142" cy="66" r="11" fill="#7E5235"></circle>
+<circle cx="58" cy="66" r="5" fill="#5A3A26"></circle>
+<circle cx="142" cy="66" r="5" fill="#5A3A26"></circle>
+<rect x="50" y="58" width="100" height="86" rx="42" fill="#A8724A"></rect>
+<ellipse cx="64" cy="112" rx="8" ry="4.5" fill="#F09A86" opacity="0.55"></ellipse>
+<ellipse cx="136" cy="112" rx="8" ry="4.5" fill="#F09A86" opacity="0.55"></ellipse>
+<g opacity="{{eyesOpen}}" transform="translate({{eyeDx}} {{eyeDy}})">
+<ellipse cx="80" cy="88" rx="5" ry="6" fill="#1A1410">
+<animate attributeName="ry" values="{{blink}}" keyTimes="0;0.92;0.96;1" dur="4s" repeatCount="indefinite"></animate>
+</ellipse>
+<ellipse cx="120" cy="88" rx="5" ry="6" fill="#1A1410">
+<animate attributeName="ry" values="{{blink}}" keyTimes="0;0.92;0.96;1" dur="4s" repeatCount="indefinite"></animate>
+</ellipse>
+<circle cx="81.5" cy="86" r="1.6" fill="#FFFFFF"></circle>
+<circle cx="121.5" cy="86" r="1.6" fill="#FFFFFF"></circle>
+</g>
+<g opacity="{{eyesArc}}" stroke="#1A1410" stroke-width="3.5" fill="none" stroke-linecap="round">
+<path d="M73 90 Q80 81 87 90"></path>
+<path d="M113 90 Q120 81 127 90"></path>
+</g>
+<g opacity="{{eyesClosed}}" stroke="#1A1410" stroke-width="3" fill="none" stroke-linecap="round">
+<path d="M73 88 Q80 93 87 88"></path>
+<path d="M113 88 Q120 93 127 88"></path>
+</g>
+<rect x="74" y="100" width="52" height="34" rx="17" fill="#7E5235"></rect>
+<ellipse cx="91" cy="110" rx="3.5" ry="2.5" fill="#3A2518"></ellipse>
+<ellipse cx="109" cy="110" rx="3.5" ry="2.5" fill="#3A2518"></ellipse>
+<path opacity="{{mouthSmile}}" d="M93 122 Q100 129 107 122" stroke="#2A1A10" stroke-width="2.5" fill="none" stroke-linecap="round"></path>
+<path opacity="{{mouthOpen}}" d="M92 120 Q100 133 108 120 Z" fill="#2A1A10"></path>
+<path opacity="{{mouthFlat}}" d="M94 125 L106 125" stroke="#2A1A10" stroke-width="2.5" stroke-linecap="round"></path>
+<ellipse opacity="{{mouthO}}" cx="100" cy="124" rx="3.5" ry="4.5" fill="#2A1A10"></ellipse>
+<g transform="translate(100 42) rotate({{coinTilt}})">
+<ellipse cx="0" cy="0" rx="16" ry="16" fill="#F2A541" stroke="#C97C12" stroke-width="3">
+<animate attributeName="rx" values="{{coinSpin}}" keyTimes="0;0.7;0.8;0.9;1" dur="3s" repeatCount="indefinite"></animate>
+</ellipse>
+<ellipse cx="0" cy="0" rx="9" ry="9" fill="none" stroke="#C97C12" stroke-width="2" opacity="0.7">
+<animate attributeName="rx" values="{{coinSpinInner}}" keyTimes="0;0.7;0.8;0.9;1" dur="3s" repeatCount="indefinite"></animate>
+</ellipse>
+</g>
+</g>
+<g opacity="{{sparkles}}" fill="#F2A541">
+<g transform="translate(32 64)"><path d="M0 -9 L2.5 -2.5 L9 0 L2.5 2.5 L0 9 L-2.5 2.5 L-9 0 L-2.5 -2.5 Z"><animate attributeName="opacity" values="0;1;0" dur="1.2s" repeatCount="indefinite"></animate></path></g>
+<g transform="translate(168 36)"><path d="M0 -7 L2 -2 L7 0 L2 2 L0 7 L-2 2 L-7 0 L-2 -2 Z"><animate attributeName="opacity" values="0;1;0" dur="1.2s" begin="0.4s" repeatCount="indefinite"></animate></path></g>
+<g transform="translate(40 26)"><path d="M0 -6 L1.8 -1.8 L6 0 L1.8 1.8 L0 6 L-1.8 1.8 L-6 0 L-1.8 -1.8 Z"><animate attributeName="opacity" values="0;1;0" dur="1.2s" begin="0.8s" repeatCount="indefinite"></animate></path></g>
+</g>
+<g opacity="{{thought}}" fill="#FFFFFF" stroke="#C5CCD6" stroke-width="2">
+<circle cx="154" cy="62" r="4"></circle>
+<circle cx="165" cy="46" r="6"></circle>
+<circle cx="180" cy="24" r="10"></circle>
+</g>
+<g opacity="{{sweat}}">
+<path d="M152 60 Q159 71 152 77 Q145 71 152 60 Z" fill="#6BB6FF">
+<animateTransform attributeName="transform" type="translate" values="0 0; 0 6; 0 0" dur="1.6s" repeatCount="indefinite"></animateTransform>
+</path>
+</g>
+<g opacity="{{zzz}}" fill="#5B6B85" font-family="Bricolage Grotesque, sans-serif" font-weight="700">
+<text x="150" y="58" font-size="16">z<animate attributeName="opacity" values="0;1;0" dur="2.4s" repeatCount="indefinite"></animate></text>
+<text x="162" y="40" font-size="20">z<animate attributeName="opacity" values="0;1;0" dur="2.4s" begin="0.6s" repeatCount="indefinite"></animate></text>
+<text x="176" y="20" font-size="24">z<animate attributeName="opacity" values="0;1;0" dur="2.4s" begin="1.2s" repeatCount="indefinite"></animate></text>
+</g>
+</svg>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"mood":{"editor":"enum","options":["feliz","comemorando","pensando","alerta","dormindo"],"default":"feliz"},"size":{"editor":"int","min":32,"max":600,"default":240},"animated":{"editor":"boolean","default":true},"$preview":{"width":240,"height":240}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const mood = this.props.mood ?? 'feliz';
+    const anim = this.props.animated ?? true;
+    const is = (m) => (mood === m ? 1 : 0);
+    const bobBy = { feliz: '0 0; 0 -5; 0 0', comemorando: '0 0; 0 -16; 0 0', pensando: '0 0; 0 -3; 0 0', alerta: '0 0; -2 0; 2 0; 0 0', dormindo: '0 0; 0 2; 0 0' };
+    const durBy = { feliz: '3s', comemorando: '0.8s', pensando: '4s', alerta: '0.4s', dormindo: '4s' };
+    const labels = { feliz: 'Capi, a capivara mascote, sorrindo', comemorando: 'Capi comemorando', pensando: 'Capi pensando', alerta: 'Capi preocupada', dormindo: 'Capi dormindo' };
+    return {
+      size: this.props.size ?? 240,
+      label: labels[mood] || labels.feliz,
+      bob: anim ? (bobBy[mood] || bobBy.feliz) : '0 0; 0 0',
+      bobDur: durBy[mood] || '3s',
+      blink: anim ? '6;6;0.6;6' : '6;6;6;6',
+      coinSpin: anim && mood !== 'dormindo' ? '16;16;3;16;16' : '16;16;16;16;16',
+      coinSpinInner: anim && mood !== 'dormindo' ? '9;9;1.5;9;9' : '9;9;9;9;9',
+      coinTilt: mood === 'alerta' ? -18 : (mood === 'dormindo' ? 12 : 0),
+      eyesOpen: is('feliz') || is('pensando') || is('alerta'),
+      eyeDx: mood === 'pensando' ? 2 : 0,
+      eyeDy: mood === 'pensando' ? -3 : 0,
+      eyesArc: is('comemorando'),
+      eyesClosed: is('dormindo'),
+      mouthSmile: is('feliz') || is('dormindo'),
+      mouthOpen: is('comemorando'),
+      mouthFlat: is('pensando'),
+      mouthO: is('alerta'),
+      sparkles: is('comemorando'),
+      thought: is('pensando'),
+      sweat: is('alerta'),
+      zzz: is('dormindo')
+    };
+  }
+}
+</script>
+</body>
+</html>

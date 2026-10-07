@@ -129,7 +129,7 @@
                                  {{ formatCurrency(inv.current_price) }}
                                  <svg class="w-3 h-3 opacity-0 group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                              </div>
-                             <span v-if="inv.type!=='ACAO' && inv.type!=='FII'" class="text-[10px] text-gray-400 block -mt-1">Clique para atualizar</span>
+                             <span v-if="inv.type!=='ACAO' && inv.type!=='FII'" class="text-xs text-gray-500 block -mt-1">Clique para atualizar</span>
                          </td>
                          <td class="p-4 text-right">
                              <p class="font-black text-gray-900">{{ formatCurrency(parseFloat(inv.quantity) * parseFloat(inv.current_price)) }}</p>
@@ -143,13 +143,13 @@
                                     {{ getRentabilityInfo(inv).pct >= 0 ? '+' : '' }}{{ getRentabilityInfo(inv).pct.toFixed(2) }}%
                                  </p>
                              </div>
-                             <p v-else class="text-gray-400 text-sm">-</p>
+                             <p v-else class="text-gray-500 text-sm">-</p>
                          </td>
                          <td class="p-4 text-center">
                              <div class="flex items-center justify-center gap-2">
                                  <button @click="openTransactionModal(inv, 'BUY')" title="Aportar (Comprar Mais)" class="p-1.5 text-emerald-600 bg-emerald-50 hover:bg-emerald-100 rounded transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></button>
                                  <button @click="openTransactionModal(inv, 'SELL')" title="Vender / Sacar" class="p-1.5 text-rose-600 bg-rose-50 hover:bg-rose-100 rounded transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg></button>
-                                 <button @click="deleteInvestment(inv.id)" title="Deletar Ativo (Apaga todo Histórico)" class="p-1.5 text-gray-400 hover:text-red-600 transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+                                 <button @click="deleteInvestment(inv.id)" title="Deletar Ativo (Apaga todo Histórico)" class="p-1.5 text-gray-500 hover:text-red-600 transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
                              </div>
                          </td>
                      </tr>
@@ -167,7 +167,7 @@
                 <svg class="w-6 h-6 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                 Cadastrar Novo Ativo
             </h3>
-            <button @click="createModalOpen = false" class="text-gray-400 hover:text-gray-600 transition"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+            <button @click="createModalOpen = false" class="text-gray-500 hover:text-gray-600 transition"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
         </div>
         <form @submit.prevent="submitCreate" class="p-6 space-y-4">
             <div>
@@ -208,7 +208,7 @@
         <div class="p-5 border-b border-gray-100 bg-gray-50">
             <div class="flex justify-between items-center">
                 <h3 class="font-bold text-gray-800 text-lg">Nova Operação</h3>
-                <button @click="txModalOpen = false" class="text-gray-400 hover:text-gray-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+                <button @click="txModalOpen = false" class="text-gray-500 hover:text-gray-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
             </div>
             <p class="text-sm text-gray-500 mt-1">Lançando em: <span class="font-bold text-indigo-600">{{ activeAsset.ticker || activeAsset.name }}</span></p>
         </div>
@@ -424,7 +424,7 @@ const deleteInvestment = async (id: number) => {
         text: 'Apagar este ativo excluirá todo o seu histórico de rentabilidade. Deseja prosseguir?',
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#ef4444',
+        confirmButtonColor: '#C2410C',
         cancelButtonColor: '#6b7280',
         confirmButtonText: 'Sim, Apagar Histórico',
         cancelButtonText: 'Cancelar'

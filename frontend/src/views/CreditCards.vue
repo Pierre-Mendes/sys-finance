@@ -8,6 +8,7 @@ import MainLayout from '@/components/layout/MainLayout.vue'
 import LoaderSpinner from '@/components/ui/LoaderSpinner.vue'
 import { toast } from 'vue3-toastify'
 import Swal from 'sweetalert2'
+import EmptyState from '@/components/ui/EmptyState.vue'
 
 const store = useCreditCardStore()
 const accountStore = useAccountStore()
@@ -278,7 +279,7 @@ const deleteTx = async (tx: any) => {
     text: `Deseja realmente excluir "${tx.title}"? Esta ação não pode ser desfeita.`,
     icon: 'warning',
     showCancelButton: true,
-    confirmButtonColor: '#ef4444',
+    confirmButtonColor: '#C2410C',
     cancelButtonColor: '#9ca3af',
     confirmButtonText: 'Sim, excluir!',
     cancelButtonText: 'Cancelar'
@@ -294,7 +295,7 @@ const deleteCard = async (card: any) => {
     text: `Deseja realmente excluir o cartão "${card.name}"? Todas as compras registradas serão perdidas.`,
     icon: 'warning',
     showCancelButton: true,
-    confirmButtonColor: '#ef4444',
+    confirmButtonColor: '#C2410C',
     cancelButtonColor: '#9ca3af',
     confirmButtonText: 'Sim, excluir!',
     cancelButtonText: 'Cancelar'
@@ -346,7 +347,7 @@ const formatDate = (dateStr: string) => {
           <h2 class="text-2xl sm:text-3xl font-semibold text-gray-800">Meus Cartões de Crédito</h2>
           <p class="text-gray-500 mt-1">Gerencie seus plásticos, acompanhe faturas e compras parceladas.</p>
         </div>
-        <button @click="showModal = true" class="w-full sm:w-auto bg-primary hover:bg-blue-600 px-5 py-2.5 rounded-lg text-white font-medium shadow transition cursor-pointer flex items-center justify-center gap-2 whitespace-nowrap">
+        <button @click="showModal = true" class="w-full sm:w-auto bg-primary hover:bg-brand-800 px-5 py-2.5 rounded-lg text-white font-medium shadow transition cursor-pointer flex items-center justify-center gap-2 whitespace-nowrap">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
           Adicionar Cartão
         </button>
@@ -359,13 +360,7 @@ const formatDate = (dateStr: string) => {
 
       <template v-else>
         <!-- Empty State -->
-        <div v-if="store.cards.length === 0" class="text-center py-20">
-          <div class="inline-flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full mb-5">
-            <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
-          </div>
-          <p class="text-gray-500 text-lg font-medium">Você ainda não adicionou nenhum cartão de crédito.</p>
-          <p class="text-gray-400 text-sm mt-1">Clique em "Adicionar Cartão" para começar.</p>
-        </div>
+        <EmptyState v-if="store.cards.length === 0" class="py-12" title="Nenhum cartão ainda" description="Clique em &quot;Adicionar Cartão&quot; para acompanhar faturas e limite." :size="140" />
 
         <!-- Card Gallery — horizontal scroll with snap -->
         <div v-else>
@@ -374,7 +369,7 @@ const formatDate = (dateStr: string) => {
               v-for="card in store.cards"
               :key="card.id"
               @click="selectCard(card.id)"
-              :style="{ backgroundColor: card.color || '#4f46e5' }"
+              :style="{ backgroundColor: card.color || '#2346D8' }"
               class="snap-start shrink-0 w-[290px] sm:w-[350px] lg:w-auto rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 text-white overflow-hidden relative min-h-[220px] cursor-pointer select-none border-2"
               :class="store.selectedCardId === card.id ? 'border-primary ring-4 ring-primary/20 scale-[1.02]' : 'border-transparent'"
             >
@@ -437,7 +432,7 @@ const formatDate = (dateStr: string) => {
               <!-- Card footer actions with high contrast -->
               <div class="bg-black/30 px-4 py-3 relative z-10 flex gap-2 backdrop-blur-lg border-t border-white/10">
                 <button @click.stop="openTxModal(card.id)" class="flex-1 text-[11px] bg-white text-gray-900 hover:bg-gray-100 py-2.5 rounded-xl font-bold transition-all shadow-lg uppercase tracking-wider">Nova Compra</button>
-                <button @click.stop="generateBill(card.id)" class="flex-1 text-[11px] bg-primary hover:bg-blue-600 text-white py-2.5 rounded-xl font-bold transition-all shadow-lg uppercase tracking-wider">Gerar Fatura</button>
+                <button @click.stop="generateBill(card.id)" class="flex-1 text-[11px] bg-primary hover:bg-brand-800 text-white py-2.5 rounded-xl font-bold transition-all shadow-lg uppercase tracking-wider">Gerar Fatura</button>
                 <button @click.stop="showCardDetailModal = true" class="lg:hidden flex-1 text-[11px] bg-white/20 text-white hover:bg-white/30 py-2.5 rounded-xl font-bold transition-all backdrop-blur-md uppercase tracking-wider leading-tight">Compras</button>
               </div>
             </div>
@@ -448,11 +443,11 @@ const formatDate = (dateStr: string) => {
             <!-- Invoice Summary Card -->
             <div class="grid grid-cols-2 gap-4">
               <div class="bg-white dark:bg-gray-800 p-5 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700">
-                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Fatura Atual</p>
+                <p class="text-xs font-black text-gray-500 uppercase tracking-widest mb-1">Fatura Atual</p>
                 <p class="text-xl font-black text-gray-900 dark:text-white">R$ {{ currentMonthTotal.toFixed(2) }}</p>
               </div>
               <div class="bg-white dark:bg-gray-800 p-5 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700">
-                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Próxima Fatura</p>
+                <p class="text-xs font-black text-gray-500 uppercase tracking-widest mb-1">Próxima Fatura</p>
                 <p class="text-xl font-black text-gray-900 dark:text-white">R$ {{ nextMonthTotal.toFixed(2) }}</p>
               </div>
             </div>
@@ -478,7 +473,7 @@ const formatDate = (dateStr: string) => {
                 </div>
 
                 <div v-if="recentTransactions.length === 0" class="p-8 text-center">
-                  <p class="text-sm text-gray-400 italic">Nenhuma compra recente.</p>
+                  <p class="text-sm text-gray-500 italic">Nenhuma compra recente.</p>
                 </div>
               </div>
               
@@ -500,7 +495,7 @@ const formatDate = (dateStr: string) => {
                       <div class="w-2 h-6 bg-primary rounded-full"></div>
                       Histórico de Compras: {{ store.cards.find(c => c.id === store.selectedCardId)?.name }}
                     </h3>
-                    <p class="text-sm text-gray-400 mt-1">Gerencie e acompanhe os lançamentos deste cartão.</p>
+                    <p class="text-sm text-gray-500 mt-1">Gerencie e acompanhe os lançamentos deste cartão.</p>
                   </div>
                   
                   <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
@@ -512,7 +507,7 @@ const formatDate = (dateStr: string) => {
                         placeholder="Buscar compra..." 
                         class="w-full sm:w-64 pl-10 pr-4 py-2.5 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all shadow-sm dark:text-white"
                       />
-                      <svg class="w-5 h-5 text-gray-400 absolute left-3 top-3 group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg class="w-5 h-5 text-gray-500 absolute left-3 top-3 group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                       </svg>
                     </div>
@@ -526,7 +521,7 @@ const formatDate = (dateStr: string) => {
 
               <div class="overflow-x-auto">
                 <table class="w-full text-left">
-                  <thead class="bg-gray-50 dark:bg-gray-900 text-gray-400 text-[11px] font-bold uppercase tracking-wider border-b border-gray-100 dark:border-gray-700">
+                  <thead class="bg-gray-50 dark:bg-gray-900 text-gray-500 text-[11px] font-bold uppercase tracking-wider border-b border-gray-100 dark:border-gray-700">
                     <tr>
                       <th class="px-8 py-5 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group" @click="toggleTxSort('date')">
                         <div class="flex items-center gap-1">
@@ -555,10 +550,10 @@ const formatDate = (dateStr: string) => {
                       <td class="px-8 py-5 text-sm text-gray-500 dark:text-gray-400 font-medium whitespace-nowrap">{{ formatDate(tx.date) }}</td>
                       <td class="px-8 py-5">
                         <div class="font-bold text-gray-900 dark:text-white group-hover:text-primary transition-colors">{{ tx.title }}</div>
-                        <div v-if="tx.description" class="text-xs text-gray-400 mt-0.5">{{ tx.description }}</div>
+                        <div v-if="tx.description" class="text-xs text-gray-500 mt-0.5">{{ tx.description }}</div>
                       </td>
                       <td class="px-8 py-5">
-                        <span class="px-2.5 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg text-[10px] font-bold uppercase ring-1 ring-blue-100 dark:ring-blue-800">
+                        <span class="px-2.5 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg text-xs font-bold uppercase ring-1 ring-blue-100 dark:ring-blue-800">
                           {{ tx.installments > 1 ? `${tx.currentInstallment}/${tx.installments}` : 'À Vista' }}
                         </span>
                       </td>
@@ -567,10 +562,10 @@ const formatDate = (dateStr: string) => {
                       </td>
                       <td class="px-8 py-5 text-center">
                         <div class="flex justify-center gap-2">
-                          <button @click="openEditTxModal(tx)" title="Editar" class="p-1.5 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors">
+                          <button @click="openEditTxModal(tx)" title="Editar" class="p-1.5 text-gray-500 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                           </button>
-                          <button @click="deleteTx(tx)" title="Excluir" class="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                          <button @click="deleteTx(tx)" title="Excluir" class="p-1.5 text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                           </button>
                         </div>
@@ -580,7 +575,7 @@ const formatDate = (dateStr: string) => {
                       <td colspan="4" class="px-8 py-20 text-center">
                         <div class="flex flex-col items-center">
                           <svg class="w-12 h-12 text-gray-200 dark:text-gray-700 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
-                          <p class="text-gray-400 font-medium italic">Nenhuma compra encontrada para este filtro.</p>
+                          <p class="text-gray-500 font-medium italic">Nenhuma compra encontrada para este filtro.</p>
                         </div>
                       </td>
                     </tr>
@@ -661,7 +656,7 @@ const formatDate = (dateStr: string) => {
             </div>
           </div>
           <div class="mt-8 flex flex-col sm:flex-row-reverse gap-3">
-            <button @click="addCard" class="w-full bg-primary hover:bg-blue-600 text-white font-bold py-3 rounded-xl shadow-lg transition duration-300">
+            <button @click="addCard" class="w-full bg-primary hover:bg-brand-800 text-white font-bold py-3 rounded-xl shadow-lg transition duration-300">
               Criar Cartão
             </button>
             <button @click="showModal = false" class="w-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-bold py-3 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition duration-300">
@@ -713,7 +708,7 @@ const formatDate = (dateStr: string) => {
             </div>
           </div>
           <div class="mt-8 flex flex-col sm:flex-row-reverse gap-3">
-            <button @click="submitTx" class="w-full bg-primary hover:bg-blue-600 text-white font-bold py-3 rounded-xl shadow-lg transition duration-300">
+            <button @click="submitTx" class="w-full bg-primary hover:bg-brand-800 text-white font-bold py-3 rounded-xl shadow-lg transition duration-300">
               Lançar Compra
             </button>
             <button @click="showTxModal = false" class="w-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-bold py-3 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition duration-300">
@@ -791,7 +786,7 @@ const formatDate = (dateStr: string) => {
             </div>
           </div>
           <div class="mt-8 flex flex-col sm:flex-row-reverse gap-3">
-            <button @click="saveEdit" class="w-full bg-primary hover:bg-blue-600 text-white font-bold py-3 rounded-xl shadow-lg transition duration-300">
+            <button @click="saveEdit" class="w-full bg-primary hover:bg-brand-800 text-white font-bold py-3 rounded-xl shadow-lg transition duration-300">
               Salvar Alterações
             </button>
             <button @click="showEditModal = false" class="w-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-bold py-3 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition duration-300">
@@ -829,7 +824,7 @@ const formatDate = (dateStr: string) => {
                 placeholder="Buscar compra..." 
                 class="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-700/50 border-none rounded-2xl focus:ring-2 focus:ring-primary/20 outline-none transition-all dark:text-white"
               />
-              <svg class="w-5 h-5 text-gray-400 absolute left-3.5 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-5 h-5 text-gray-500 absolute left-3.5 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
               </svg>
             </div>
@@ -861,15 +856,15 @@ const formatDate = (dateStr: string) => {
 
           <div v-if="store.isTransactionsLoading" class="flex flex-col items-center py-12">
             <LoaderSpinner class="text-primary mb-3" />
-            <p class="text-sm text-gray-400">Carregando compras...</p>
+            <p class="text-sm text-gray-500">Carregando compras...</p>
           </div>
 
           <div v-else class="space-y-3">
             <div v-for="tx in filteredTransactions" :key="tx.id" class="p-4 bg-gray-50 dark:bg-gray-700/30 rounded-2xl flex justify-between items-center border border-gray-100 dark:border-gray-700/50">
               <div class="flex-1 min-w-0 pr-4">
                 <div class="flex items-center gap-2 mb-1">
-                  <span class="text-[10px] font-black text-primary bg-primary/10 px-2 py-0.5 rounded-full uppercase">{{ formatDate(tx.date) }}</span>
-                  <span v-if="tx.installments > 1" class="text-[10px] font-bold text-blue-500 bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded-full uppercase">{{ tx.currentInstallment }}/{{ tx.installments }}</span>
+                  <span class="text-xs font-black text-primary bg-primary/10 px-2 py-0.5 rounded-full uppercase">{{ formatDate(tx.date) }}</span>
+                  <span v-if="tx.installments > 1" class="text-xs font-bold text-blue-500 bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded-full uppercase">{{ tx.currentInstallment }}/{{ tx.installments }}</span>
                 </div>
                 <h4 class="font-bold text-gray-900 dark:text-white truncate">{{ tx.title }}</h4>
                 <p v-if="tx.description" class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ tx.description }}</p>
@@ -891,7 +886,7 @@ const formatDate = (dateStr: string) => {
               <div class="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg class="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
               </div>
-              <p class="text-gray-400 italic">Nenhuma compra encontrada.</p>
+              <p class="text-gray-500 italic">Nenhuma compra encontrada.</p>
             </div>
           </div>
         </div>
@@ -938,7 +933,7 @@ const formatDate = (dateStr: string) => {
             </div>
           </div>
           <div class="mt-8 flex flex-col sm:flex-row-reverse gap-3">
-            <button @click="saveEditTx" class="w-full bg-primary hover:bg-blue-600 text-white font-bold py-3 rounded-xl shadow-lg transition duration-300">
+            <button @click="saveEditTx" class="w-full bg-primary hover:bg-brand-800 text-white font-bold py-3 rounded-xl shadow-lg transition duration-300">
               Salvar
             </button>
             <button @click="showEditTxModal = false" class="w-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-bold py-3 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition duration-300">

@@ -1,10 +1,11 @@
 name: AI Code Review
 
+# DESATIVADO: o secret OPENAI_API_KEY está com um valor inválido (dummy_key), então o job falhava em todo PR.
+# Para reativar, configure uma chave válida e restaure os gatilhos:
+#   pull_request: { types: [opened, reopened, ready_for_review, synchronize] }
+#   issue_comment: { types: [created] }
 on:
-  pull_request:
-    types: [opened, reopened, ready_for_review, synchronize]
-  issue_comment:
-    types: [created]
+  workflow_dispatch:
 
 jobs:
   pr_agent:

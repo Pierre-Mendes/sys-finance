@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Movimento</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&display=swap">
+<style>
+body{margin:0}
+.btn{font-family: Manrope, sans-serif; font-weight: 700; font-size: 15px; height: 44px; padding: 0 18px; border-radius: 8px; border: 0; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; background: #2346D8; color: #FFFFFF; transition: background-color 120ms, transform 120ms}
+.btn:hover{background: #1A34A6}.btn:active{transform: scale(0.97)}
+.btn:focus-visible{outline: 3px solid #6F8BF0; outline-offset: 2px}
+@keyframes fadeUp{from{opacity: 0; transform: translateY(16px)}to{opacity: 1; transform: none}}
+.fade-up{animation: fadeUp 480ms cubic-bezier(.2,.8,.2,1) both}
+@keyframes shimmer{from{background-position: -320px 0}to{background-position: 320px 0}}
+.skel{background: linear-gradient(90deg, #EEF1F5 0%, #F8F9FB 50%, #EEF1F5 100%); background-size: 320px 100%; animation: shimmer 1.4s linear infinite; border-radius: 8px}
+@keyframes fill{from{width: 0}to{width: 100%}}
+.fill{animation: fill 1400ms cubic-bezier(.2,.8,.2,1) both}
+@keyframes pop{0%{opacity: 0; transform: scale(0.4) translateY(20px)}70%{opacity: 1; transform: scale(1.08)}100%{opacity: 1; transform: scale(1)}}
+.pop{animation: pop 600ms cubic-bezier(.34,1.56,.64,1) 1300ms both}
+@keyframes draw{to{stroke-dashoffset: 0}}
+.ring{stroke-dasharray: 176; stroke-dashoffset: 176; animation: draw 600ms cubic-bezier(.2,.8,.2,1) 150ms forwards}
+.check{stroke-dasharray: 40; stroke-dashoffset: 40; animation: draw 360ms cubic-bezier(.2,.8,.2,1) 700ms forwards}
+@keyframes scaleIn{0%{transform: scale(0.6)}60%{transform: scale(1.1)}100%{transform: scale(1)}}
+.badge-in{animation: scaleIn 500ms cubic-bezier(.34,1.56,.64,1) both}
+@media (prefers-reduced-motion: reduce){.fade-up,.skel,.fill,.pop,.ring,.check,.badge-in{animation-duration: 1ms !important; animation-delay: 0ms !important}}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1100px; box-sizing: border-box; background: #F6F7F9; font-family: Manrope, sans-serif; color: #0B1324; padding: 64px 72px; display: flex; flex-direction: column; gap: 28px">
+<div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 24px">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5B6B85">Movimento</div>
+<h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 52px; letter-spacing: -0.02em">Animar para explicar, não para enfeitar</h1>
+</div>
+<button class="btn" type="button" onClick="{{replay}}">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"></path><path d="M4 4v4h4"></path></svg>
+Reproduzir tudo</button>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px">
+<div style="background: #FFFFFF; border-radius: 16px; padding: 16px 18px; display: flex; flex-direction: column; gap: 4px"><div style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 26px">120ms</div><div style="font-weight: 700; font-size: 14px">Rápido</div><div style="font-size: 13px; color: #5B6B85">Hover, pressionar, cor</div></div>
+<div style="background: #FFFFFF; border-radius: 16px; padding: 16px 18px; display: flex; flex-direction: column; gap: 4px"><div style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 26px">200ms</div><div style="font-weight: 700; font-size: 14px">Base</div><div style="font-size: 13px; color: #5B6B85">Toggle, abas, menus</div></div>
+<div style="background: #FFFFFF; border-radius: 16px; padding: 16px 18px; display: flex; flex-direction: column; gap: 4px"><div style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 26px">320–480ms</div><div style="font-weight: 700; font-size: 14px">Entrada</div><div style="font-size: 13px; color: #5B6B85">Modais, cards, toasts</div></div>
+<div style="background: #FFFFFF; border-radius: 16px; padding: 16px 18px; display: flex; flex-direction: column; gap: 4px"><div style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 26px">600ms+</div><div style="font-weight: 700; font-size: 14px">Celebração</div><div style="font-size: 13px; color: #5B6B85">Só para conquistas reais</div></div>
+</div>
+
+<sc-if value="{{show}}" hint-placeholder-val="{{ true }}">
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px">
+
+<div style="background: #FFFFFF; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 12px; height: 300px; box-sizing: border-box">
+<div style="font-weight: 800; font-size: 16px">1 · Logo na abertura</div>
+<div style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 14px; background: #F6F7F9; border-radius: 12px">
+<svg width="72" height="72" viewBox="0 0 64 64" aria-hidden="true">
+<rect width="64" height="64" rx="18" fill="#2346D8"></rect>
+<path d="M15 42 L26 31 L34 37 L47 22" stroke="#FFFFFF" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="48" stroke-dashoffset="48">
+<animate attributeName="stroke-dashoffset" values="48;0" dur="1s" begin="0.2s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.2 0.8 0.2 1"></animate>
+</path>
+<circle cx="48" cy="20" r="0" fill="#F2A541"><animate attributeName="r" values="0;9;7" dur="0.5s" begin="1.1s" fill="freeze"></animate></circle>
+</svg>
+<div class="fade-up" style="animation-delay: 1.2s; font-family: 'Bricolage Grotesque', sans-serif; font-size: 34px; letter-spacing: -0.02em"><span style="font-weight: 600; color: #5B6B85">sys</span><span style="font-weight: 800">finance</span></div>
+</div>
+<div style="font-size: 13px; color: #5B6B85">Linha desenha, moeda salta, nome entra. Só na tela de login e no carregamento inicial.</div>
+</div>
+
+<div style="background: #FFFFFF; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 12px; height: 300px; box-sizing: border-box">
+<div style="font-weight: 800; font-size: 16px">2 · Saldo contando</div>
+<div style="flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 0 20px; background: #F6F7F9; border-radius: 12px">
+<div style="font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #5B6B85">Saldo total</div>
+<div style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 42px; letter-spacing: -0.02em; font-variant-numeric: tabular-nums">R$ {{count}}</div>
+</div>
+<div style="font-size: 13px; color: #5B6B85">Conta de 0 até o valor em 1,2s, desacelerando no fim. Números tabulares evitam que o texto “dance”.</div>
+</div>
+
+<div style="background: #FFFFFF; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 12px; height: 300px; box-sizing: border-box">
+<div style="font-weight: 800; font-size: 16px">3 · Entrada em cascata</div>
+<div style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 10px; padding: 0 16px; background: #F6F7F9; border-radius: 12px">
+<div class="fade-up" style="animation-delay: 0ms; height: 40px; background: #FFFFFF; border-radius: 12px; box-shadow: 0 1px 2px rgba(11,19,36,0.06)"></div>
+<div class="fade-up" style="animation-delay: 60ms; height: 40px; background: #FFFFFF; border-radius: 12px; box-shadow: 0 1px 2px rgba(11,19,36,0.06)"></div>
+<div class="fade-up" style="animation-delay: 120ms; height: 40px; background: #FFFFFF; border-radius: 12px; box-shadow: 0 1px 2px rgba(11,19,36,0.06)"></div>
+<div class="fade-up" style="animation-delay: 180ms; height: 40px; background: #FFFFFF; border-radius: 12px; box-shadow: 0 1px 2px rgba(11,19,36,0.06)"></div>
+</div>
+<div style="font-size: 13px; color: #5B6B85">Cards do painel sobem 16px com 60ms entre eles. No máximo 6 itens animados; o resto aparece direto.</div>
+</div>
+
+<div style="background: #FFFFFF; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 12px; height: 300px; box-sizing: border-box">
+<div style="font-weight: 800; font-size: 16px">4 · Carregando com a Capi</div>
+<div style="flex: 1; display: flex; align-items: center; gap: 12px; padding: 0 16px; background: #F6F7F9; border-radius: 12px">
+<dc-import name="Capi" mood="pensando" size="96" hint-size="96px,96px"></dc-import>
+<div style="flex: 1; display: flex; flex-direction: column; gap: 10px">
+<div class="skel" style="height: 14px; width: 70%"></div>
+<div class="skel" style="height: 28px; width: 100%"></div>
+<div class="skel" style="height: 14px; width: 50%"></div>
+</div>
+</div>
+<div style="font-size: 13px; color: #5B6B85">Esqueleto com brilho no lugar do spinner genérico. A Capi pensando aparece só se demorar mais de 1s.</div>
+</div>
+
+<div style="background: #FFFFFF; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 12px; height: 300px; box-sizing: border-box">
+<div style="font-weight: 800; font-size: 16px">5 · Meta concluída</div>
+<div style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 4px; padding: 0 20px; background: #F6F7F9; border-radius: 12px; position: relative; overflow: hidden">
+<div style="display: flex; align-items: center; gap: 8px">
+<div style="flex: 1; display: flex; flex-direction: column; gap: 10px">
+<div style="font-weight: 700; font-size: 14px">Viagem de férias</div>
+<div style="height: 12px; background: #E4E8EF; border-radius: 999px; overflow: hidden"><div class="fill" style="height: 100%; background: #F2A541; border-radius: 999px"></div></div>
+<div class="badge-in" style="animation-delay: 1.4s; align-self: flex-start; font-size: 12px; font-weight: 800; padding: 3px 10px; border-radius: 999px; background: #FDE7C4; color: #7A4A06">Conquista desbloqueada</div>
+</div>
+<div class="pop">
+<dc-import name="Capi" mood="comemorando" size="110" hint-size="110px,110px"></dc-import>
+</div>
+</div>
+</div>
+<div style="font-size: 13px; color: #5B6B85">Barra enche, a Capi salta comemorando e o selo de conquista aparece. Liga com “Metas &amp; Conquistas”.</div>
+</div>
+
+<div style="background: #FFFFFF; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 12px; height: 300px; box-sizing: border-box">
+<div style="font-weight: 800; font-size: 16px">6 · Conta paga</div>
+<div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; background: #F6F7F9; border-radius: 12px">
+<svg width="72" height="72" viewBox="0 0 64 64" aria-hidden="true">
+<circle class="ring" cx="32" cy="32" r="28" fill="none" stroke="#0E7A55" stroke-width="5" stroke-linecap="round" transform="rotate(-90 32 32)"></circle>
+<path class="check" d="M20 33 L28 41 L45 24" fill="none" stroke="#0E7A55" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<div class="fade-up" style="animation-delay: 900ms; font-weight: 800; font-size: 16px">Conta de luz paga</div>
+</div>
+<div style="font-size: 13px; color: #5B6B85">Anel fecha e o check desenha. Substitui o SweetAlert de sucesso por um retorno no próprio item.</div>
+</div>
+</div>
+</sc-if>
+
+<div style="background: #0B1324; color: #FFFFFF; border-radius: 20px; padding: 20px 24px; display: flex; gap: 32px; align-items: center">
+<div style="font-weight: 800; font-size: 15px; flex-shrink: 0">Regras</div>
+<div style="font-size: 14px; color: #C5CCD6; line-height: 1.5">Curva padrão <span style="color: #FFFFFF; font-family: ui-monospace, Menlo, monospace">cubic-bezier(.2,.8,.2,1)</span>; mola só em toggle e celebração. Com <span style="color: #FFFFFF; font-family: ui-monospace, Menlo, monospace">prefers-reduced-motion</span> tudo vai direto ao estado final e a Capi fica parada. Nada pisca nem pulsa em loop para chamar atenção.</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"target":{"editor":"float","default":12480.9,"section":"Saldo"},"$preview":{"width":1440,"height":1100}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { show: true, value: 0 };
+  }
+  componentDidMount() {
+    this.countUp();
+  }
+  componentWillUnmount() {
+    cancelAnimationFrame(this.raf);
+    clearTimeout(this.t);
+  }
+  countUp() {
+    const target = this.props.target ?? 12480.9;
+    cancelAnimationFrame(this.raf);
+    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) { this.setState({ value: target }); return; }
+    const t0 = performance.now();
+    const step = (now) => {
+      const p = Math.min(1, (now - t0) / 1200);
+      this.setState({ value: target * (1 - Math.pow(1 - p, 3)) });
+      if (p < 1) this.raf = requestAnimationFrame(step);
+    };
+    this.raf = requestAnimationFrame(step);
+  }
+  renderVals() {
+    return {
+      show: this.state.show,
+      count: this.state.value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+      replay: () => {
+        clearTimeout(this.t);
+        this.setState({ show: false, value: 0 });
+        this.t = setTimeout(() => { this.setState({ show: true }); this.countUp(); }, 60);
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

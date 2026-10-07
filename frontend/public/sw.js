@@ -39,7 +39,7 @@ self.addEventListener('push', (event) => {
   }
   const url = typeof data.url === 'string' && data.url.startsWith('/') && !data.url.startsWith('//') ? data.url : '/dashboard'
   event.waitUntil(
-    self.registration.showNotification(data.title || 'Banco Digital', {
+    self.registration.showNotification(data.title || 'sysfinance', {
       body: data.body || '',
       icon: '/app-icons/icon-192.png',
       badge: '/app-icons/icon-192.png',

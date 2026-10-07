@@ -1,5 +1,5 @@
 <template>
-  <div v-if="visible" class="mb-8 bg-gradient-to-r from-indigo-50 to-blue-50 border border-indigo-100 rounded-2xl p-5 shadow-sm">
+  <div v-if="visible" class="mb-8 bg-brand-50 border border-brand-100 rounded-2xl p-5 shadow-sm">
     <div class="flex items-start justify-between gap-4">
       <div>
         <h3 class="text-lg font-bold text-gray-800">Primeiros passos</h3>
@@ -8,7 +8,7 @@
           e nós criamos para você.
         </p>
       </div>
-      <button @click="dismiss" class="text-gray-400 hover:text-gray-600 text-sm" aria-label="Dispensar">✕</button>
+      <button @click="dismiss" class="text-gray-500 hover:text-gray-600 text-sm" aria-label="Dispensar">✕</button>
     </div>
 
     <ul class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">

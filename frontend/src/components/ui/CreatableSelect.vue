@@ -19,7 +19,7 @@
 
     <span
       v-if="newName"
-      class="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-bold uppercase bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full pointer-events-none"
+      class="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-bold uppercase bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full pointer-events-none"
     >Novo</span>
 
     <ul

@@ -28,6 +28,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { toast } from 'vue3-toastify'
+import { useCelebrationStore } from '@/presentation/store/celebrationStore'
 import Swal from 'sweetalert2'
 import { transactionRepository } from '@/data/repositories/TransactionRepositoryImpl'
 import { daysUntil, dueLabel } from '@/core/domain/dueDates'
@@ -59,7 +60,7 @@ const pay = async (bill: any) => {
     text: `${bill.title} · R$ ${formatCurrency(bill.amount)}`,
     icon: 'question',
     showCancelButton: true,
-    confirmButtonColor: '#10b981',
+    confirmButtonColor: '#0E7A55',
     confirmButtonText: 'Sim, paguei',
     cancelButtonText: 'Cancelar',
   })
@@ -68,7 +69,7 @@ const pay = async (bill: any) => {
   payingId.value = bill.id
   try {
     await transactionRepository.payTransaction(bill.id, true, 'bill')
-    toast.success('Conta paga!')
+    useCelebrationStore().celebrate('Conta paga!', `${bill.title} · R$ ${formatCurrency(bill.amount)}`)
     await load()
     emit('paid')
   } catch (e: any) {

@@ -1,8 +1,9 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800 p-4">
-    <div class="w-full max-w-md bg-card rounded-2xl shadow-2xl overflow-hidden border border-gray-700">
+  <div class="min-h-screen flex items-center justify-center bg-ink-900 p-4">
+    <div class="w-full max-w-md rounded-2xl shadow-2xl overflow-hidden border border-ink-700 bg-ink-800 animate-fade-up">
       <div class="p-8">
-        <h2 class="text-3xl font-bold text-white mb-2 text-center">Criar Conta</h2>
+        <div class="flex justify-center mb-6"><BrandLogo tone="dark" :size="44" /></div>
+        <h2 class="text-2xl font-extrabold text-white mb-2 text-center">Criar Conta</h2>
         <p class="text-gray-400 text-center mb-8">Junte-se ao Gerenciador Financeiro</p>
         
         <form @submit.prevent="handleSignup" class="space-y-5">
@@ -68,14 +69,14 @@
           </div>
           
           <button type="submit" :disabled="isSubmitting"
-            class="w-full bg-primary hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 mt-2 disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none">
+            class="w-full bg-primary hover:bg-brand-800 text-white font-semibold py-3 px-4 rounded-lg shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 mt-2 disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none">
             {{ isSubmitting ? 'Criando conta…' : 'Cadastrar' }}
           </button>
         </form>
         
         <p class="mt-8 text-center text-sm text-gray-400">
           Já tem uma conta? 
-          <router-link to="/" class="text-primary hover:text-blue-400 font-medium transition">
+          <router-link to="/" class="text-brand-400 hover:text-brand-100 font-medium transition">
             Entrar
           </router-link>
         </p>
@@ -89,6 +90,7 @@ import { reactive, ref } from 'vue'
 import api from '@/data/api/HttpClient'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
+import BrandLogo from '@/components/brand/BrandLogo.vue'
 
 const router = useRouter()
 const form = reactive({

@@ -8,9 +8,12 @@
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview",
     "test:unit": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "design:export-capi": "EXPORT_CAPI=1 vitest run scripts/export-capi.spec.ts"
   },
   "dependencies": {
+    "@fontsource-variable/bricolage-grotesque": "^5.3.0",
+    "@fontsource-variable/manrope": "^5.3.0",
     "@sentry/vue": "^10.48.0",
     "apexcharts": "^5.10.5",
     "pinia": "^3.0.4",
