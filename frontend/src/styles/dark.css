@@ -1,0 +1,445 @@
+/*
+ * Modo escuro: traduz as classes claras mais usadas nas telas para a paleta escura, sem reescrever cada view.
+ * Fica fora de @layer para vencer os utilitários do Tailwind. Componentes novos podem usar dark: diretamente
+ * (a variante segue a classe .dark no <html>, ver style.css). Regras de cor: docs/conventions/design-system.md.
+ */
+.dark {
+  --dk-sunken: #0F1930;
+  --dk-surface: #17223A;
+  --dk-raised: #1F2C47;
+  --dk-border: #2A3754;
+  --dk-border-strong: #3A4866;
+  --dk-text: #EEF1F5;
+  --dk-text-2: #C5CCD6;
+  --dk-text-3: #9AA6BA;
+  color-scheme: dark;
+}
+
+.dark body,
+.dark .bg-ink-50 {
+  background-color: var(--dk-sunken);
+  color: var(--dk-text);
+}
+
+.dark input,
+.dark select,
+.dark textarea {
+  color: var(--dk-text);
+}
+
+.dark ::placeholder {
+  color: var(--dk-text-3);
+}
+
+/* SweetAlert2 */
+.dark .swal2-popup {
+  background: var(--dk-surface);
+  color: var(--dk-text);
+}
+.dark .swal2-title,
+.dark .swal2-html-container {
+  color: var(--dk-text);
+}
+.dark .swal2-input,
+.dark .swal2-select,
+.dark .swal2-textarea {
+  background: var(--dk-sunken);
+  border-color: var(--dk-border-strong);
+  color: var(--dk-text);
+}
+
+.dark .bg-white,
+.dark .bg-white\/80,
+.dark .bg-white\/70,
+.dark .bg-white\/60 {
+  background-color: var(--dk-surface);
+}
+
+.dark .focus\:bg-white:focus {
+  background-color: var(--dk-surface);
+}
+
+.dark .bg-gray-50,
+.dark .bg-gray-50\/50,
+.dark .bg-ink-50 {
+  background-color: var(--dk-sunken);
+}
+
+.dark .bg-gray-100,
+.dark .bg-gray-200,
+.dark .bg-ink-100 {
+  background-color: var(--dk-raised);
+}
+
+.dark .hover\:bg-gray-50:hover,
+.dark .hover\:bg-gray-100:hover,
+.dark .hover\:bg-white:hover,
+.dark .hover\:bg-ink-50:hover,
+.dark .hover\:bg-gray-50\/50:hover {
+  background-color: var(--dk-raised);
+}
+
+.dark .hover\:bg-gray-200:hover {
+  background-color: var(--dk-border-strong);
+}
+
+.dark .text-gray-900,
+.dark .text-gray-800,
+.dark .text-ink-900 {
+  color: var(--dk-text);
+}
+
+.dark .text-gray-700,
+.dark .text-gray-600,
+.dark .text-ink-700 {
+  color: var(--dk-text-2);
+}
+
+.dark .text-gray-500,
+.dark .text-gray-400,
+.dark .text-ink-500 {
+  color: var(--dk-text-3);
+}
+
+.dark .hover\:text-gray-900:hover,
+.dark .hover\:text-gray-800:hover,
+.dark .hover\:text-gray-700:hover,
+.dark .hover\:text-gray-600:hover {
+  color: var(--dk-text);
+}
+
+.dark .border-gray-50,
+.dark .border-gray-100,
+.dark .border-gray-200,
+.dark .border-ink-100,
+.dark .border-gray-100\/50 {
+  border-color: var(--dk-border);
+}
+
+.dark .border-gray-300 {
+  border-color: var(--dk-border-strong);
+}
+
+.dark .divide-gray-50 > :not(:last-child),
+.dark .divide-gray-100 > :not(:last-child) {
+  border-color: var(--dk-border);
+}
+
+.dark .shadow-gray-200,
+.dark .shadow-gray-200\/20 {
+  --tw-shadow-color: transparent;
+}
+
+.dark .text-blue-600,
+.dark .text-blue-700,
+.dark .text-blue-800,
+.dark .text-blue-900,
+.dark .text-indigo-600,
+.dark .text-indigo-700,
+.dark .text-indigo-800,
+.dark .text-indigo-900,
+.dark .text-brand-600,
+.dark .text-brand-700,
+.dark .text-brand-800,
+.dark .text-brand-900,
+.dark .text-primary {
+  color: var(--color-brand-300);
+}
+
+.dark .bg-blue-50,
+.dark .bg-blue-100,
+.dark .bg-indigo-50,
+.dark .bg-indigo-100,
+.dark .bg-brand-50,
+.dark .bg-brand-100 {
+  background-color: color-mix(in oklab, var(--color-brand-500) 22%, var(--dk-surface));
+}
+
+.dark .border-blue-100,
+.dark .border-blue-200,
+.dark .border-indigo-100,
+.dark .border-indigo-200,
+.dark .border-brand-100,
+.dark .border-brand-200 {
+  border-color: color-mix(in oklab, var(--color-brand-500) 40%, var(--dk-surface));
+}
+
+.dark .bg-red-50,
+.dark .bg-red-100,
+.dark .bg-red-50\/50 {
+  background-color: color-mix(in oklab, var(--color-red-500) 18%, var(--dk-surface));
+}
+
+.dark .border-red-100,
+.dark .border-red-200 {
+  border-color: color-mix(in oklab, var(--color-red-500) 35%, var(--dk-surface));
+}
+
+.dark .text-red-600,
+.dark .text-red-700,
+.dark .text-red-800,
+.dark .text-red-900 {
+  color: var(--color-red-300);
+}
+
+.dark .bg-green-50,
+.dark .bg-green-100,
+.dark .bg-green-50\/50 {
+  background-color: color-mix(in oklab, var(--color-green-500) 18%, var(--dk-surface));
+}
+
+.dark .border-green-100,
+.dark .border-green-200 {
+  border-color: color-mix(in oklab, var(--color-green-500) 35%, var(--dk-surface));
+}
+
+.dark .text-green-600,
+.dark .text-green-700,
+.dark .text-green-800,
+.dark .text-green-900 {
+  color: var(--color-green-300);
+}
+
+.dark .bg-emerald-50,
+.dark .bg-emerald-100,
+.dark .bg-emerald-50\/50 {
+  background-color: color-mix(in oklab, var(--color-emerald-500) 18%, var(--dk-surface));
+}
+
+.dark .border-emerald-100,
+.dark .border-emerald-200 {
+  border-color: color-mix(in oklab, var(--color-emerald-500) 35%, var(--dk-surface));
+}
+
+.dark .text-emerald-600,
+.dark .text-emerald-700,
+.dark .text-emerald-800,
+.dark .text-emerald-900 {
+  color: var(--color-emerald-300);
+}
+
+.dark .bg-amber-50,
+.dark .bg-amber-100,
+.dark .bg-amber-50\/50 {
+  background-color: color-mix(in oklab, var(--color-amber-500) 18%, var(--dk-surface));
+}
+
+.dark .border-amber-100,
+.dark .border-amber-200 {
+  border-color: color-mix(in oklab, var(--color-amber-500) 35%, var(--dk-surface));
+}
+
+.dark .text-amber-600,
+.dark .text-amber-700,
+.dark .text-amber-800,
+.dark .text-amber-900 {
+  color: var(--color-amber-300);
+}
+
+.dark .bg-orange-50,
+.dark .bg-orange-100,
+.dark .bg-orange-50\/50 {
+  background-color: color-mix(in oklab, var(--color-orange-500) 18%, var(--dk-surface));
+}
+
+.dark .border-orange-100,
+.dark .border-orange-200 {
+  border-color: color-mix(in oklab, var(--color-orange-500) 35%, var(--dk-surface));
+}
+
+.dark .text-orange-600,
+.dark .text-orange-700,
+.dark .text-orange-800,
+.dark .text-orange-900 {
+  color: var(--color-orange-300);
+}
+
+.dark .bg-yellow-50,
+.dark .bg-yellow-100,
+.dark .bg-yellow-50\/50 {
+  background-color: color-mix(in oklab, var(--color-yellow-500) 18%, var(--dk-surface));
+}
+
+.dark .border-yellow-100,
+.dark .border-yellow-200 {
+  border-color: color-mix(in oklab, var(--color-yellow-500) 35%, var(--dk-surface));
+}
+
+.dark .text-yellow-600,
+.dark .text-yellow-700,
+.dark .text-yellow-800,
+.dark .text-yellow-900 {
+  color: var(--color-yellow-300);
+}
+
+.dark .bg-purple-50,
+.dark .bg-purple-100,
+.dark .bg-purple-50\/50 {
+  background-color: color-mix(in oklab, var(--color-purple-500) 18%, var(--dk-surface));
+}
+
+.dark .border-purple-100,
+.dark .border-purple-200 {
+  border-color: color-mix(in oklab, var(--color-purple-500) 35%, var(--dk-surface));
+}
+
+.dark .text-purple-600,
+.dark .text-purple-700,
+.dark .text-purple-800,
+.dark .text-purple-900 {
+  color: var(--color-purple-300);
+}
+
+.dark .bg-violet-50,
+.dark .bg-violet-100,
+.dark .bg-violet-50\/50 {
+  background-color: color-mix(in oklab, var(--color-violet-500) 18%, var(--dk-surface));
+}
+
+.dark .border-violet-100,
+.dark .border-violet-200 {
+  border-color: color-mix(in oklab, var(--color-violet-500) 35%, var(--dk-surface));
+}
+
+.dark .text-violet-600,
+.dark .text-violet-700,
+.dark .text-violet-800,
+.dark .text-violet-900 {
+  color: var(--color-violet-300);
+}
+
+.dark .bg-teal-50,
+.dark .bg-teal-100,
+.dark .bg-teal-50\/50 {
+  background-color: color-mix(in oklab, var(--color-teal-500) 18%, var(--dk-surface));
+}
+
+.dark .border-teal-100,
+.dark .border-teal-200 {
+  border-color: color-mix(in oklab, var(--color-teal-500) 35%, var(--dk-surface));
+}
+
+.dark .text-teal-600,
+.dark .text-teal-700,
+.dark .text-teal-800,
+.dark .text-teal-900 {
+  color: var(--color-teal-300);
+}
+
+.dark .bg-pink-50,
+.dark .bg-pink-100,
+.dark .bg-pink-50\/50 {
+  background-color: color-mix(in oklab, var(--color-pink-500) 18%, var(--dk-surface));
+}
+
+.dark .border-pink-100,
+.dark .border-pink-200 {
+  border-color: color-mix(in oklab, var(--color-pink-500) 35%, var(--dk-surface));
+}
+
+.dark .text-pink-600,
+.dark .text-pink-700,
+.dark .text-pink-800,
+.dark .text-pink-900 {
+  color: var(--color-pink-300);
+}
+
+.dark .bg-rose-50,
+.dark .bg-rose-100,
+.dark .bg-rose-50\/50 {
+  background-color: color-mix(in oklab, var(--color-rose-500) 18%, var(--dk-surface));
+}
+
+.dark .border-rose-100,
+.dark .border-rose-200 {
+  border-color: color-mix(in oklab, var(--color-rose-500) 35%, var(--dk-surface));
+}
+
+.dark .text-rose-600,
+.dark .text-rose-700,
+.dark .text-rose-800,
+.dark .text-rose-900 {
+  color: var(--color-rose-300);
+}
+
+.dark .bg-sky-50,
+.dark .bg-sky-100,
+.dark .bg-sky-50\/50 {
+  background-color: color-mix(in oklab, var(--color-sky-500) 18%, var(--dk-surface));
+}
+
+.dark .border-sky-100,
+.dark .border-sky-200 {
+  border-color: color-mix(in oklab, var(--color-sky-500) 35%, var(--dk-surface));
+}
+
+.dark .text-sky-600,
+.dark .text-sky-700,
+.dark .text-sky-800,
+.dark .text-sky-900 {
+  color: var(--color-sky-300);
+}
+
+.dark .bg-cyan-50,
+.dark .bg-cyan-100,
+.dark .bg-cyan-50\/50 {
+  background-color: color-mix(in oklab, var(--color-cyan-500) 18%, var(--dk-surface));
+}
+
+.dark .border-cyan-100,
+.dark .border-cyan-200 {
+  border-color: color-mix(in oklab, var(--color-cyan-500) 35%, var(--dk-surface));
+}
+
+.dark .text-cyan-600,
+.dark .text-cyan-700,
+.dark .text-cyan-800,
+.dark .text-cyan-900 {
+  color: var(--color-cyan-300);
+}
+
+.dark .bg-lime-50,
+.dark .bg-lime-100,
+.dark .bg-lime-50\/50 {
+  background-color: color-mix(in oklab, var(--color-lime-500) 18%, var(--dk-surface));
+}
+
+.dark .border-lime-100,
+.dark .border-lime-200 {
+  border-color: color-mix(in oklab, var(--color-lime-500) 35%, var(--dk-surface));
+}
+
+.dark .text-lime-600,
+.dark .text-lime-700,
+.dark .text-lime-800,
+.dark .text-lime-900 {
+  color: var(--color-lime-300);
+}
+
+.dark .bg-expense-50 {
+  background-color: color-mix(in oklab, var(--color-expense) 22%, var(--dk-surface));
+}
+.dark .bg-income-50 {
+  background-color: color-mix(in oklab, var(--color-income) 22%, var(--dk-surface));
+}
+.dark .bg-capi-100 {
+  background-color: color-mix(in oklab, var(--color-capi-500) 22%, var(--dk-surface));
+}
+.dark .text-expense-900 {
+  color: #FDBA8C;
+}
+.dark .text-income-900 {
+  color: #8FD9B6;
+}
+
+/* Brilhos coloridos claros (shadow-*-100/200) viram sombra neutra no escuro */
+.dark .shadow-indigo-50,
+.dark .shadow-indigo-100,
+.dark .shadow-indigo-200,
+.dark .shadow-blue-100,
+.dark .shadow-blue-200,
+.dark .hover\:shadow-indigo-100:hover,
+.dark .hover\:shadow-indigo-200:hover,
+.dark .hover\:shadow-gray-200\/50:hover {
+  --tw-shadow-color: rgb(0 0 0 / 0.35);
+}

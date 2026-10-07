@@ -13,7 +13,7 @@
           <p class="text-sm text-gray-500">{{ pushDescription }}</p>
         </div>
         <div class="flex gap-2 flex-shrink-0">
-          <button v-if="push.state.value === 'off'" @click="enablePush" :disabled="push.busy.value" class="bg-primary hover:bg-blue-600 text-white font-semibold px-4 py-2.5 rounded-lg disabled:opacity-50">Ativar</button>
+          <button v-if="push.state.value === 'off'" @click="enablePush" :disabled="push.busy.value" class="bg-primary hover:bg-brand-800 text-white font-semibold px-4 py-2.5 rounded-lg disabled:opacity-50">Ativar</button>
           <template v-else-if="push.state.value === 'on'">
             <button @click="sendTest" :disabled="testing" class="border border-gray-200 hover:bg-gray-50 font-medium px-4 py-2.5 rounded-lg disabled:opacity-50">Enviar teste</button>
             <button @click="disablePush" :disabled="push.busy.value" class="text-red-600 hover:bg-red-50 font-medium px-4 py-2.5 rounded-lg disabled:opacity-50">Desativar</button>
@@ -54,7 +54,7 @@
         </div>
 
         <div class="flex justify-end">
-          <button type="submit" :disabled="saving" class="bg-primary hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-lg shadow-md disabled:opacity-50">Salvar lembretes</button>
+          <button type="submit" :disabled="saving" class="bg-primary hover:bg-brand-800 text-white font-bold py-3 px-8 rounded-lg shadow-md disabled:opacity-50">Salvar lembretes</button>
         </div>
       </form>
     </div>

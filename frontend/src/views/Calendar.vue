@@ -57,7 +57,7 @@
                          :class="['group/tx relative text-xs font-semibold px-2 py-1 rounded truncate shadow-sm cursor-pointer', t.type === 'asset' || t.type === 'income' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700']">
                         {{ t.type === 'asset' || t.type === 'income' ? '+' : '-' }}R$ {{ formatCurrency(t.amount) }}
                     </div>
-                    <div v-if="day.transactions.length > 3" class="text-[10px] text-gray-500 font-medium text-center bg-gray-100 rounded px-1 mt-1">
+                    <div v-if="day.transactions.length > 3" class="text-xs text-gray-500 font-medium text-center bg-gray-100 rounded px-1 mt-1">
                         +{{ day.transactions.length - 3 }} transações
                     </div>
                 </div>
@@ -86,12 +86,12 @@
             <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden animate-fadeIn relative">
                 <div class="p-5 border-b border-gray-100 flex justify-between items-start" :class="selectedTransaction.type === 'asset' || selectedTransaction.type === 'income' ? 'bg-green-50' : 'bg-red-50'">
                      <div class="pr-6">
-                         <div class="inline-flex items-center justify-center text-[10px] font-bold uppercase tracking-wider mb-2 px-2 py-0.5 rounded-full" :class="selectedTransaction.type === 'asset' || selectedTransaction.type === 'income' ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'">
+                         <div class="inline-flex items-center justify-center text-xs font-bold uppercase tracking-wider mb-2 px-2 py-0.5 rounded-full" :class="selectedTransaction.type === 'asset' || selectedTransaction.type === 'income' ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'">
                              {{ selectedTransaction.type === 'asset' || selectedTransaction.type === 'income' ? 'Entrada / Receita' : 'Saída / Despesa' }}
                          </div>
                          <h3 class="font-bold text-gray-900 text-lg leading-tight">{{ selectedTransaction.title }}</h3>
                      </div>
-                     <button @click="selectedTransaction = null" class="text-gray-400 hover:text-gray-800 transition bg-white rounded-full p-1 shadow-sm absolute right-4 top-4">
+                     <button @click="selectedTransaction = null" class="text-gray-500 hover:text-gray-800 transition bg-white rounded-full p-1 shadow-sm absolute right-4 top-4">
                          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                      </button>
                 </div>
@@ -106,7 +106,7 @@
                          </div>
                          <hr class="border-gray-200"/>
                          <div class="flex justify-between"><span class="text-gray-500">Data de Competência:</span> <span class="font-medium text-gray-800">{{ selectedTransaction.date.split('-').reverse().join('/') }}</span></div>
-                         <div class="flex justify-between"><span class="text-gray-500">Data do Retirada:</span> <span class="font-medium" :class="selectedTransaction.dueDate ? 'text-gray-800' : 'text-gray-400'">{{ selectedTransaction.dueDate ? selectedTransaction.dueDate.split('-').reverse().join('/') : '(Não agendada)' }}</span></div>
+                         <div class="flex justify-between"><span class="text-gray-500">Data do Retirada:</span> <span class="font-medium" :class="selectedTransaction.dueDate ? 'text-gray-800' : 'text-gray-500'">{{ selectedTransaction.dueDate ? selectedTransaction.dueDate.split('-').reverse().join('/') : '(Não agendada)' }}</span></div>
                          <div class="flex justify-between"><span class="text-gray-500">Prioridade SLA:</span> 
                              <span class="font-bold flex items-center gap-1">
                                  <span class="w-2 h-2 rounded-full" :class="{'bg-red-500': selectedTransaction.priority === 'HIGH', 'bg-blue-500': selectedTransaction.priority === 'NORMAL', 'bg-gray-400': selectedTransaction.priority === 'LOW'}"></span>
@@ -114,7 +114,7 @@
                              </span>
                          </div>
                          <div class="flex justify-between"><span class="text-gray-500">Status de Quitação:</span> 
-                             <span class="font-bold px-2 py-0.5 rounded text-[10px] uppercase tracking-wider" :class="selectedTransaction.status === 'PAID' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'">
+                             <span class="font-bold px-2 py-0.5 rounded text-xs uppercase tracking-wider" :class="selectedTransaction.status === 'PAID' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'">
                                  {{ selectedTransaction.status === 'PAID' ? 'Pago (Baixado)' : selectedTransaction.status === 'CANCELED' ? 'Desconsiderada' : 'Pendente' }}
                              </span>
                          </div>

@@ -3,7 +3,7 @@
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <h2 class="text-2xl sm:text-3xl font-semibold text-gray-800">Meus Orçamentos</h2>
         <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-          <button @click="openCreateModal" class="w-full sm:w-auto bg-primary hover:bg-blue-600 px-5 py-2.5 rounded-lg text-white font-medium shadow transition cursor-pointer flex items-center justify-center gap-2 whitespace-nowrap">
+          <button @click="openCreateModal" class="w-full sm:w-auto bg-primary hover:bg-brand-800 px-5 py-2.5 rounded-lg text-white font-medium shadow transition cursor-pointer flex items-center justify-center gap-2 whitespace-nowrap">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>Novo Orçamento
           </button>
         </div>
@@ -70,7 +70,7 @@
             </tr>
             <TableLoader v-if="isLoading" :columns="3" message="CARREGANDO ORÇAMENTOS..." />
             <tr v-if="budgets.length === 0 && !isLoading">
-              <td colspan="3" class="p-8 text-center text-gray-500">Nenhum orçamento mensal definido.</td>
+              <td colspan="3"><EmptyState title="Nenhum orçamento definido" description="Defina um limite por categoria e a Capi avisa quando o mês apertar." /></td>
             </tr>
           </tbody>
         </table>
@@ -95,7 +95,7 @@
           
           <div class="flex justify-end gap-3">
             <button type="button" @click="openModal = false" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition cursor-pointer font-medium">Cancelar</button>
-            <button type="submit" class="px-4 py-2 bg-primary hover:bg-blue-600 text-white font-medium rounded-lg shadow transition cursor-pointer">Salvar</button>
+            <button type="submit" class="px-4 py-2 bg-primary hover:bg-brand-800 text-white font-medium rounded-lg shadow transition cursor-pointer">Salvar</button>
           </div>
         </form>
       </div>
@@ -111,6 +111,7 @@ import { toast } from 'vue3-toastify'
 import Swal from 'sweetalert2'
 import MainLayout from '@/components/layout/MainLayout.vue'
 import TableLoader from '@/components/ui/TableLoader.vue'
+import EmptyState from '@/components/ui/EmptyState.vue'
 
 const router = useRouter()
 const budgets = ref<any[]>([])
@@ -205,7 +206,7 @@ const deleteBudget = async (b: any) => {
         text: `Deseja remover o limite de orçamento para "${b.categoryName}"?`,
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#ef4444',
+        confirmButtonColor: '#C2410C',
         cancelButtonColor: '#9ca3af',
         confirmButtonText: 'Sim, excluir!',
         cancelButtonText: 'Cancelar'

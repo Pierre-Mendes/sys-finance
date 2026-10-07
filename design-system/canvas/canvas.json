@@ -1,0 +1,79 @@
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "Audit.dc.html": {
+      "h": 1320,
+      "title": "Avaliação do design atual",
+      "w": 1440,
+      "x": 1520,
+      "y": 0
+    },
+    "Capi.dc.html": {
+      "h": 240,
+      "title": "Componente: Capi",
+      "w": 240,
+      "x": 3040,
+      "y": 0
+    },
+    "Components.dc.html": {
+      "h": 1400,
+      "is_interactive": true,
+      "title": "Componentes",
+      "w": 1440,
+      "x": 1520,
+      "y": 1440
+    },
+    "Dashboard.dc.html": {
+      "expand": "fill",
+      "h": 1500,
+      "is_interactive": true,
+      "title": "Painel redesenhado",
+      "w": 1440,
+      "x": 1520,
+      "y": 2960
+    },
+    "Main.dc.html": {
+      "h": 1100,
+      "title": "Marca: logo e Capi",
+      "w": 1440,
+      "x": 0,
+      "y": 0
+    },
+    "Motion.dc.html": {
+      "h": 1100,
+      "is_interactive": true,
+      "title": "Movimento",
+      "w": 1440,
+      "x": 0,
+      "y": 2960
+    },
+    "Tokens.dc.html": {
+      "h": 1400,
+      "title": "Fundamentos",
+      "w": 1440,
+      "x": 0,
+      "y": 1440
+    }
+  },
+  "createdOnFiles": {
+    "at": "2026-10-07T12:00:00Z",
+    "v": 1
+  },
+  "designSystems": [],
+  "launch": {
+    "view": "canvas"
+  },
+  "notes": {},
+  "order": [
+    "Main.dc.html",
+    "Audit.dc.html",
+    "Capi.dc.html",
+    "Tokens.dc.html",
+    "Components.dc.html",
+    "Motion.dc.html",
+    "Dashboard.dc.html"
+  ],
+  "pages": [],
+  "title": "sys-finance Design System"
+}

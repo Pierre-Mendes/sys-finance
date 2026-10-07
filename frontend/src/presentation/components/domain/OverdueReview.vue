@@ -43,6 +43,7 @@
 import { ref, computed, onMounted, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import { toast } from 'vue3-toastify'
+import { useCelebrationStore } from '@/presentation/store/celebrationStore'
 import Swal from 'sweetalert2'
 import { transactionRepository } from '@/data/repositories/TransactionRepositoryImpl'
 import { daysUntil } from '@/core/domain/dueDates'
@@ -74,17 +75,19 @@ const load = async () => {
   }
 }
 
-const done = async (message: string) => {
-  toast.success(message)
+// celebration: conta paga/recebida ganha a Capi comemorando; reagendar/desconsiderar fica no toast
+const done = async (message: string, celebration?: { title: string; detail: string }) => {
+  if (celebration) useCelebrationStore().celebrate(celebration.title, celebration.detail)
+  else toast.success(message)
   await load()
   emit('changed')
 }
 
-const run = async (action: () => Promise<unknown>, message: string) => {
+const run = async (action: () => Promise<unknown>, message: string, celebration?: { title: string; detail: string }) => {
   busy.value = true
   try {
     await action()
-    await done(message)
+    await done(message, celebration)
   } catch (e: any) {
     toast.error(e.response?.data?.error || 'Não foi possível concluir.')
   } finally {
@@ -92,7 +95,10 @@ const run = async (action: () => Promise<unknown>, message: string) => {
   }
 }
 
-const markPaid = (t: any) => run(() => transactionRepository.payTransaction(t.id, true, t.type), t.type === 'asset' ? 'Marcada como recebida.' : 'Marcada como paga.')
+const markPaid = (t: any) => {
+  const message = t.type === 'asset' ? 'Marcada como recebida.' : 'Marcada como paga.'
+  return run(() => transactionRepository.payTransaction(t.id, true, t.type), message, { title: message, detail: `${t.title ?? ''} · ${formatBRL(Number(t.amount) || 0)}` })
+}
 
 const reschedule = async (t: any) => {
   const tomorrow = new Date(Date.now() + 86_400_000)

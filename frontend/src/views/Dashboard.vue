@@ -1,9 +1,12 @@
 <template>
   <MainLayout>
     <div class="mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-      <div>
-        <h2 class="text-3xl font-bold text-gray-800">Visão Geral</h2>
-        <p class="text-gray-500 mt-1 sm:text-lg">Aqui está o resumo da sua vida financeira.</p>
+      <div class="flex items-center gap-2">
+        <CapiMascot :mood="healthStatus === 'critical' ? 'alert' : 'happy'" :size="72" class="hidden sm:block -ml-2" />
+        <div>
+          <h2 class="text-3xl font-extrabold text-ink-900">Visão Geral</h2>
+          <p class="text-ink-500 mt-1 sm:text-lg">Aqui está o resumo da sua vida financeira.</p>
+        </div>
       </div>
       <div class="flex flex-wrap items-center gap-3">
           <label class="flex items-center cursor-pointer border border-gray-200 bg-white px-3 py-1.5 rounded-lg shadow-sm">
@@ -29,7 +32,7 @@
               </button>
               
               <!-- Quick Actions Folder Window -->
-              <div v-show="showQuickActions" class="absolute right-0 mt-3 w-72 bg-white/70 backdrop-blur-3xl rounded-[2rem] shadow-2xl border border-white/40 p-5 z-50 grid grid-cols-2 gap-4 origin-top-right transition-all">
+              <div v-show="showQuickActions" class="absolute right-0 mt-3 w-72 bg-white/70 backdrop-blur-3xl rounded-3xl shadow-2xl border border-white/40 p-5 z-50 grid grid-cols-2 gap-4 origin-top-right transition-all">
                 <button @click="openModal = true; showQuickActions = false" class="flex flex-col items-center justify-center p-3 bg-white/80 hover:bg-white text-blue-600 rounded-2xl shadow-sm hover:shadow-md transition cursor-pointer text-center group">
                     <div class="bg-blue-100 p-3 rounded-2xl text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors mb-2 shadow-inner">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
@@ -68,24 +71,20 @@
     <ForecastCard ref="forecastCard" class="mb-8" />
 
     <!-- Alerta de Saúde Financeira -->
-    <div v-if="healthStatus === 'critical'" class="mb-8 bg-red-50 border-l-4 border-red-500 p-4 rounded-xl flex items-center justify-between shadow-sm animate-pulse">
-        <div class="flex items-center gap-3">
-            <div class="bg-red-100 p-2 rounded-full text-red-600">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-            </div>
-            <div>
-                <h4 class="font-bold text-red-800 text-sm">Alerta: Déficit Financeiro!</h4>
-                <p class="text-red-600 text-xs">Suas despesas mensais já ultrapassaram sua receita. Cuidado com o fluxo de caixa!</p>
-            </div>
+    <div v-if="healthStatus === 'critical'" role="alert" class="mb-8 bg-expense-50 rounded-2xl py-3 pl-2 pr-4 flex flex-wrap items-center gap-x-3 gap-y-2 animate-fade-up">
+        <CapiMascot mood="alert" :size="76" />
+        <div class="flex-1 min-w-[200px]">
+            <h4 class="font-extrabold text-expense-900 text-[15px]">As despesas do mês passaram das receitas</h4>
+            <p class="text-expense-900 text-sm leading-snug">Revise os orçamentos de maior gasto antes do fechamento para proteger seu caixa.</p>
         </div>
-        <span class="text-[10px] font-black uppercase text-red-400 border border-red-200 px-2 py-1 rounded">Crítico</span>
+        <router-link to="/budgets" class="min-h-9 inline-flex items-center px-3.5 rounded-lg bg-[#7C2D12] hover:bg-[#5F2310] text-white text-sm font-bold transition">Revisar orçamentos</router-link>
     </div>
 
     <!-- Metricas Principais -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         
         <!-- Saldo Atual -->
-        <div class="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 shadow-lg shadow-blue-500/30 text-white flex flex-col justify-between transform transition hover:-translate-y-1">
+        <div class="bg-brand-600 rounded-2xl p-6 shadow-lg shadow-brand-600/25 text-white flex flex-col justify-between transition hover:-translate-y-1 animate-fade-up">
             <div class="flex items-start justify-between mb-4">
                 <div>
                 <div class="flex items-center gap-2 mb-1 group relative">
@@ -99,7 +98,7 @@
                         </div>
                     </div>
                 </div>
-                    <p class="text-3xl font-bold truncate pr-2">R$ {{ formatCurrency(analytics.balance) }}</p>
+                    <p class="font-display text-3xl font-extrabold tracking-tight truncate pr-2">R$ {{ formatCurrency(balanceShown) }}</p>
                     <div class="mt-1 text-xs text-blue-100 flex items-center gap-1 opacity-80">
                         <span>Projeção:</span>
                         <span class="font-bold">R$ {{ formatCurrency(analytics.projections.projectedBalance) }}</span>
@@ -127,14 +126,14 @@
         </div>
 
         <!-- Receitas Card -->
-        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col justify-between transform transition hover:-translate-y-1">
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-ink-100 flex flex-col justify-between transition hover:-translate-y-1 animate-fade-up [animation-delay:60ms]">
             <div class="flex items-start justify-between mb-4">
                 <div class="w-full">
                     <div class="flex items-center gap-2 mb-1 group relative">
                     <h3 class="text-gray-500 font-medium text-sm uppercase tracking-wider flex items-center gap-1">
                             Total Receitas
                         </h3>
-                        <div class="cursor-help text-gray-400 hover:text-gray-700 transition relative">
+                        <div class="cursor-help text-gray-500 hover:text-gray-700 transition relative">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-gray-900 text-white text-xs rounded-xl py-2 px-3 shadow-lg z-10 text-center before:content-[''] before:absolute before:top-full before:left-1/2 before:-translate-x-1/2 before:border-4 before:border-transparent before:border-t-gray-900">
                                 Todas as entradas registradas.
@@ -142,7 +141,7 @@
                         </div>
                     </div>
                     <div class="flex items-end gap-2">
-                        <p class="text-3xl font-bold text-gray-800 truncate pr-2">R$ {{ formatCurrency(analytics.totalIncome) }}</p>
+                        <p class="font-display text-3xl font-extrabold tracking-tight text-ink-900 truncate pr-2">R$ {{ formatCurrency(incomeShown) }}</p>
                         <span v-if="incomeMoM !== 0" :class="incomeMoM > 0 ? 'text-green-600' : 'text-red-600'" class="text-xs font-bold mb-1 flex items-center">
                             {{ incomeMoM > 0 ? '▲' : '▼' }} {{ Math.abs(incomeMoM) }}%
                         </span>
@@ -155,14 +154,14 @@
         </div>
 
         <!-- Despesas Card -->
-        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col justify-between transform transition hover:-translate-y-1">
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-ink-100 flex flex-col justify-between transition hover:-translate-y-1 animate-fade-up [animation-delay:120ms]">
             <div class="flex items-start justify-between mb-4">
                 <div class="w-full">
                     <div class="flex items-center gap-2 mb-1 group relative">
                         <h3 class="text-gray-500 font-medium text-sm uppercase tracking-wider flex items-center gap-1">
                             Total Despesas
                         </h3>
-                        <div class="cursor-help text-gray-400 hover:text-gray-700 transition relative">
+                        <div class="cursor-help text-gray-500 hover:text-gray-700 transition relative">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-gray-900 text-white text-xs rounded-xl py-2 px-3 shadow-lg z-10 text-center before:content-[''] before:absolute before:top-full before:left-1/2 before:-translate-x-1/2 before:border-4 before:border-transparent before:border-t-gray-900">
                                 Todas as saídas registradas.
@@ -170,7 +169,7 @@
                         </div>
                     </div>
                     <div class="flex items-end gap-2">
-                        <p class="text-3xl font-bold text-gray-800 truncate pr-2">R$ {{ formatCurrency(analytics.totalExpense) }}</p>
+                        <p class="font-display text-3xl font-extrabold tracking-tight text-ink-900 truncate pr-2">R$ {{ formatCurrency(expenseShown) }}</p>
                         <span v-if="expenseMoM !== 0" :class="expenseMoM > 0 ? 'text-red-600' : 'text-green-600'" class="text-xs font-bold mb-1 flex items-center">
                             {{ expenseMoM > 0 ? '▲' : '▼' }} {{ Math.abs(expenseMoM) }}%
                         </span>
@@ -181,21 +180,21 @@
                 </div>
             </div>
             <!-- Villain Highlight -->
-            <div v-if="analytics.villain" class="mt-2 flex items-center justify-between text-[10px] uppercase font-bold px-2 py-1 bg-red-50 text-red-600 rounded-lg">
+            <div v-if="analytics.villain" class="mt-2 flex items-center justify-between text-xs uppercase font-bold px-2 py-1 bg-red-50 text-red-600 rounded-lg">
                 <span>Vilão: {{ analytics.villain.name }}</span>
                 <span>R$ {{ formatCurrency(analytics.villain.total) }}</span>
             </div>
         </div>
 
         <!-- Patrimônio Acumulado Card -->
-        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 group hover:shadow-md transition-shadow">
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-ink-100 group hover:shadow-md transition-shadow animate-fade-up [animation-delay:180ms]">
             <div class="flex items-start justify-between mb-4">
                 <div class="w-full">
                     <div class="flex items-center gap-2 mb-1 group relative">
                         <h3 class="text-gray-500 font-medium text-sm uppercase tracking-wider flex items-center gap-1">
                             {{ analytics.goals.label || 'Dinheiro Guardado' }}
                         </h3>
-                        <div class="cursor-help text-gray-400 hover:text-gray-700 transition relative">
+                        <div class="cursor-help text-gray-500 hover:text-gray-700 transition relative">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-gray-900 text-white text-xs rounded-xl py-2 px-3 shadow-lg z-10 text-center before:content-[''] before:absolute before:top-full before:left-1/2 before:-translate-x-1/2 before:border-4 before:border-transparent before:border-t-gray-900">
                                 Capital reservado em suas metas de acúmulo.
@@ -210,7 +209,7 @@
             </div>
             <!-- Progress toward Goals -->
             <div v-if="analytics.goals.target > 0" class="mt-2">
-                <div class="flex justify-between text-[10px] uppercase font-bold text-gray-400 mb-1">
+                <div class="flex justify-between text-xs uppercase font-bold text-gray-500 mb-1">
                     <span>Meta Total: R$ {{ formatCurrency(analytics.goals.target) }}</span>
                     <span>{{ analytics.goals.percent }}%</span>
                 </div>
@@ -235,7 +234,7 @@
             </div>
             <div class="flex-1 w-full relative">
                 <apexchart v-show="!isRefreshing && evolutionChartSeries[0]?.data?.length > 0" type="area" height="100%" :options="evolutionChartOpts" :series="evolutionChartSeries"></apexchart>
-                <div v-if="!isRefreshing && evolutionChartSeries[0]?.data?.length === 0" class="flex h-full items-center justify-center text-gray-400 text-sm">Sem dados suficientes.</div>
+                <div v-if="!isRefreshing && evolutionChartSeries[0]?.data?.length === 0" class="flex h-full items-center justify-center text-gray-500 text-sm">Sem dados suficientes.</div>
             </div>
         </div>
 
@@ -246,7 +245,7 @@
             </div>
             <div class="flex-1 w-full relative">
                 <apexchart v-show="!isRefreshing && flowChartSeries[0]?.data?.length > 0" type="bar" height="100%" :options="flowChartOpts" :series="flowChartSeries"></apexchart>
-                <div v-if="!isRefreshing && flowChartSeries[0]?.data?.length === 0" class="flex h-full items-center justify-center text-gray-400 text-sm">Sem movimentos contabilizados.</div>
+                <div v-if="!isRefreshing && flowChartSeries[0]?.data?.length === 0" class="flex h-full items-center justify-center text-gray-500 text-sm">Sem movimentos contabilizados.</div>
             </div>
         </div>
     </div>
@@ -266,7 +265,7 @@
             <div class="flex-1 flex items-center justify-center relative">
                 <!-- Não desmontar durante a atualização: remover o gráfico no meio do desenho gera "Element not found" no ApexCharts -->
                 <apexchart v-if="categoryChartSeries.length" :class="{ 'opacity-50': isRefreshing }" type="donut" width="300" :options="categoryChartOpts" :series="categoryChartSeries"></apexchart>
-                <div v-else-if="!isRefreshing" class="text-gray-400 text-sm">Sem dados suficientes.</div>
+                <div v-else-if="!isRefreshing" class="text-gray-500 text-sm">Sem dados suficientes.</div>
             </div>
         </div>
 
@@ -313,6 +312,8 @@ import SetupChecklist from '@/presentation/components/domain/SetupChecklist.vue'
 import UpcomingBills from '@/presentation/components/domain/UpcomingBills.vue'
 import OverdueReview from '@/presentation/components/domain/OverdueReview.vue'
 import ForecastCard from '@/presentation/components/reports/ForecastCard.vue'
+import CapiMascot from '@/components/brand/CapiMascot.vue'
+import { useCountUp } from '@/presentation/composables/useCountUp'
 import { escapeHtml } from '@/core/security/escapeHtml'
 import api from '@/data/api/HttpClient'
 import { useWorkspaceStore } from '@/presentation/store/workspaceStore'
@@ -356,6 +357,11 @@ const expenseMoM = computed(() => {
     return Math.round((diff / analytics.value.prevMonth.expense) * 100);
 })
 
+// Valores dos cards contam até o número real ao carregar (direto ao fim com prefers-reduced-motion)
+const balanceShown = useCountUp(computed(() => Number(analytics.value.balance) || 0))
+const incomeShown = useCountUp(computed(() => Number(analytics.value.totalIncome) || 0))
+const expenseShown = useCountUp(computed(() => Number(analytics.value.totalExpense) || 0))
+
 const healthStatus = computed(() => {
     // Subtract goals from available balance to get "real" liquid health
     const availableLiquid = analytics.value.balance;
@@ -375,7 +381,7 @@ const evolutionChartOpts = computed(() => {
 
     return {
         chart: { type: 'area', toolbar: { show: false }, fontFamily: 'inherit', parentHeightOffset: 0 },
-        colors: ['#4F46E5'],
+        colors: ['#2346D8'],
         dataLabels: { enabled: false },
         stroke: { curve: 'smooth', width: 2 },
         fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0, stops: [0, 100] } },
@@ -404,7 +410,7 @@ const flowChartOpts = computed(() => {
     return {
         chart: { type: 'bar', toolbar: { show: false }, fontFamily: 'inherit', parentHeightOffset: 0 },
         plotOptions: { bar: { columnWidth: '50%', borderRadius: 4 } },
-        colors: ['#10B981', '#EF4444'], // Green for In, Red for Out
+        colors: ['#0E7A55', '#F4A06A'], // receita escura x despesa clara: diferem também em luminosidade
         dataLabels: { enabled: false },
         xaxis: { categories },
         yaxis: { labels: { formatter: (val: number) => 'R$ ' + val.toLocaleString('pt-BR', { notation: 'compact' }) } },
@@ -430,7 +436,7 @@ const categoryChartOpts = computed(() => {
     return {
         chart: { type: 'donut', fontFamily: 'inherit' },
         labels: labels,
-        colors: ['#3B82F6', '#8B5CF6', '#10B981', '#F59E0B', '#EF4444', '#EC4899', '#6366F1'],
+        colors: ['#2346D8', '#F2A541', '#0E7A55', '#C2410C', '#6F8BF0', '#A8724A', '#5B6B85'],
         dataLabels: { enabled: false },
         legend: { position: 'bottom', show: false },
         stroke: { show: false },

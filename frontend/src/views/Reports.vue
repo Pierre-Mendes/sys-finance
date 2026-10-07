@@ -32,7 +32,7 @@
           <option v-for="y in years" :key="y" :value="y">{{ y }}</option>
         </select>
       </label>
-      <span v-if="loading" class="text-xs text-gray-400 sm:ml-auto">Atualizando...</span>
+      <span v-if="loading" class="text-xs text-gray-500 sm:ml-auto">Atualizando...</span>
     </div>
 
     <template v-if="report">
@@ -94,7 +94,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           <section v-for="pie in pieSections" :key="pie.key" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
             <h3 class="font-bold text-gray-800 mb-2">{{ pie.title }}</h3>
-            <p v-if="!pie.slices.length" class="py-10 text-center text-sm text-gray-400">{{ pie.empty }}</p>
+            <p v-if="!pie.slices.length" class="py-10 text-center text-sm text-gray-500">{{ pie.empty }}</p>
             <template v-else>
               <apexchart type="donut" height="240" :options="pieOptions(pie.slices)" :series="pie.slices.map(s => s.value)" />
               <!-- Lista com valores: a cor nunca é o único jeito de identificar a categoria -->
@@ -119,7 +119,7 @@
               <div v-for="h in historyCards" :key="h.label" class="rounded-xl bg-gray-50 p-4">
                 <p class="text-xs text-gray-500">{{ h.label }} média</p>
                 <p class="font-bold text-gray-900">{{ formatBRL(h.avg) }}</p>
-                <p :class="['text-xs mt-1 font-medium', h.change === null ? 'text-gray-400' : h.good ? 'text-emerald-700' : 'text-red-700']">
+                <p :class="['text-xs mt-1 font-medium', h.change === null ? 'text-gray-500' : h.good ? 'text-emerald-700' : 'text-red-700']">
                   {{ h.change === null ? 'Sem histórico para comparar' : `Este mês: ${formatChange(h.change)} vs média` }}
                 </p>
               </div>
@@ -134,7 +134,7 @@
             <section class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
               <h3 class="font-bold text-gray-800">Despesas por dia do mês</h3>
               <p class="text-xs text-gray-500 mb-3">Quanto mais escuro, maior o gasto no dia.</p>
-              <div class="grid grid-cols-7 gap-1.5 mb-1.5 text-center text-[11px] font-medium text-gray-400" aria-hidden="true">
+              <div class="grid grid-cols-7 gap-1.5 mb-1.5 text-center text-[11px] font-medium text-gray-500" aria-hidden="true">
                 <span v-for="(w, i) in ['D', 'S', 'T', 'Q', 'Q', 'S', 'S']" :key="i">{{ w }}</span>
               </div>
               <div class="grid grid-cols-7 gap-1.5" role="list">
@@ -200,7 +200,7 @@
         </section>
       </template>
     </template>
-    <div v-else-if="loading" class="py-20 text-center text-gray-400">Carregando relatório...</div>
+    <div v-else-if="loading" class="py-20 text-center text-gray-500">Carregando relatório...</div>
 
     <TransactionExports />
   </MainLayout>

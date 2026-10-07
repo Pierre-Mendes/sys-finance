@@ -13,7 +13,7 @@
       </div>
     </header>
 
-    <div v-if="!data && loading" class="h-64 flex items-center justify-center text-sm text-gray-400">Calculando previsão...</div>
+    <div v-if="!data && loading" class="h-64 flex items-center justify-center text-sm text-gray-500">Calculando previsão...</div>
     <!-- Ao trocar o horizonte o gráfico continua montado (desmontar no meio do desenho gera "Element not found") -->
     <div v-else-if="data" :class="{ 'opacity-60 pointer-events-none': loading }">
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
@@ -59,7 +59,7 @@
           <li v-for="(e, i) in data.events" :key="i" class="py-2 flex items-center gap-3">
             <span class="w-14 text-gray-500 tabular-nums">{{ formatDay(e.date) }}</span>
             <span class="flex-1 min-w-0 truncate text-gray-800">{{ e.title }}</span>
-            <span class="text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded bg-gray-100 text-gray-600">{{ KIND_LABEL[e.kind] }}</span>
+            <span class="text-xs uppercase font-semibold px-1.5 py-0.5 rounded bg-gray-100 text-gray-600">{{ KIND_LABEL[e.kind] }}</span>
             <span :class="['font-semibold tabular-nums whitespace-nowrap', e.amount < 0 ? 'text-red-700' : 'text-emerald-700']">{{ formatBRL(e.amount) }}</span>
           </li>
         </ul>

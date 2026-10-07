@@ -128,7 +128,7 @@
                  <h3 class="text-2xl font-bold text-gray-900 mb-4 border-b pb-2">Rateios e Divisão de Contas</h3>
                  <p class="text-gray-700 mb-6 leading-relaxed">Exclusivo sistema de rateio entre espaços. Pague algo na sua conta pessoal e "transfira" uma porcentagem da despesa para outro Workspace.</p>
                  
-                 <div class="bg-gray-900 text-white p-6 rounded-[32px] shadow-2xl mb-8 overflow-hidden relative">
+                 <div class="bg-gray-900 text-white p-6 rounded-3xl shadow-2xl mb-8 overflow-hidden relative">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/20 rounded-full blur-3xl"></div>
                     <div class="relative z-10">
                         <h4 class="text-xl font-black mb-4 flex items-center gap-2">
@@ -143,15 +143,15 @@
 
                         <div class="grid grid-cols-3 gap-3 text-center">
                             <div class="p-3 bg-white/5 rounded-2xl border border-white/10">
-                                <p class="text-[10px] text-gray-400 font-bold uppercase mb-1">Passo 1</p>
+                                <p class="text-xs text-gray-500 font-bold uppercase mb-1">Passo 1</p>
                                 <p class="text-xs font-medium">Lança valor total</p>
                             </div>
                             <div class="p-3 bg-white/5 rounded-2xl border border-white/10">
-                                <p class="text-[10px] text-gray-400 font-bold uppercase mb-1">Passo 2</p>
+                                <p class="text-xs text-gray-500 font-bold uppercase mb-1">Passo 2</p>
                                 <p class="text-xs font-medium">Define % Split</p>
                             </div>
                             <div class="p-3 bg-white/5 rounded-2xl border border-white/10">
-                                <p class="text-[10px] text-gray-400 font-bold uppercase mb-1">Passo 3</p>
+                                <p class="text-xs text-gray-500 font-bold uppercase mb-1">Passo 3</p>
                                 <p class="text-xs font-medium">Auto-Repasse</p>
                             </div>
                         </div>
@@ -221,7 +221,7 @@
                             <p class="text-sm text-gray-300 leading-relaxed">Diferente da tela de Lançamentos que foca no título, o Extrato foca na <strong>Data e Saldo</strong>. Veja exatamente quanto você tinha em conta após cada cafezinho ou depósito de salário.</p>
                         </div>
                         <div class="p-6 bg-white border-2 border-indigo-50 rounded-3xl">
-                            <h4 class="font-black text-gray-400 uppercase text-xs mb-3">Saldo Progressivo</h4>
+                            <h4 class="font-black text-gray-500 uppercase text-xs mb-3">Saldo Progressivo</h4>
                             <p class="text-sm text-gray-600 leading-relaxed">O sistema calcula o "Running Balance", permitindo identificar quebras de padrão e entender em qual dia do mês seu saldo costuma ficar mais crítico.</p>
                         </div>
                     </div>

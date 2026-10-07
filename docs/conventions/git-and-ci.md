@@ -18,7 +18,7 @@
 |---|---|---|
 | `verify.yml` (CI Pipeline) | push/PR na main | PHPUnit com cobertura, Vitest, build |
 | `security.yml` (Security & Quality Gate) | push/PR na main, semanal | Semgrep, CodeQL, composer/npm audit, Gitleaks, OWASP ZAP, SonarCloud opcional, Dependency-Check semanal, **Quality Gate** |
-| `ai-review.yml` | PR | Revisão por IA (requer `OPENAI_API_KEY`) |
+| `ai-review.yml` | desativado (só manual) | Revisão por IA; reative com uma `OPENAI_API_KEY` válida (instruções no arquivo) |
 | `deploy-sandbox.yml` | push na main/sandbox | Deploy de staging via SSH |
 | `deploy-prod.yml` | manual | Deploy de produção via SSH |
 
