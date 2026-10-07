@@ -8,6 +8,7 @@ do design system, **quais regras** valem e **como** desenvolver uma tela nova se
 | O quê | Onde |
 |---|---|
 | Design system (tokens, logo, Capi, canvas de design) | [`design-system/`](design-system/README.md) |
+| Canvas de design interativo (claude.ai, compartilhe pelo menu Share) | [https://claude.ai/artifact/EpKQjikiEQyb6b7XGnpEZu](https://claude.ai/artifact/EpKQjikiEQyb6b7XGnpEZu) |
 | Regras de cor, tipo, forma, movimento e acessibilidade | [`docs/conventions/design-system.md`](docs/conventions/design-system.md) |
 | Convenções do Vue (componentes, HTTP, stores, formulários, gráficos) | [`docs/conventions/frontend-vue.md`](docs/conventions/frontend-vue.md) |
 | Segurança na UI (escape, CSP) | [`docs/conventions/security.md`](docs/conventions/security.md) |

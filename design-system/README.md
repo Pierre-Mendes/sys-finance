@@ -14,6 +14,16 @@ Identidade visual e base de interface do sysfinance. O guia de como aplicar isto
 | [`capi/`](capi) | A mascote nos cinco humores (SVG estático exportado de `CapiMascot.vue`). |
 | [`canvas/`](canvas) | Código-fonte do canvas de design (marca, avaliação, fundamentos, componentes, movimento e painel). |
 
+## Canvas de design
+
+O canvas interativo (marca, avaliação, fundamentos, componentes clicáveis, movimento e o painel redesenhado)
+fica no claude.ai: **[https://claude.ai/artifact/EpKQjikiEQyb6b7XGnpEZu](https://claude.ai/artifact/EpKQjikiEQyb6b7XGnpEZu)**.
+
+- É privado por padrão: para outra pessoa abrir, o dono compartilha pelo menu **Share** do próprio canvas.
+- A pasta [`canvas/`](canvas) guarda uma cópia do código-fonte de cada quadro, para histórico e revisão em PR;
+  esses arquivos são do formato do editor e não abrem sozinhos no navegador.
+- Mudou o canvas? Copie os quadros alterados para `canvas/` no mesmo PR da mudança de código.
+
 ## Marca
 
 <p>

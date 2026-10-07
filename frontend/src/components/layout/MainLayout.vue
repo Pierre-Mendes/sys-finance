@@ -168,7 +168,7 @@
                 <h4 v-if="sysInvites?.length > 0" class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 mt-1">Convites Pendentes</h4>
                 <div v-for="inv in sysInvites" :key="'inv'+inv.id" class="bg-white border border-gray-200 rounded-lg p-4 mb-3 shadow-sm hover:shadow transition">
                     <p class="text-sm text-gray-800 mb-2 font-medium"><span class="font-bold text-indigo-600">{{ inv.senderFirstName }}</span> convidou você para o espaço <span class="font-bold text-gray-900 border-b border-indigo-200">{{ inv.workspaceName }}</span>.</p>
-                    <p class="text-xs text-gray-500 mb-3 block text-right">{{ new Date(inv.createdAt).toLocaleDateString() }} ás {{ new Date(inv.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) }}</p>
+                    <p class="text-xs text-gray-500 mb-3 block text-right">{{ formatDateBR(inv.createdAt) }} às {{ formatTimeBR(inv.createdAt) }}</p>
                     <div class="flex justify-end gap-2 text-sm mt-2">
                          <button @click="resolveInvite(inv.id, 'reject')" class="px-3 py-1.5 text-red-600 hover:bg-red-50 rounded-lg border border-transparent font-medium transition">Recusar</button>
                          <button @click="resolveInvite(inv.id, 'accept')" class="px-3 py-1.5 bg-green-500 hover:bg-green-600 text-white rounded-lg font-bold shadow-sm transition disabled:opacity-50" :disabled="isResolving">Aceitar Visão</button>
@@ -231,6 +231,7 @@ import EmptyState from '@/components/ui/EmptyState.vue'
 import ThemeToggle from '@/components/ui/ThemeToggle.vue'
 import { BRAND_NAME } from '@/core/domain/brand'
 import { NAV_GROUPS } from './navigation'
+import { formatDateBR, formatTimeBR } from '@/core/domain/dates'
 
 const router = useRouter()
 const sidebarOpen = ref(false)

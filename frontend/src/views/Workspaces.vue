@@ -116,7 +116,7 @@
                                    {{ m.firstName }} {{ m.lastName }}
                                </div>
                             </td>
-                            <td class="p-4 text-gray-600 text-sm">{{ new Date(m.joinedAt).toLocaleDateString() }}</td>
+                            <td class="p-4 text-gray-600 text-sm">{{ formatDateBR(m.joinedAt) }}</td>
                             <td class="p-4 font-mono font-bold text-gray-500 text-sm">
                                 <span v-if="m.usedInviteCode">{{ m.usedInviteCode }}</span>
                                 <span v-else>-</span>
@@ -171,9 +171,9 @@
                                     <svg class="w-4 h-4 opacity-0 group-hover:opacity-100 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
                                 </button>
                             </td>
-                            <td class="p-4 text-gray-600 text-sm">{{ new Date(inv.createdAt).toLocaleDateString() }}</td>
+                            <td class="p-4 text-gray-600 text-sm">{{ formatDateBR(inv.createdAt) }}</td>
                             <td class="p-4">
-                                <span v-if="inv.expiresAt" class="text-red-500 text-sm font-semibold">{{ new Date(inv.expiresAt).toLocaleDateString() }}</span>
+                                <span v-if="inv.expiresAt" class="text-red-500 text-sm font-semibold">{{ formatDateBR(inv.expiresAt) }}</span>
                                 <span v-else class="text-green-500 text-sm font-semibold border border-green-200 bg-green-50 px-2 py-0.5 rounded">Infinito</span>
                             </td>
                             <td class="p-4 text-center font-bold text-gray-600">
@@ -268,6 +268,7 @@ import { ref, onMounted, computed, watch } from 'vue'
 import Swal from 'sweetalert2'
 import { toast } from 'vue3-toastify'
 import MainLayout from '@/components/layout/MainLayout.vue'
+import { formatDateBR } from '@/core/domain/dates'
 import api from '@/data/api/HttpClient'
 import { useWorkspaceStore } from '@/presentation/store/workspaceStore'
 
