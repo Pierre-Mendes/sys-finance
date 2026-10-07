@@ -31,12 +31,6 @@ class StatementImportController {
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
 
-        // Create a local temporary file to avoid system /tmp permission issues
-        $tempDir = __DIR__ . '/../../storage/temp';
-        if (!file_exists($tempDir)) {
-            mkdir($tempDir, 0770, true);
-        }
-        
         // Nunca confiar no nome/extensão enviados pelo cliente (OWASP A04/A08: upload irrestrito).
         $originalName = (string) $file->getClientFilename();
         $extension = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
@@ -49,14 +43,17 @@ class StatementImportController {
             return $response->withHeader('Content-Type', 'application/json')->withStatus(413);
         }
 
-        $tempFile = $tempDir . '/stmt_' . bin2hex(random_bytes(16)) . '.' . $extension;
-        
-        $file->moveTo($tempFile);
+        // Processado em memória: o conteúdo não é gravado em disco pela aplicação.
+        $contents = (string) $file->getStream();
+        if ($contents === '' || strlen($contents) > self::MAX_UPLOAD_BYTES) {
+            $response->getBody()->write(json_encode(['error' => 'Arquivo vazio ou muito grande (máx. 10 MB).']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(413);
+        }
 
         $workspaceId = $request->getAttribute('workspaceId');
 
         try {
-            $transactions = $this->importService->extractFromPdf($tempFile, $workspaceId);
+            $transactions = $this->importService->extractFromContent($contents, $extension, $workspaceId);
             
             $response->getBody()->write(json_encode([
                 'success' => true,
@@ -74,10 +71,6 @@ class StatementImportController {
                 'needs_ai_learning' => true // Flag para o frontend mostrar tela de aprendizado
             ]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(422);
-        } finally {
-            if (file_exists($tempFile)) {
-                unlink($tempFile);
-            }
         }
     }
 }
