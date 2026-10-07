@@ -55,6 +55,11 @@ if (!is_writable($logDir)) {
     $fileHandler->setFormatter(new JsonFormatter());
     $logger->pushHandler($fileHandler);
 }
+if ($sentryDsn) {
+    // Erros registrados no log (inclusive os capturados pelo ErrorMiddleware do Slim) também vão para o Sentry.
+    $logger->pushHandler(new \Sentry\Monolog\Handler(\Sentry\SentrySdk::getCurrentHub(), Logger::ERROR));
+}
+\App\Security\PublicError::setLogger($logger);
 
 $app = AppFactory::create();
 

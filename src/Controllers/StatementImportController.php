@@ -67,7 +67,7 @@ class StatementImportController {
         } catch (\Exception $e) {
             // Se falhou mesmo com a heurística, retorna um erro amigável para a IA aprender
             $response->getBody()->write(json_encode([
-                'error' => $e->getMessage(),
+                'error' => \App\Security\PublicError::message($e),
                 'needs_ai_learning' => true // Flag para o frontend mostrar tela de aprendizado
             ]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(422);
