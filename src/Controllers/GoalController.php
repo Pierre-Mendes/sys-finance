@@ -44,7 +44,7 @@ class GoalController {
             $goal = $this->goalService->updateGoal($id, $workspaceId, $dto);
             $response->getBody()->write(json_encode(['success' => true, 'data' => $goal]));
         } catch (\Exception $e) {
-            $response->getBody()->write(json_encode(['success' => false, 'error' => $e->getMessage()]));
+            $response->getBody()->write(json_encode(['success' => false, 'error' => \App\Security\PublicError::message($e)]));
             return $response->withStatus(400)->withHeader('Content-Type', 'application/json');
         }
         return $response->withHeader('Content-Type', 'application/json');
@@ -58,7 +58,7 @@ class GoalController {
             $this->goalService->deleteGoal($id, $workspaceId);
             $response->getBody()->write(json_encode(['success' => true]));
         } catch (\Exception $e) {
-            $response->getBody()->write(json_encode(['success' => false, 'error' => $e->getMessage()]));
+            $response->getBody()->write(json_encode(['success' => false, 'error' => \App\Security\PublicError::message($e)]));
             return $response->withStatus(400)->withHeader('Content-Type', 'application/json');
         }
         return $response->withHeader('Content-Type', 'application/json');
@@ -73,7 +73,7 @@ class GoalController {
             $contribution = $this->goalService->addContribution($workspaceId, $dto);
             $response->getBody()->write(json_encode(['success' => true, 'data' => $contribution]));
         } catch (\Exception $e) {
-            $response->getBody()->write(json_encode(['success' => false, 'error' => $e->getMessage()]));
+            $response->getBody()->write(json_encode(['success' => false, 'error' => \App\Security\PublicError::message($e)]));
             return $response->withStatus(400)->withHeader('Content-Type', 'application/json');
         }
         
@@ -88,7 +88,7 @@ class GoalController {
             $forecast = $this->goalService->calculateForecast($goalId, $workspaceId);
             $response->getBody()->write(json_encode(['success' => true, 'data' => $forecast]));
         } catch (\Exception $e) {
-            $response->getBody()->write(json_encode(['success' => false, 'error' => $e->getMessage()]));
+            $response->getBody()->write(json_encode(['success' => false, 'error' => \App\Security\PublicError::message($e)]));
             return $response->withStatus(400);
         }
         

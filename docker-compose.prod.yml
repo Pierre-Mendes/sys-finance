@@ -64,16 +64,39 @@ services:
       db:
         condition: service_healthy
 
+  # Backup diário do banco em ./backups (no host), com retenção de 14 dias. O deploy também
+  # faz um backup antes de rodar as migrations. Restaurar: veja docs/guides/vps.md ("Backup e restauração").
+  backup:
+    image: mysql:8.0
+    container_name: financas-backup-prod
+    restart: always
+    entrypoint: ["/usr/local/bin/backup.sh"]
+    environment:
+      DB_HOST: db
+      DB_NAME: ${DB_NAME}
+      MYSQL_PWD: ${DB_ROOT_PASSWORD}
+      BACKUP_RETENTION_DAYS: ${BACKUP_RETENTION_DAYS:-14}
+      BACKUP_INTERVAL_HOURS: ${BACKUP_INTERVAL_HOURS:-24}
+      TZ: ${APP_TIMEZONE:-America/Sao_Paulo}
+    volumes:
+      - ./backups:/backups
+      - ./docker/backup/backup.sh:/usr/local/bin/backup.sh:ro
+      - ./docker/backup/restore.sh:/usr/local/bin/restore.sh:ro
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # Só sobe sob demanda (docker compose -f docker-compose.prod.yml --profile admin up -d phpmyadmin)
+  # e só escuta em 127.0.0.1: acesse por túnel SSH (ssh -L 8084:127.0.0.1:8084 usuario@vps) e entre
+  # com usuário/senha do banco. Nunca publique o phpMyAdmin na internet nem com login automático.
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     container_name: financas-pma-prod
-    restart: always
+    profiles: ["admin"]
     environment:
       PMA_HOST: db
-      PMA_USER: root
-      PMA_PASSWORD: ${DB_ROOT_PASSWORD}
     ports:
-      - "8084:80"
+      - "127.0.0.1:8084:80"
     depends_on:
       db:
         condition: service_healthy

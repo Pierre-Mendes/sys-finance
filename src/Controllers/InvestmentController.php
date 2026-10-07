@@ -70,7 +70,7 @@ class InvestmentController
             $id = $this->db->lastInsertId();
             return $this->json($response, ['message' => 'Criado com sucesso', 'id' => $id]);
         } catch (Exception $e) {
-            return $this->error($response, 'Erro ao criar investimento: ' . $e->getMessage(), 500);
+            return $this->error($response, 'Erro ao criar investimento: ' . \App\Security\PublicError::message($e), 500);
         }
     }
 
@@ -153,7 +153,7 @@ class InvestmentController
             return $this->json($response, ['message' => 'Movimentação registrada com sucesso.']);
         } catch (Exception $e) {
             $this->db->rollBack();
-            return $this->error($response, 'Falha ao lançar registro: ' . $e->getMessage(), 500);
+            return $this->error($response, 'Falha ao lançar registro: ' . \App\Security\PublicError::message($e), 500);
         }
     }
 
@@ -186,7 +186,7 @@ class InvestmentController
 
             return $this->json($response, ['message' => 'Cotações em tempo real atualizadas!', 'updatedcount' => $updatedCount]);
         } catch (Exception $e) {
-            return $this->error($response, 'Erro na conexão com API Mercado: ' . $e->getMessage(), 500);
+            return $this->error($response, 'Erro na conexão com API Mercado: ' . \App\Security\PublicError::message($e), 500);
         }
     }
 

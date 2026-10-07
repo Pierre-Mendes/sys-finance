@@ -68,9 +68,9 @@
              </div>
           </div>
           
-          <button type="submit" 
-            class="w-full bg-primary hover:bg-brand-800 text-white font-semibold py-3 px-4 rounded-lg shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 mt-2">
-            Cadastrar
+          <button type="submit" :disabled="isSubmitting"
+            class="w-full bg-primary hover:bg-brand-800 text-white font-semibold py-3 px-4 rounded-lg shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 mt-2 disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none">
+            {{ isSubmitting ? 'Criando conta…' : 'Cadastrar' }}
           </button>
         </form>
         
@@ -86,7 +86,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import api from '@/data/api/HttpClient'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
@@ -103,7 +103,11 @@ const form = reactive({
   securityAnswer: ''
 })
 
+const isSubmitting = ref(false)
+
 const handleSignup = async () => {
+    if (isSubmitting.value) return
+    isSubmitting.value = true
     try {
         const response = await api.post('/api/auth/signup', form);
         
@@ -113,6 +117,8 @@ const handleSignup = async () => {
         }
     } catch (e: any) {
         toast.error('Erro ao criar conta: ' + (e.response?.data?.error || e.message))
+    } finally {
+        isSubmitting.value = false
     }
 }
 </script>
