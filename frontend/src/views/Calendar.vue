@@ -15,7 +15,7 @@
         <!-- Loader Overlay -->
         <div v-if="isLoading" class="absolute inset-0 bg-white/60 backdrop-blur-sm flex flex-col items-center justify-center z-10 gap-3">
             <svg class="animate-spin w-8 h-8 text-primary" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-            <span class="text-gray-500 font-semibold uppercase tracking-wider text-sm animate-pulse">CARREGANDO MAPA...</span>
+            <span class="text-gray-500 font-semibold text-sm" role="status">Carregando calendário…</span>
         </div>
 
         <div class="bg-gray-50 flex items-center justify-between py-3 px-4 border-b border-gray-200">
@@ -83,7 +83,7 @@
     <!-- Modal Responsivo Principal (Mobile/Click Viewer) -->
     <Teleport to="body">
         <div v-if="selectedTransaction" class="fixed inset-0 z-[10000] bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden animate-fadeIn relative">
+            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden animate-fade-in relative">
                 <div class="p-5 border-b border-gray-100 flex justify-between items-start" :class="selectedTransaction.type === 'asset' || selectedTransaction.type === 'income' ? 'bg-green-50' : 'bg-red-50'">
                      <div class="pr-6">
                          <div class="inline-flex items-center justify-center text-xs font-bold uppercase tracking-wider mb-2 px-2 py-0.5 rounded-full" :class="selectedTransaction.type === 'asset' || selectedTransaction.type === 'income' ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'">

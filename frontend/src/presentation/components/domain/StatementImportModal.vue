@@ -12,7 +12,7 @@
 
     <!-- Slide-out Panel -->
     <div 
-      class="relative w-full max-w-2xl h-full bg-white shadow-2xl flex flex-col animate-slideInLeft"
+      class="relative w-full max-w-2xl h-full bg-white shadow-2xl flex flex-col animate-slide-in-right"
     >
       <!-- Fixed Header -->
       <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white/80 backdrop-blur-md sticky top-0 z-10">
@@ -78,7 +78,7 @@
             <p class="text-gray-500 mt-2 max-w-xs mx-auto">Solte PDF, CSV ou OFX para começar o processamento automático.</p>
           </div>
 
-          <div v-if="uploading" class="mt-8 flex flex-col items-center gap-4 text-primary animate-pulse">
+          <div v-if="uploading" class="mt-8 flex flex-col items-center gap-4 text-primary" role="status">
             <div class="flex gap-1">
               <div class="w-1.5 h-1.5 bg-primary rounded-full animate-bounce"></div>
               <div class="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:-.3s]"></div>
@@ -472,15 +472,6 @@ const confirmImport = async () => {
 </script>
 
 <style scoped>
-@keyframes slideInLeft {
-  from { transform: translateX(100%); }
-  to { transform: translateX(0); }
-}
-
-.animate-slideInLeft {
-  animation: slideInLeft 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
 .animate-bounce-subtle {
   animation: bounce-subtle 2s infinite;
 }

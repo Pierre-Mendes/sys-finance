@@ -72,6 +72,9 @@ services:
     volumes:
       - ./frontend:/app
       - frontend-node-modules:/app/node_modules
+      # Fica em /design-system = "../design-system" visto de /app: os testes de tokens/site e
+      # `npm run design:build-site` leem e geram arquivos ali.
+      - ./design-system:/design-system
     environment:
       # O Vite repassa /api para o container do backend: navegador vê uma origem só (cookies e CSRF funcionam).
       VITE_PROXY_TARGET: http://backend:8080

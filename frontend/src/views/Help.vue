@@ -27,7 +27,7 @@
         <!-- Main Content Window -->
         <div class="flex-1 bg-white rounded-xl shadow-sm border border-gray-200 p-6 sm:p-8 min-h-[500px]">
              <!-- Tab: Onboarding -->
-             <div v-show="activeTab === 'onboarding'" class="animate-fadeIn">
+             <div v-show="activeTab === 'onboarding'" class="animate-fade-in">
                  <h3 class="text-2xl font-bold text-gray-900 mb-6 border-b pb-2 flex items-center gap-2">
                     <svg class="w-7 h-7 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                     Começando: Guia de Boas-Vindas
@@ -72,7 +72,7 @@
              </div>
 
              <!-- Tab: Introdução -->
-             <div v-show="activeTab === 'intro'" class="animate-fadeIn">
+             <div v-show="activeTab === 'intro'" class="animate-fade-in">
                  <h3 class="text-2xl font-bold text-gray-900 mb-4 border-b pb-2">Visão Geral e Pilares</h3>
                  <p class="text-gray-700 mb-4 leading-relaxed">O Gerenciador Financeiro Pessoal Colaborativo foi desenhado para escalabilidade e clareza. Aqui estão os conceitos fundamentais para você dominar a ferramenta.</p>
                  
@@ -95,7 +95,7 @@
              </div>
 
              <!-- Tab: Workspaces -->
-             <div v-show="activeTab === 'workspaces'" class="animate-fadeIn">
+             <div v-show="activeTab === 'workspaces'" class="animate-fade-in">
                  <h3 class="text-2xl font-bold text-gray-900 mb-4 border-b pb-2">Gestão em Equipe (Workspaces)</h3>
                  <p class="text-gray-700 mb-6 leading-relaxed">Um 'Workspace' permite que você isole ambientes. Por exemplo: "Pessoal", "Festa de Casamento", "Microempresa".</p>
                  
@@ -124,7 +124,7 @@
              </div>
 
              <!-- Tab: Lançamentos & Rateios -->
-             <div v-show="activeTab === 'rateios'" class="animate-fadeIn">
+             <div v-show="activeTab === 'rateios'" class="animate-fade-in">
                  <h3 class="text-2xl font-bold text-gray-900 mb-4 border-b pb-2">Rateios e Divisão de Contas</h3>
                  <p class="text-gray-700 mb-6 leading-relaxed">Exclusivo sistema de rateio entre espaços. Pague algo na sua conta pessoal e "transfira" uma porcentagem da despesa para outro Workspace.</p>
                  
@@ -160,7 +160,7 @@
              </div>
 
              <!-- Tab: Contas e Recorrências -->
-             <div v-show="activeTab === 'contas'" class="animate-fadeIn">
+             <div v-show="activeTab === 'contas'" class="animate-fade-in">
                  <h3 class="text-2xl font-bold text-gray-900 mb-4 border-b pb-2">Contas a Pagar e Receber</h3>
                  <p class="text-gray-700 mb-6 leading-relaxed">Controle vencimentos e mantenha suas obrigações em dia. O sistema separa transações de "Dinheiro em Mão" de "Compromissos Agendados".</p>
                  
@@ -185,7 +185,7 @@
              </div>
 
              <!-- Tab: Metas e Sonhos -->
-             <div v-show="activeTab === 'goals'" class="animate-fadeIn">
+             <div v-show="activeTab === 'goals'" class="animate-fade-in">
                  <h3 class="text-2xl font-bold text-gray-900 mb-4 border-b pb-2">Metas, Sonhos e Favoritos</h3>
                  <p class="text-gray-700 mb-6 leading-relaxed">As metas permitem priorizar seus objetivos financeiros e entender quando eles se tornarão realidade. Agora com suporte a destaque e vínculo bancário.</p>
                  
@@ -208,7 +208,7 @@
              </div>
 
              <!-- Tab: Extrato Bancário -->
-             <div v-show="activeTab === 'statement'" class="animate-fadeIn">
+             <div v-show="activeTab === 'statement'" class="animate-fade-in">
                  <h3 class="text-2xl font-bold text-gray-900 mb-4 border-b pb-2">Extrato Bancário e Saldo Progressivo</h3>
                  <p class="text-gray-700 mb-6 leading-relaxed">
                     O módulo de Extrato é sua ferramenta de auditoria. Ele permite uma visão microscópica de cada centavo que entra e sai de suas contas.
@@ -235,7 +235,7 @@
              </div>
 
              <!-- Tab: Cartões de Crédito -->
-             <div v-show="activeTab === 'cards'" class="animate-fadeIn">
+             <div v-show="activeTab === 'cards'" class="animate-fade-in">
                  <h3 class="text-2xl font-bold text-gray-900 mb-4 border-b pb-2">Cartões de Crédito Refinados</h3>
                  <p class="text-gray-700 mb-6 leading-relaxed">
                     Acompanhe faturas, limites e compras parceladas com uma interface moderna e mobile-first.
@@ -259,7 +259,7 @@
              </div>
 
               <!-- Tab: Ferramentas e Orçamentos -->
-             <div v-show="activeTab === 'ferramentas'" class="animate-fadeIn">
+             <div v-show="activeTab === 'ferramentas'" class="animate-fade-in">
                  <h3 class="text-2xl font-bold text-gray-900 mb-4 border-b pb-2">Ferramentas e Orçamentos</h3>
                  
                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -277,7 +277,7 @@
              </div>
 
              <!-- Tab: Conciliação Bancária (BETA) -->
-             <div v-show="activeTab === 'import'" class="animate-fadeIn">
+             <div v-show="activeTab === 'import'" class="animate-fade-in">
                  <h3 class="text-2xl font-bold text-gray-900 mb-6 border-b pb-2 flex items-center gap-3">
                     <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                     Conciliação e Importação (BETA)
@@ -355,13 +355,3 @@ const guideTabs = [
     { id: 'ferramentas', title: 'Limites e Planilhas', iconPath: 'M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
 ]
 </script>
-
-<style scoped>
-.animate-fadeIn {
-    animation: fadeIn 0.4s ease-in-out;
-}
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(5px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-</style>

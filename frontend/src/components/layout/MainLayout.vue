@@ -168,7 +168,7 @@
                 <h4 v-if="sysInvites?.length > 0" class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 mt-1">Convites Pendentes</h4>
                 <div v-for="inv in sysInvites" :key="'inv'+inv.id" class="bg-white border border-gray-200 rounded-lg p-4 mb-3 shadow-sm hover:shadow transition">
                     <p class="text-sm text-gray-800 mb-2 font-medium"><span class="font-bold text-indigo-600">{{ inv.senderFirstName }}</span> convidou você para o espaço <span class="font-bold text-gray-900 border-b border-indigo-200">{{ inv.workspaceName }}</span>.</p>
-                    <p class="text-xs text-gray-500 mb-3 block text-right">{{ new Date(inv.createdAt).toLocaleDateString() }} ás {{ new Date(inv.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) }}</p>
+                    <p class="text-xs text-gray-500 mb-3 block text-right">{{ formatDateBR(inv.createdAt) }} às {{ formatTimeBR(inv.createdAt) }}</p>
                     <div class="flex justify-end gap-2 text-sm mt-2">
                          <button @click="resolveInvite(inv.id, 'reject')" class="px-3 py-1.5 text-red-600 hover:bg-red-50 rounded-lg border border-transparent font-medium transition">Recusar</button>
                          <button @click="resolveInvite(inv.id, 'accept')" class="px-3 py-1.5 bg-green-500 hover:bg-green-600 text-white rounded-lg font-bold shadow-sm transition disabled:opacity-50" :disabled="isResolving">Aceitar Visão</button>
@@ -178,7 +178,7 @@
                 <h4 v-if="generalNotifications?.length > 0" class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 mt-4 block">Alertas</h4>
                 <TransitionGroup name="list" tag="div" class="space-y-3">
                     <div v-for="notif in generalNotifications" :key="'notif'+notif.id" :class="['border rounded-xl p-4 transition-all duration-300 relative group', !notif.read_at ? 'bg-indigo-50/40 border-indigo-100' : 'bg-white border-gray-100']">
-                        <div v-if="!notif.read_at" class="w-3 h-3 bg-indigo-500 absolute -top-1 -right-1 rounded-full shadow-sm animate-pulse border-2 border-white z-10"></div>
+                        <div v-if="!notif.read_at" class="w-3 h-3 bg-indigo-500 absolute -top-1 -right-1 rounded-full shadow-sm border-2 border-white z-10"></div>
                         
                         <!-- Individual Delete Button -->
                         <button @click.stop="deleteNotification(notif.id)" class="absolute top-2 right-2 p-1 text-gray-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100" title="Excluir">
@@ -231,6 +231,7 @@ import EmptyState from '@/components/ui/EmptyState.vue'
 import ThemeToggle from '@/components/ui/ThemeToggle.vue'
 import { BRAND_NAME } from '@/core/domain/brand'
 import { NAV_GROUPS } from './navigation'
+import { formatDateBR, formatTimeBR } from '@/core/domain/dates'
 
 const router = useRouter()
 const sidebarOpen = ref(false)
@@ -378,12 +379,4 @@ const logout = async () => {
   transform: translateX(30px);
 }
 
-@keyframes fade-in-down {
-    0% { opacity: 0; transform: translateY(-10px); }
-    100% { opacity: 1; transform: translateY(0); }
-}
-
-.animate-fade-in-down {
-    animation: fade-in-down 0.3s ease-out;
-}
 </style>

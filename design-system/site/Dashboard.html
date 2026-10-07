@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Painel redesenhado · Design system sysfinance</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&amp;family=Manrope:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#2346D8}a:hover{color:#1A34A6}
+.nav{display: flex; align-items: center; gap: 12px; min-height: 40px; padding: 0 12px; border-radius: 8px; color: #C5CCD6; text-decoration: none; font-weight: 600; font-size: 14px; transition: background-color 120ms, color 120ms}
+.nav:hover{background: #141E33; color: #FFFFFF}
+.nav:focus-visible, .btn:focus-visible{outline: 3px solid #6F8BF0; outline-offset: 2px}
+.btn{font-family: Manrope, sans-serif; font-weight: 700; font-size: 15px; min-height: 44px; padding: 0 18px; border-radius: 8px; border: 0; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: background-color 120ms, transform 120ms}
+.btn:active{transform: scale(0.97)}
+.btn-primary{background: #2346D8; color: #FFFFFF}.btn-primary:hover{background: #1A34A6}
+.btn-secondary{background: #FFFFFF; color: #0B1324; box-shadow: inset 0 0 0 1.5px #C5CCD6}.btn-secondary:hover{background: #F6F7F9}
+.btn-sm{min-height: 36px; font-size: 14px; padding: 0 12px}
+@keyframes fadeUp{from{opacity: 0; transform: translateY(16px)}to{opacity: 1; transform: none}}
+.fade-up{animation: fadeUp 480ms cubic-bezier(.2,.8,.2,1) both}
+@keyframes grow{from{transform: scaleY(0)}to{transform: scaleY(1)}}
+.bar{transform-origin: bottom; animation: grow 700ms cubic-bezier(.2,.8,.2,1) both}
+@keyframes fill{from{width: 0}}
+.fill{animation: fill 900ms cubic-bezier(.2,.8,.2,1) 300ms both}
+@keyframes scaleIn{0%{transform: scale(0.6); opacity: 0}60%{transform: scale(1.1); opacity: 1}100%{transform: scale(1)}}
+.badge-in{animation: scaleIn 450ms cubic-bezier(.34,1.56,.64,1) both}
+@media (prefers-reduced-motion: reduce){.fade-up,.bar,.fill,.badge-in{animation: none}}
+</style>
+<style>
+body{margin:0}
+</style>
+<style>
+.ds-bar{position:sticky;top:0;z-index:9999;display:flex;align-items:center;gap:12px;padding:10px 16px;background:#0B1324;color:#C5CCD6;font:600 14px/1.4 Manrope,system-ui,sans-serif}
+.ds-bar a{color:#fff;font-weight:700;text-decoration:none;padding:6px 10px;border-radius:8px}
+.ds-bar a:hover{background:#26324A}
+.ds-bar a:focus-visible{outline:3px solid #6F8BF0;outline-offset:2px}
+
+</style>
+</head>
+<body>
+<nav class="ds-bar" aria-label="Design system"><a href="index.html">← Todos os quadros</a><span>Painel redesenhado · versão estática</span></nav>
+<div class="ds-board">
+
+
+<DIV style="min-height: 100vh; background: #F6F7F9; font-family: Manrope, sans-serif; color: #0B1324; display: flex; flex-wrap: wrap">
+
+<NAV aria-label="Principal" style="flex: 1 1 240px; max-width: 100%; background: #0B1324; color: #FFFFFF; padding: 20px 14px; box-sizing: border-box; display: flex; flex-direction: column; gap: 18px">
+<DIV style="display: flex; align-items: center; gap: 10px; padding: 4px 8px">
+<svg width="34" height="34" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="18" fill="#FFFFFF"></rect><path d="M15 42 L26 31 L34 37 L47 22" stroke="#2346D8" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="48" cy="20" r="7" fill="#F2A541"></circle></svg>
+<DIV style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 22px; letter-spacing: -0.02em"><SPAN style="font-weight: 600; color: #9AA6BA">sys</SPAN><SPAN style="font-weight: 800">finance</SPAN></DIV>
+</DIV>
+<BUTTON class="btn btn-sm" type="button" style="background: #141E33; color: #FFFFFF; justify-content: space-between; width: 100%">
+<SPAN style="display: flex; flex-direction: column; align-items: flex-start"><SPAN style="font-size: 12px; color: #9AA6BA; font-weight: 600">Workspace</SPAN><SPAN>[NOME DO WORKSPACE]</SPAN></SPAN>
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 10l5 5 5-5"></path></svg>
+</BUTTON>
+
+<DIV style="display: flex; flex-direction: column; gap: 2px">
+
+
+<A class="nav" href="#" aria-current="page" style="background: #2346D8; color: #FFFFFF">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"></path></svg>
+Visão geral</A>
+
+</DIV>
+
+<DIV style="display: flex; flex-direction: column; gap: 2px">
+
+<DIV style="font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #9AA6BA; padding: 4px 12px">Dinheiro</DIV>
+
+
+<A class="nav" href="#" aria-current="false" style="background: transparent; color: #C5CCD6">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h15a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3zM3 7l12-3v3M16 13.5h.01"></path></svg>
+Contas</A>
+
+<A class="nav" href="#" aria-current="false" style="background: transparent; color: #C5CCD6">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"></path></svg>
+Extrato</A>
+
+<A class="nav" href="#" aria-current="false" style="background: transparent; color: #C5CCD6">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4v16M7 4L3 8M7 4l4 4M17 20V4M17 20l-4-4M17 20l4-4"></path></svg>
+Lançamentos</A>
+
+<A class="nav" href="#" aria-current="false" style="background: transparent; color: #C5CCD6">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18v12H3zM3 10h18M7 15h3"></path></svg>
+Cartões</A>
+
+</DIV>
+
+<DIV style="display: flex; flex-direction: column; gap: 2px">
+
+<DIV style="font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #9AA6BA; padding: 4px 12px">Planejamento</DIV>
+
+
+<A class="nav" href="#" aria-current="false" style="background: transparent; color: #C5CCD6">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v9h9A9 9 0 1 1 12 3zM15 3.5A9 9 0 0 1 20.5 9H15z"></path></svg>
+Orçamentos</A>
+
+<A class="nav" href="#" aria-current="false" style="background: transparent; color: #C5CCD6">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4M5 4h11l-2 4 2 4H5"></path></svg>
+Metas e conquistas</A>
+
+<A class="nav" href="#" aria-current="false" style="background: transparent; color: #C5CCD6">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16v14H4zM4 10h16M8 3v4M16 3v4"></path></svg>
+Calendário</A>
+
+<A class="nav" href="#" aria-current="false" style="background: transparent; color: #C5CCD6">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"></path></svg>
+Investimentos</A>
+
+</DIV>
+
+<DIV style="display: flex; flex-direction: column; gap: 2px">
+
+<DIV style="font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #9AA6BA; padding: 4px 12px">Análise</DIV>
+
+
+<A class="nav" href="#" aria-current="false" style="background: transparent; color: #C5CCD6">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20V10M12 20V4M19 20v-7"></path></svg>
+Relatórios</A>
+
+<A class="nav" href="#" aria-current="false" style="background: transparent; color: #C5CCD6">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8zM7.5 8h.01"></path></svg>
+Categorias</A>
+
+</DIV>
+
+<DIV style="display: flex; flex-direction: column; gap: 2px">
+
+<DIV style="font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #9AA6BA; padding: 4px 12px">Conta</DIV>
+
+
+<A class="nav" href="#" aria-current="false" style="background: transparent; color: #C5CCD6">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5zM3 13l9 5 9-5"></path></svg>
+Workspaces</A>
+
+<A class="nav" href="#" aria-current="false" style="background: transparent; color: #C5CCD6">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 9a3 3 0 1 0 0 6a3 3 0 1 0 0-6zM12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"></path></svg>
+Configurações</A>
+
+<A class="nav" href="#" aria-current="false" style="background: transparent; color: #C5CCD6">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21a9 9 0 1 0 0-18a9 9 0 0 0 0 18zM9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.7M12 17h.01"></path></svg>
+Ajuda</A>
+
+</DIV>
+
+</NAV>
+
+<MAIN style="flex: 999 1 560px; min-width: 0; padding: 32px clamp(16px, 4vw, 48px) 56px; box-sizing: border-box; display: flex; flex-direction: column; gap: 24px">
+<DIV style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px">
+<DIV style="display: flex; align-items: center; gap: 8px">
+
+
+<DIV style="width: 84px; height: 84px; display: flex; align-items: center; justify-content: center">
+<svg viewBox="0 0 200 200" width="100%" height="100%" role="img" aria-label="Capi, a capivara mascote, sorrindo">
+<ellipse cx="100" cy="188" rx="56" ry="6" fill="#0B1324" opacity="0.10"></ellipse>
+<g>
+<animateTransform attributeName="transform" type="translate" values="0 0; 0 -5; 0 0" dur="3s" repeatCount="indefinite"></animateTransform>
+<ellipse cx="72" cy="178" rx="16" ry="8" fill="#7E5235"></ellipse>
+<ellipse cx="128" cy="178" rx="16" ry="8" fill="#7E5235"></ellipse>
+<ellipse cx="100" cy="140" rx="66" ry="42" fill="#A8724A"></ellipse>
+<ellipse cx="100" cy="152" rx="38" ry="24" fill="#D9A877"></ellipse>
+<g opacity="0">
+<ellipse cx="160" cy="116" rx="9" ry="18" fill="#A8724A">
+<animateTransform attributeName="transform" type="rotate" values="-25 152 132; 15 152 132; -25 152 132" dur="0.8s" repeatCount="indefinite"></animateTransform>
+</ellipse>
+</g>
+<circle cx="58" cy="66" r="11" fill="#7E5235"></circle>
+<circle cx="142" cy="66" r="11" fill="#7E5235"></circle>
+<circle cx="58" cy="66" r="5" fill="#5A3A26"></circle>
+<circle cx="142" cy="66" r="5" fill="#5A3A26"></circle>
+<rect x="50" y="58" width="100" height="86" rx="42" fill="#A8724A"></rect>
+<ellipse cx="64" cy="112" rx="8" ry="4.5" fill="#F09A86" opacity="0.55"></ellipse>
+<ellipse cx="136" cy="112" rx="8" ry="4.5" fill="#F09A86" opacity="0.55"></ellipse>
+<g opacity="1" transform="translate(0 0)">
+<ellipse cx="80" cy="88" rx="5" ry="6" fill="#1A1410">
+<animate attributeName="ry" values="6;6;0.6;6" keyTimes="0;0.92;0.96;1" dur="4s" repeatCount="indefinite"></animate>
+</ellipse>
+<ellipse cx="120" cy="88" rx="5" ry="6" fill="#1A1410">
+<animate attributeName="ry" values="6;6;0.6;6" keyTimes="0;0.92;0.96;1" dur="4s" repeatCount="indefinite"></animate>
+</ellipse>
+<circle cx="81.5" cy="86" r="1.6" fill="#FFFFFF"></circle>
+<circle cx="121.5" cy="86" r="1.6" fill="#FFFFFF"></circle>
+</g>
+<g opacity="0" stroke="#1A1410" stroke-width="3.5" fill="none" stroke-linecap="round">
+<path d="M73 90 Q80 81 87 90"></path>
+<path d="M113 90 Q120 81 127 90"></path>
+</g>
+<g opacity="0" stroke="#1A1410" stroke-width="3" fill="none" stroke-linecap="round">
+<path d="M73 88 Q80 93 87 88"></path>
+<path d="M113 88 Q120 93 127 88"></path>
+</g>
+<rect x="74" y="100" width="52" height="34" rx="17" fill="#7E5235"></rect>
+<ellipse cx="91" cy="110" rx="3.5" ry="2.5" fill="#3A2518"></ellipse>
+<ellipse cx="109" cy="110" rx="3.5" ry="2.5" fill="#3A2518"></ellipse>
+<path opacity="1" d="M93 122 Q100 129 107 122" stroke="#2A1A10" stroke-width="2.5" fill="none" stroke-linecap="round"></path>
+<path opacity="0" d="M92 120 Q100 133 108 120 Z" fill="#2A1A10"></path>
+<path opacity="0" d="M94 125 L106 125" stroke="#2A1A10" stroke-width="2.5" stroke-linecap="round"></path>
+<ellipse opacity="0" cx="100" cy="124" rx="3.5" ry="4.5" fill="#2A1A10"></ellipse>
+<g transform="translate(100 42) rotate(0)">
+<ellipse cx="0" cy="0" rx="16" ry="16" fill="#F2A541" stroke="#C97C12" stroke-width="3">
+<animate attributeName="rx" values="16;16;3;16;16" keyTimes="0;0.7;0.8;0.9;1" dur="3s" repeatCount="indefinite"></animate>
+</ellipse>
+<ellipse cx="0" cy="0" rx="9" ry="9" fill="none" stroke="#C97C12" stroke-width="2" opacity="0.7">
+<animate attributeName="rx" values="9;9;1.5;9;9" keyTimes="0;0.7;0.8;0.9;1" dur="3s" repeatCount="indefinite"></animate>
+</ellipse>
+</g>
+</g>
+<g opacity="0" fill="#F2A541">
+<g transform="translate(32 64)"><path d="M0 -9 L2.5 -2.5 L9 0 L2.5 2.5 L0 9 L-2.5 2.5 L-9 0 L-2.5 -2.5 Z"><animate attributeName="opacity" values="0;1;0" dur="1.2s" repeatCount="indefinite"></animate></path></g>
+<g transform="translate(168 36)"><path d="M0 -7 L2 -2 L7 0 L2 2 L0 7 L-2 2 L-7 0 L-2 -2 Z"><animate attributeName="opacity" values="0;1;0" dur="1.2s" begin="0.4s" repeatCount="indefinite"></animate></path></g>
+<g transform="translate(40 26)"><path d="M0 -6 L1.8 -1.8 L6 0 L1.8 1.8 L0 6 L-1.8 1.8 L-6 0 L-1.8 -1.8 Z"><animate attributeName="opacity" values="0;1;0" dur="1.2s" begin="0.8s" repeatCount="indefinite"></animate></path></g>
+</g>
+<g opacity="0" fill="#FFFFFF" stroke="#C5CCD6" stroke-width="2">
+<circle cx="154" cy="62" r="4"></circle>
+<circle cx="165" cy="46" r="6"></circle>
+<circle cx="180" cy="24" r="10"></circle>
+</g>
+<g opacity="0">
+<path d="M152 60 Q159 71 152 77 Q145 71 152 60 Z" fill="#6BB6FF">
+<animateTransform attributeName="transform" type="translate" values="0 0; 0 6; 0 0" dur="1.6s" repeatCount="indefinite"></animateTransform>
+</path>
+</g>
+<g opacity="0" fill="#5B6B85" font-family="Bricolage Grotesque, sans-serif" font-weight="700">
+<text x="150" y="58" font-size="16">z<animate attributeName="opacity" values="0;1;0" dur="2.4s" repeatCount="indefinite"></animate></text>
+<text x="162" y="40" font-size="20">z<animate attributeName="opacity" values="0;1;0" dur="2.4s" begin="0.6s" repeatCount="indefinite"></animate></text>
+<text x="176" y="20" font-size="24">z<animate attributeName="opacity" values="0;1;0" dur="2.4s" begin="1.2s" repeatCount="indefinite"></animate></text>
+</g>
+</svg>
+</DIV>
+
+<DIV style="display: flex; flex-direction: column; gap: 2px">
+<H1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 34px; letter-spacing: -0.02em">Bom dia, [NOME]</H1>
+<DIV style="font-size: 15px; color: #5B6B85">Seu mês está no azul. Duas contas vencem esta semana.</DIV>
+</DIV>
+</DIV>
+<DIV style="display: flex; flex-wrap: wrap; gap: 10px">
+<BUTTON class="btn btn-secondary" type="button">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16v14H4zM4 10h16M8 3v4M16 3v4"></path></svg>
+Outubro 2026</BUTTON>
+<BUTTON class="btn btn-primary" type="button">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+Novo lançamento</BUTTON>
+</DIV>
+</DIV>
+
+<DIV style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px">
+
+<DIV class="fade-up" style="animation-delay: 0ms; background: #2346D8; color: #FFFFFF; border-radius: 20px; padding: 20px 22px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 1px 2px rgba(11,19,36,0.06)">
+<DIV style="display: flex; justify-content: space-between; align-items: center; gap: 8px">
+<DIV style="font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.8">Saldo total</DIV>
+<DIV style="width: 32px; height: 32px; border-radius: 10px; background: rgba(255,255,255,0.16); color: #FFFFFF; display: flex; align-items: center; justify-content: center">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h15a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3zM3 7l12-3v3M16 13.5h.01"></path></svg>
+</DIV>
+</DIV>
+<DIV style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 30px; letter-spacing: -0.02em; font-variant-numeric: tabular-nums">R$ 12.480,90</DIV>
+<DIV style="font-size: 13px; opacity: 0.8">Em 3 contas</DIV>
+</DIV>
+
+<DIV class="fade-up" style="animation-delay: 60ms; background: #FFFFFF; color: #0B1324; border-radius: 20px; padding: 20px 22px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 1px 2px rgba(11,19,36,0.06)">
+<DIV style="display: flex; justify-content: space-between; align-items: center; gap: 8px">
+<DIV style="font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.8">Receitas</DIV>
+<DIV style="width: 32px; height: 32px; border-radius: 10px; background: #E6F4EE; color: #0E7A55; display: flex; align-items: center; justify-content: center">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"></path></svg>
+</DIV>
+</DIV>
+<DIV style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 30px; letter-spacing: -0.02em; font-variant-numeric: tabular-nums">R$ 8.420,00</DIV>
+<DIV style="font-size: 13px; opacity: 0.8">▲ 4% vs. setembro</DIV>
+</DIV>
+
+<DIV class="fade-up" style="animation-delay: 120ms; background: #FFFFFF; color: #0B1324; border-radius: 20px; padding: 20px 22px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 1px 2px rgba(11,19,36,0.06)">
+<DIV style="display: flex; justify-content: space-between; align-items: center; gap: 8px">
+<DIV style="font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.8">Despesas</DIV>
+<DIV style="width: 32px; height: 32px; border-radius: 10px; background: #FDEEE6; color: #C2410C; display: flex; align-items: center; justify-content: center">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"></path></svg>
+</DIV>
+</DIV>
+<DIV style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 30px; letter-spacing: -0.02em; font-variant-numeric: tabular-nums">R$ 5.212,35</DIV>
+<DIV style="font-size: 13px; opacity: 0.8">▼ 7% vs. setembro</DIV>
+</DIV>
+
+<DIV class="fade-up" style="animation-delay: 180ms; background: #FFFFFF; color: #0B1324; border-radius: 20px; padding: 20px 22px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 1px 2px rgba(11,19,36,0.06)">
+<DIV style="display: flex; justify-content: space-between; align-items: center; gap: 8px">
+<DIV style="font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.8">Previsão fim do mês</DIV>
+<DIV style="width: 32px; height: 32px; border-radius: 10px; background: #FDE7C4; color: #7A4A06; display: flex; align-items: center; justify-content: center">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"></path></svg>
+</DIV>
+</DIV>
+<DIV style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 30px; letter-spacing: -0.02em; font-variant-numeric: tabular-nums">R$ 14.060,00</DIV>
+<DIV style="font-size: 13px; opacity: 0.8">Se nada mudar</DIV>
+</DIV>
+
+</DIV>
+
+<DIV style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px">
+<SECTION class="fade-up" style="animation-delay: 240ms; background: #FFFFFF; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 1px 2px rgba(11,19,36,0.06)">
+<DIV style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px">
+<H2 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px">Fluxo dos últimos 6 meses</H2>
+<DIV style="display: flex; gap: 14px; font-size: 13px; font-weight: 700; color: #26324A">
+<SPAN style="display: flex; align-items: center; gap: 6px"><SPAN style="width: 10px; height: 10px; border-radius: 3px; background: #0E7A55"></SPAN>Receitas</SPAN>
+<SPAN style="display: flex; align-items: center; gap: 6px"><SPAN style="width: 10px; height: 10px; border-radius: 3px; background: #F4A06A"></SPAN>Despesas</SPAN>
+</DIV>
+</DIV>
+<DIV style="display: flex; align-items: flex-end; gap: 14px; height: 200px; padding-bottom: 4px; border-bottom: 1px solid #EEF1F5" role="img" aria-label="Gráfico de barras com receitas e despesas por mês, de maio a outubro">
+
+<DIV style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; height: 100%; justify-content: flex-end">
+<DIV style="display: flex; align-items: flex-end; gap: 3px; height: 100%; width: 100%; justify-content: center">
+<DIV class="bar" style="animation-delay: 200ms; width: 40%; max-width: 22px; height: 82%; background: #0E7A55; border-radius: 4px 4px 0 0"></DIV>
+<DIV class="bar" style="animation-delay: 230ms; width: 40%; max-width: 22px; height: 70%; background: #F4A06A; border-radius: 4px 4px 0 0"></DIV>
+</DIV>
+</DIV>
+
+<DIV style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; height: 100%; justify-content: flex-end">
+<DIV style="display: flex; align-items: flex-end; gap: 3px; height: 100%; width: 100%; justify-content: center">
+<DIV class="bar" style="animation-delay: 260ms; width: 40%; max-width: 22px; height: 80%; background: #0E7A55; border-radius: 4px 4px 0 0"></DIV>
+<DIV class="bar" style="animation-delay: 290ms; width: 40%; max-width: 22px; height: 76%; background: #F4A06A; border-radius: 4px 4px 0 0"></DIV>
+</DIV>
+</DIV>
+
+<DIV style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; height: 100%; justify-content: flex-end">
+<DIV style="display: flex; align-items: flex-end; gap: 3px; height: 100%; width: 100%; justify-content: center">
+<DIV class="bar" style="animation-delay: 320ms; width: 40%; max-width: 22px; height: 86%; background: #0E7A55; border-radius: 4px 4px 0 0"></DIV>
+<DIV class="bar" style="animation-delay: 350ms; width: 40%; max-width: 22px; height: 92%; background: #F4A06A; border-radius: 4px 4px 0 0"></DIV>
+</DIV>
+</DIV>
+
+<DIV style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; height: 100%; justify-content: flex-end">
+<DIV style="display: flex; align-items: flex-end; gap: 3px; height: 100%; width: 100%; justify-content: center">
+<DIV class="bar" style="animation-delay: 380ms; width: 40%; max-width: 22px; height: 84%; background: #0E7A55; border-radius: 4px 4px 0 0"></DIV>
+<DIV class="bar" style="animation-delay: 410ms; width: 40%; max-width: 22px; height: 68%; background: #F4A06A; border-radius: 4px 4px 0 0"></DIV>
+</DIV>
+</DIV>
+
+<DIV style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; height: 100%; justify-content: flex-end">
+<DIV style="display: flex; align-items: flex-end; gap: 3px; height: 100%; width: 100%; justify-content: center">
+<DIV class="bar" style="animation-delay: 440ms; width: 40%; max-width: 22px; height: 81%; background: #0E7A55; border-radius: 4px 4px 0 0"></DIV>
+<DIV class="bar" style="animation-delay: 470ms; width: 40%; max-width: 22px; height: 72%; background: #F4A06A; border-radius: 4px 4px 0 0"></DIV>
+</DIV>
+</DIV>
+
+<DIV style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; height: 100%; justify-content: flex-end">
+<DIV style="display: flex; align-items: flex-end; gap: 3px; height: 100%; width: 100%; justify-content: center">
+<DIV class="bar" style="animation-delay: 500ms; width: 40%; max-width: 22px; height: 88%; background: #0E7A55; border-radius: 4px 4px 0 0"></DIV>
+<DIV class="bar" style="animation-delay: 530ms; width: 40%; max-width: 22px; height: 58%; background: #F4A06A; border-radius: 4px 4px 0 0"></DIV>
+</DIV>
+</DIV>
+
+</DIV>
+<DIV style="display: flex; gap: 14px; margin-top: -8px">
+
+<DIV style="flex: 1; text-align: center; font-size: 12px; font-weight: 700; color: #5B6B85">mai</DIV>
+
+<DIV style="flex: 1; text-align: center; font-size: 12px; font-weight: 700; color: #5B6B85">jun</DIV>
+
+<DIV style="flex: 1; text-align: center; font-size: 12px; font-weight: 700; color: #5B6B85">jul</DIV>
+
+<DIV style="flex: 1; text-align: center; font-size: 12px; font-weight: 700; color: #5B6B85">ago</DIV>
+
+<DIV style="flex: 1; text-align: center; font-size: 12px; font-weight: 700; color: #5B6B85">set</DIV>
+
+<DIV style="flex: 1; text-align: center; font-size: 12px; font-weight: 700; color: #5B6B85">out</DIV>
+
+</DIV>
+</SECTION>
+
+<SECTION class="fade-up" style="animation-delay: 300ms; background: #FFFFFF; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 1px 2px rgba(11,19,36,0.06)">
+<DIV style="display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-bottom: 6px">
+<H2 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px">Contas a vencer</H2>
+<A href="#" style="font-size: 14px; font-weight: 700; text-decoration: none">Ver calendário</A>
+</DIV>
+
+<DIV style="display: flex; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid #EEF1F5">
+<DIV style="width: 44px; height: 44px; border-radius: 12px; background: #FDEEE6; color: #9A3412; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0">
+<DIV style="font-weight: 800; font-size: 16px; line-height: 1">09</DIV>
+<DIV style="font-size: 12px; font-weight: 700">out</DIV>
+</DIV>
+<DIV style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+<DIV style="font-weight: 700; font-size: 15px">Conta de luz</DIV>
+<DIV style="font-size: 13px; color: #9A3412; font-weight: 600">Vence amanhã</DIV>
+</DIV>
+<DIV style="font-weight: 800; font-size: 15px; font-variant-numeric: tabular-nums">R$ 214,37</DIV>
+
+<BUTTON class="btn btn-secondary btn-sm" type="button" aria-label="Pagar Conta de luz">Pagar</BUTTON>
+
+
+</DIV>
+
+<DIV style="display: flex; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid #EEF1F5">
+<DIV style="width: 44px; height: 44px; border-radius: 12px; background: #EEF1F5; color: #26324A; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0">
+<DIV style="font-weight: 800; font-size: 16px; line-height: 1">11</DIV>
+<DIV style="font-size: 12px; font-weight: 700">out</DIV>
+</DIV>
+<DIV style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+<DIV style="font-weight: 700; font-size: 15px">Internet</DIV>
+<DIV style="font-size: 13px; color: #5B6B85; font-weight: 600">Em 3 dias</DIV>
+</DIV>
+<DIV style="font-weight: 800; font-size: 15px; font-variant-numeric: tabular-nums">R$ 119,90</DIV>
+
+<BUTTON class="btn btn-secondary btn-sm" type="button" aria-label="Pagar Internet">Pagar</BUTTON>
+
+
+</DIV>
+
+<DIV style="display: flex; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid #EEF1F5">
+<DIV style="width: 44px; height: 44px; border-radius: 12px; background: #EEF1F5; color: #26324A; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0">
+<DIV style="font-weight: 800; font-size: 16px; line-height: 1">15</DIV>
+<DIV style="font-size: 12px; font-weight: 700">out</DIV>
+</DIV>
+<DIV style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+<DIV style="font-weight: 700; font-size: 15px">Fatura do cartão</DIV>
+<DIV style="font-size: 13px; color: #5B6B85; font-weight: 600">Em 7 dias</DIV>
+</DIV>
+<DIV style="font-weight: 800; font-size: 15px; font-variant-numeric: tabular-nums">R$ 2.348,10</DIV>
+
+<BUTTON class="btn btn-secondary btn-sm" type="button" aria-label="Pagar Fatura do cartão">Pagar</BUTTON>
+
+
+</DIV>
+
+
+</SECTION>
+
+<SECTION class="fade-up" style="animation-delay: 360ms; background: #FFFFFF; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 1px 2px rgba(11,19,36,0.06)">
+<DIV style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
+<H2 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px">Orçamentos do mês</H2>
+<A href="#" style="font-size: 14px; font-weight: 700; text-decoration: none">Ajustar</A>
+</DIV>
+
+<DIV style="display: flex; flex-direction: column; gap: 6px">
+<DIV style="display: flex; justify-content: space-between; font-size: 14px; gap: 8px">
+<SPAN style="font-weight: 700">Moradia</SPAN>
+<SPAN style="font-variant-numeric: tabular-nums; color: #9A3412; font-weight: 700">R$ 2.100 de R$ 2.300</SPAN>
+</DIV>
+<DIV style="height: 10px; background: #EEF1F5; border-radius: 999px; overflow: hidden"><DIV class="fill" style="height: 100%; width: 91%; background: #C2410C; border-radius: 999px"></DIV></DIV>
+</DIV>
+
+<DIV style="display: flex; flex-direction: column; gap: 6px">
+<DIV style="display: flex; justify-content: space-between; font-size: 14px; gap: 8px">
+<SPAN style="font-weight: 700">Alimentação</SPAN>
+<SPAN style="font-variant-numeric: tabular-nums; color: #5B6B85; font-weight: 700">R$ 1.240 de R$ 1.600</SPAN>
+</DIV>
+<DIV style="height: 10px; background: #EEF1F5; border-radius: 999px; overflow: hidden"><DIV class="fill" style="height: 100%; width: 78%; background: #2346D8; border-radius: 999px"></DIV></DIV>
+</DIV>
+
+<DIV style="display: flex; flex-direction: column; gap: 6px">
+<DIV style="display: flex; justify-content: space-between; font-size: 14px; gap: 8px">
+<SPAN style="font-weight: 700">Transporte</SPAN>
+<SPAN style="font-variant-numeric: tabular-nums; color: #5B6B85; font-weight: 700">R$ 410 de R$ 600</SPAN>
+</DIV>
+<DIV style="height: 10px; background: #EEF1F5; border-radius: 999px; overflow: hidden"><DIV class="fill" style="height: 100%; width: 68%; background: #2346D8; border-radius: 999px"></DIV></DIV>
+</DIV>
+
+<DIV style="display: flex; flex-direction: column; gap: 6px">
+<DIV style="display: flex; justify-content: space-between; font-size: 14px; gap: 8px">
+<SPAN style="font-weight: 700">Lazer</SPAN>
+<SPAN style="font-variant-numeric: tabular-nums; color: #9A3412; font-weight: 700">R$ 552 de R$ 600</SPAN>
+</DIV>
+<DIV style="height: 10px; background: #EEF1F5; border-radius: 999px; overflow: hidden"><DIV class="fill" style="height: 100%; width: 92%; background: #C2410C; border-radius: 999px"></DIV></DIV>
+</DIV>
+
+</SECTION>
+
+<SECTION class="fade-up" style="animation-delay: 420ms; background: #0B1324; color: #FFFFFF; border-radius: 20px; padding: 18px 22px 22px 8px; display: flex; align-items: center; gap: 8px">
+
+
+<DIV style="width: 120px; height: 120px; display: flex; align-items: center; justify-content: center">
+<svg viewBox="0 0 200 200" width="100%" height="100%" role="img" aria-label="Capi pensando">
+<ellipse cx="100" cy="188" rx="56" ry="6" fill="#0B1324" opacity="0.10"></ellipse>
+<g>
+<animateTransform attributeName="transform" type="translate" values="0 0; 0 -3; 0 0" dur="4s" repeatCount="indefinite"></animateTransform>
+<ellipse cx="72" cy="178" rx="16" ry="8" fill="#7E5235"></ellipse>
+<ellipse cx="128" cy="178" rx="16" ry="8" fill="#7E5235"></ellipse>
+<ellipse cx="100" cy="140" rx="66" ry="42" fill="#A8724A"></ellipse>
+<ellipse cx="100" cy="152" rx="38" ry="24" fill="#D9A877"></ellipse>
+<g opacity="0">
+<ellipse cx="160" cy="116" rx="9" ry="18" fill="#A8724A">
+<animateTransform attributeName="transform" type="rotate" values="-25 152 132; 15 152 132; -25 152 132" dur="0.8s" repeatCount="indefinite"></animateTransform>
+</ellipse>
+</g>
+<circle cx="58" cy="66" r="11" fill="#7E5235"></circle>
+<circle cx="142" cy="66" r="11" fill="#7E5235"></circle>
+<circle cx="58" cy="66" r="5" fill="#5A3A26"></circle>
+<circle cx="142" cy="66" r="5" fill="#5A3A26"></circle>
+<rect x="50" y="58" width="100" height="86" rx="42" fill="#A8724A"></rect>
+<ellipse cx="64" cy="112" rx="8" ry="4.5" fill="#F09A86" opacity="0.55"></ellipse>
+<ellipse cx="136" cy="112" rx="8" ry="4.5" fill="#F09A86" opacity="0.55"></ellipse>
+<g opacity="1" transform="translate(2 -3)">
+<ellipse cx="80" cy="88" rx="5" ry="6" fill="#1A1410">
+<animate attributeName="ry" values="6;6;0.6;6" keyTimes="0;0.92;0.96;1" dur="4s" repeatCount="indefinite"></animate>
+</ellipse>
+<ellipse cx="120" cy="88" rx="5" ry="6" fill="#1A1410">
+<animate attributeName="ry" values="6;6;0.6;6" keyTimes="0;0.92;0.96;1" dur="4s" repeatCount="indefinite"></animate>
+</ellipse>
+<circle cx="81.5" cy="86" r="1.6" fill="#FFFFFF"></circle>
+<circle cx="121.5" cy="86" r="1.6" fill="#FFFFFF"></circle>
+</g>
+<g opacity="0" stroke="#1A1410" stroke-width="3.5" fill="none" stroke-linecap="round">
+<path d="M73 90 Q80 81 87 90"></path>
+<path d="M113 90 Q120 81 127 90"></path>
+</g>
+<g opacity="0" stroke="#1A1410" stroke-width="3" fill="none" stroke-linecap="round">
+<path d="M73 88 Q80 93 87 88"></path>
+<path d="M113 88 Q120 93 127 88"></path>
+</g>
+<rect x="74" y="100" width="52" height="34" rx="17" fill="#7E5235"></rect>
+<ellipse cx="91" cy="110" rx="3.5" ry="2.5" fill="#3A2518"></ellipse>
+<ellipse cx="109" cy="110" rx="3.5" ry="2.5" fill="#3A2518"></ellipse>
+<path opacity="0" d="M93 122 Q100 129 107 122" stroke="#2A1A10" stroke-width="2.5" fill="none" stroke-linecap="round"></path>
+<path opacity="0" d="M92 120 Q100 133 108 120 Z" fill="#2A1A10"></path>
+<path opacity="1" d="M94 125 L106 125" stroke="#2A1A10" stroke-width="2.5" stroke-linecap="round"></path>
+<ellipse opacity="0" cx="100" cy="124" rx="3.5" ry="4.5" fill="#2A1A10"></ellipse>
+<g transform="translate(100 42) rotate(0)">
+<ellipse cx="0" cy="0" rx="16" ry="16" fill="#F2A541" stroke="#C97C12" stroke-width="3">
+<animate attributeName="rx" values="16;16;3;16;16" keyTimes="0;0.7;0.8;0.9;1" dur="3s" repeatCount="indefinite"></animate>
+</ellipse>
+<ellipse cx="0" cy="0" rx="9" ry="9" fill="none" stroke="#C97C12" stroke-width="2" opacity="0.7">
+<animate attributeName="rx" values="9;9;1.5;9;9" keyTimes="0;0.7;0.8;0.9;1" dur="3s" repeatCount="indefinite"></animate>
+</ellipse>
+</g>
+</g>
+<g opacity="0" fill="#F2A541">
+<g transform="translate(32 64)"><path d="M0 -9 L2.5 -2.5 L9 0 L2.5 2.5 L0 9 L-2.5 2.5 L-9 0 L-2.5 -2.5 Z"><animate attributeName="opacity" values="0;1;0" dur="1.2s" repeatCount="indefinite"></animate></path></g>
+<g transform="translate(168 36)"><path d="M0 -7 L2 -2 L7 0 L2 2 L0 7 L-2 2 L-7 0 L-2 -2 Z"><animate attributeName="opacity" values="0;1;0" dur="1.2s" begin="0.4s" repeatCount="indefinite"></animate></path></g>
+<g transform="translate(40 26)"><path d="M0 -6 L1.8 -1.8 L6 0 L1.8 1.8 L0 6 L-1.8 1.8 L-6 0 L-1.8 -1.8 Z"><animate attributeName="opacity" values="0;1;0" dur="1.2s" begin="0.8s" repeatCount="indefinite"></animate></path></g>
+</g>
+<g opacity="1" fill="#FFFFFF" stroke="#C5CCD6" stroke-width="2">
+<circle cx="154" cy="62" r="4"></circle>
+<circle cx="165" cy="46" r="6"></circle>
+<circle cx="180" cy="24" r="10"></circle>
+</g>
+<g opacity="0">
+<path d="M152 60 Q159 71 152 77 Q145 71 152 60 Z" fill="#6BB6FF">
+<animateTransform attributeName="transform" type="translate" values="0 0; 0 6; 0 0" dur="1.6s" repeatCount="indefinite"></animateTransform>
+</path>
+</g>
+<g opacity="0" fill="#5B6B85" font-family="Bricolage Grotesque, sans-serif" font-weight="700">
+<text x="150" y="58" font-size="16">z<animate attributeName="opacity" values="0;1;0" dur="2.4s" repeatCount="indefinite"></animate></text>
+<text x="162" y="40" font-size="20">z<animate attributeName="opacity" values="0;1;0" dur="2.4s" begin="0.6s" repeatCount="indefinite"></animate></text>
+<text x="176" y="20" font-size="24">z<animate attributeName="opacity" values="0;1;0" dur="2.4s" begin="1.2s" repeatCount="indefinite"></animate></text>
+</g>
+</svg>
+</DIV>
+
+<DIV style="display: flex; flex-direction: column; gap: 8px; flex: 1; min-width: 0">
+<DIV style="font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #F2A541">Dica da Capi</DIV>
+<DIV style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; line-height: 1.3">Lazer já usou 92% do orçamento e ainda faltam 24 dias.</DIV>
+<DIV style="display: flex; gap: 10px; flex-wrap: wrap">
+<BUTTON class="btn btn-sm" type="button" style="background: #F2A541; color: #0B1324">Ver gastos de lazer</BUTTON>
+<BUTTON class="btn btn-sm" type="button" style="background: transparent; color: #C5CCD6">Agora não</BUTTON>
+</DIV>
+</DIV>
+</SECTION>
+</DIV>
+</MAIN>
+</DIV>
+
+</div>
+</body>
+</html>

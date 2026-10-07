@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Componentes · Design system sysfinance</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&amp;family=Manrope:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+.btn{font-family: Manrope, sans-serif; font-weight: 700; font-size: 15px; height: 44px; padding: 0 18px; border-radius: 8px; border: 0; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: background-color 120ms cubic-bezier(.2,.8,.2,1), transform 120ms cubic-bezier(.2,.8,.2,1), box-shadow 120ms}
+.btn:active{transform: scale(0.97)}
+.btn:focus-visible, .seg:focus-visible, .sw:focus-visible, .inp:focus-visible{outline: 3px solid #6F8BF0; outline-offset: 2px}
+.btn-primary{background: #2346D8; color: #FFFFFF}.btn-primary:hover{background: #1A34A6}
+.btn-secondary{background: #FFFFFF; color: #0B1324; box-shadow: inset 0 0 0 1.5px #C5CCD6}.btn-secondary:hover{background: #F6F7F9}
+.btn-ghost{background: transparent; color: #2346D8}.btn-ghost:hover{background: #E8EDFC}
+.btn-danger{background: #C2410C; color: #FFFFFF}.btn-danger:hover{background: #9A3412}
+.btn-sm{height: 36px; font-size: 14px; padding: 0 14px}
+.inp{font-family: Manrope, sans-serif; font-size: 16px; height: 44px; border-radius: 8px; border: 1.5px solid #C5CCD6; padding: 0 14px; color: #0B1324; background: #FFFFFF; box-sizing: border-box; width: 100%}
+.inp:hover{border-color: #5B6B85}
+.spin{width: 16px; height: 16px; border-radius: 999px; border: 2.5px solid rgba(255,255,255,0.35); border-top-color: #FFFFFF; animation: spin 700ms linear infinite}
+@keyframes spin{to{transform: rotate(360deg)}}
+@keyframes toastIn{from{opacity: 0; transform: translateY(12px) scale(0.98)}to{opacity: 1; transform: none}}
+.toast{animation: toastIn 320ms cubic-bezier(.2,.8,.2,1) both}
+.row{transition: background-color 120ms}.row:hover{background: #F6F7F9}
+@media (prefers-reduced-motion: reduce){.toast,.spin{animation-duration: 1ms}}
+</style>
+<style>
+body{margin:0}
+</style>
+<style>
+.ds-bar{position:sticky;top:0;z-index:9999;display:flex;align-items:center;gap:12px;padding:10px 16px;background:#0B1324;color:#C5CCD6;font:600 14px/1.4 Manrope,system-ui,sans-serif}
+.ds-bar a{color:#fff;font-weight:700;text-decoration:none;padding:6px 10px;border-radius:8px}
+.ds-bar a:hover{background:#26324A}
+.ds-bar a:focus-visible{outline:3px solid #6F8BF0;outline-offset:2px}
+.ds-board{width:1440px;min-height:1400px}
+</style>
+</head>
+<body>
+<nav class="ds-bar" aria-label="Design system"><a href="index.html">← Todos os quadros</a><span>Componentes · versão estática</span></nav>
+<div class="ds-board">
+
+
+<DIV style="width: 1440px; height: 1400px; box-sizing: border-box; background: #F6F7F9; font-family: Manrope, sans-serif; color: #0B1324; padding: 64px 72px; position: relative; display: flex; flex-direction: column; gap: 28px">
+<DIV style="display: flex; flex-direction: column; gap: 8px">
+<DIV style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5B6B85">Componentes · clique para testar</DIV>
+<H1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 52px; letter-spacing: -0.02em">Peças do dia a dia</H1>
+</DIV>
+<DIV style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; align-items: start">
+
+<DIV style="display: flex; flex-direction: column; gap: 20px">
+<DIV style="background: #FFFFFF; border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 1px 2px rgba(11,19,36,0.06)">
+<DIV style="font-weight: 800; font-size: 16px">Botões</DIV>
+<DIV style="display: flex; flex-wrap: wrap; gap: 10px">
+<BUTTON class="btn btn-primary" type="button">Novo lançamento</BUTTON>
+<BUTTON class="btn btn-secondary" type="button">Exportar</BUTTON>
+<BUTTON class="btn btn-ghost" type="button">Ver todos</BUTTON>
+<BUTTON class="btn btn-danger" type="button">Excluir</BUTTON>
+</DIV>
+<DIV style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center">
+<BUTTON class="btn btn-primary btn-sm" type="button">Pequeno</BUTTON>
+<BUTTON class="btn btn-secondary btn-sm" type="button">Pequeno</BUTTON>
+<BUTTON class="btn btn-primary" type="button" style="min-width: 150px">
+
+Salvar conta
+</BUTTON>
+</DIV>
+<DIV style="font-size: 13px; color: #5B6B85; line-height: 1.5">Altura mínima 44px. Clique em “Salvar conta” para ver o estado de carregando e o aviso de sucesso.</DIV>
+</DIV>
+
+<DIV style="background: #FFFFFF; border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 1px 2px rgba(11,19,36,0.06)">
+<DIV style="font-weight: 800; font-size: 16px">Campos</DIV>
+<DIV style="display: flex; flex-direction: column; gap: 6px">
+<LABEL for="desc" style="font-size: 14px; font-weight: 700">Descrição</LABEL>
+<INPUT id="desc" class="inp" type="text" placeholder="Ex.: Mercado da semana"></INPUT>
+</DIV>
+<DIV style="display: flex; flex-direction: column; gap: 6px">
+<LABEL for="valor" style="font-size: 14px; font-weight: 700">Valor</LABEL>
+<DIV style="position: relative">
+<SPAN style="position: absolute; left: 14px; top: 12px; font-weight: 700; color: #5B6B85; font-size: 16px">R$</SPAN>
+<INPUT id="valor" class="inp" type="text" inputmode="decimal" value="1.250,00" style="padding-left: 46px; font-variant-numeric: tabular-nums; font-weight: 700"></INPUT>
+</DIV>
+<DIV style="font-size: 13px; color: #5B6B85">Use vírgula para os centavos.</DIV>
+</DIV>
+<DIV style="display: flex; flex-direction: column; gap: 6px">
+<LABEL for="venc" style="font-size: 14px; font-weight: 700">Vencimento</LABEL>
+<INPUT id="venc" class="inp" type="text" value="31/02/2026" aria-invalid="true" aria-describedby="venc-err" style="border-color: #C2410C"></INPUT>
+<DIV id="venc-err" style="font-size: 13px; color: #9A3412; font-weight: 600; display: flex; align-items: center; gap: 6px">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v6M12 16.5v.5"></path></svg>
+Essa data não existe. Confira o dia.</DIV>
+</DIV>
+</DIV>
+</DIV>
+
+<DIV style="display: flex; flex-direction: column; gap: 20px">
+<DIV style="background: #FFFFFF; border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 1px 2px rgba(11,19,36,0.06)">
+<DIV style="font-weight: 800; font-size: 16px">Controles</DIV>
+<DIV style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<DIV style="display: flex; flex-direction: column"><SPAN id="v360" style="font-weight: 700; font-size: 15px">Visão 360</SPAN><SPAN style="font-size: 13px; color: #5B6B85">Somar todos os workspaces</SPAN></DIV>
+<BUTTON class="sw" type="button" role="switch" aria-checked="true" aria-labelledby="v360" style="width: 52px; height: 32px; border-radius: 999px; border: 0; padding: 0; cursor: pointer; position: relative; background: #2346D8; transition: background-color 200ms cubic-bezier(.2,.8,.2,1)">
+<SPAN style="position: absolute; top: 4px; left: 4px; width: 24px; height: 24px; border-radius: 999px; background: #FFFFFF; box-shadow: 0 1px 3px rgba(11,19,36,0.25); transform: translateX(20px); transition: transform 320ms cubic-bezier(.34,1.56,.64,1)"></SPAN>
+</BUTTON>
+</DIV>
+<DIV style="display: flex; flex-direction: column; gap: 8px">
+<DIV style="font-size: 14px; font-weight: 700">Período</DIV>
+<DIV style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); background: #EEF1F5; border-radius: 10px; padding: 4px; gap: 4px">
+
+<BUTTON class="seg" type="button" aria-pressed="true" style="height: 36px; border: 0; border-radius: 8px; font-family: Manrope, sans-serif; font-weight: 700; font-size: 14px; cursor: pointer; background: #FFFFFF; color: #0B1324; box-shadow: 0 1px 3px rgba(11,19,36,0.12); transition: background-color 200ms, color 200ms">Mês</BUTTON>
+
+<BUTTON class="seg" type="button" aria-pressed="false" style="height: 36px; border: 0; border-radius: 8px; font-family: Manrope, sans-serif; font-weight: 700; font-size: 14px; cursor: pointer; background: transparent; color: #5B6B85; box-shadow: none; transition: background-color 200ms, color 200ms">Trimestre</BUTTON>
+
+<BUTTON class="seg" type="button" aria-pressed="false" style="height: 36px; border: 0; border-radius: 8px; font-family: Manrope, sans-serif; font-weight: 700; font-size: 14px; cursor: pointer; background: transparent; color: #5B6B85; box-shadow: none; transition: background-color 200ms, color 200ms">Ano</BUTTON>
+
+</DIV>
+</DIV>
+<DIV style="display: flex; flex-direction: column; gap: 8px">
+<DIV style="font-size: 14px; font-weight: 700">Status</DIV>
+<DIV style="display: flex; flex-wrap: wrap; gap: 8px">
+<SPAN style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: #E6F4EE; color: #0B5B40"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>Pago</SPAN>
+<SPAN style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: #FEF3C7; color: #854D0E"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8"></circle><path d="M12 8v4l2.5 2"></path></svg>Pendente</SPAN>
+<SPAN style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: #FDEEE6; color: #9A3412"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 7v6M12 16.5v.5"></path></svg>Vencido</SPAN>
+<SPAN style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: #E8EDFC; color: #1A34A6">Recorrente</SPAN>
+</DIV>
+</DIV>
+</DIV>
+
+<DIV style="background: #FFFFFF; border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 1px 2px rgba(11,19,36,0.06)">
+<DIV style="display: flex; justify-content: space-between; align-items: center">
+<DIV style="font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #5B6B85">Saldo total</DIV>
+<SPAN style="font-size: 12px; font-weight: 800; padding: 3px 8px; border-radius: 999px; background: #E6F4EE; color: #0B5B40">▲ vs. mês passado</SPAN>
+</DIV>
+<DIV style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 40px; letter-spacing: -0.02em; font-variant-numeric: tabular-nums">R$ [SALDO]</DIV>
+<DIV style="font-size: 13px; color: #5B6B85">KPI: rótulo, valor grande tabular, comparação com seta + texto.</DIV>
+</DIV>
+
+<DIV style="background: #FFFFFF; border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 1px 2px rgba(11,19,36,0.06)">
+<DIV style="display: flex; justify-content: space-between; align-items: center">
+<DIV style="font-weight: 800; font-size: 16px">Meta: reserva de emergência</DIV>
+<DIV style="font-weight: 800; font-size: 15px; color: #C97C12; font-variant-numeric: tabular-nums">68%</DIV>
+</DIV>
+<DIV style="height: 12px; background: #EEF1F5; border-radius: 999px; overflow: hidden" role="progressbar" aria-valuenow="68" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso da meta">
+<DIV style="height: 100%; width: 68%; background: #F2A541; border-radius: 999px"></DIV>
+</DIV>
+<DIV style="font-size: 13px; color: #5B6B85">Ao chegar em 100%, a Capi comemora (veja Movimento).</DIV>
+</DIV>
+</DIV>
+
+<DIV style="display: flex; flex-direction: column; gap: 20px">
+<DIV style="background: #FFFFFF; border-radius: 20px; padding: 8px 8px 12px; display: flex; flex-direction: column; box-shadow: 0 1px 2px rgba(11,19,36,0.06)">
+<DIV style="font-weight: 800; font-size: 16px; padding: 16px 16px 8px">Lançamentos</DIV>
+
+<DIV class="row" style="display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-radius: 12px">
+<DIV style="width: 40px; height: 40px; border-radius: 12px; background: #E6F4EE; color: #0B5B40; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px; flex-shrink: 0">S</DIV>
+<DIV style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+<DIV style="font-weight: 700; font-size: 15px">Salário</DIV>
+<DIV style="font-size: 13px; color: #5B6B85">Receita · Conta corrente</DIV>
+</DIV>
+<DIV style="font-weight: 800; font-size: 15px; font-variant-numeric: tabular-nums; color: #0E7A55">+ R$ 8.420,00</DIV>
+</DIV>
+
+<DIV class="row" style="display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-radius: 12px">
+<DIV style="width: 40px; height: 40px; border-radius: 12px; background: #EEF1F5; color: #26324A; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px; flex-shrink: 0">M</DIV>
+<DIV style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+<DIV style="font-weight: 700; font-size: 15px">Mercado</DIV>
+<DIV style="font-size: 13px; color: #5B6B85">Alimentação · Cartão final 4412</DIV>
+</DIV>
+<DIV style="font-weight: 800; font-size: 15px; font-variant-numeric: tabular-nums; color: #0B1324">− R$ 386,20</DIV>
+</DIV>
+
+<DIV class="row" style="display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-radius: 12px">
+<DIV style="width: 40px; height: 40px; border-radius: 12px; background: #EEF1F5; color: #26324A; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px; flex-shrink: 0">A</DIV>
+<DIV style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+<DIV style="font-weight: 700; font-size: 15px">Aluguel</DIV>
+<DIV style="font-size: 13px; color: #5B6B85">Moradia · Pix</DIV>
+</DIV>
+<DIV style="font-weight: 800; font-size: 15px; font-variant-numeric: tabular-nums; color: #0B1324">− R$ 2.100,00</DIV>
+</DIV>
+
+<DIV class="row" style="display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-radius: 12px">
+<DIV style="width: 40px; height: 40px; border-radius: 12px; background: #EEF1F5; color: #26324A; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px; flex-shrink: 0">S</DIV>
+<DIV style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+<DIV style="font-weight: 700; font-size: 15px">Streaming</DIV>
+<DIV style="font-size: 13px; color: #5B6B85">Lazer · Recorrente</DIV>
+</DIV>
+<DIV style="font-weight: 800; font-size: 15px; font-variant-numeric: tabular-nums; color: #0B1324">− R$ 39,90</DIV>
+</DIV>
+
+</DIV>
+
+<DIV style="background: #FDEEE6; border-radius: 20px; padding: 16px 20px 16px 8px; display: flex; align-items: center; gap: 8px" role="alert">
+
+
+<DIV style="width: 84px; height: 84px; display: flex; align-items: center; justify-content: center">
+<svg viewBox="0 0 200 200" width="100%" height="100%" role="img" aria-label="Capi preocupada">
+<ellipse cx="100" cy="188" rx="56" ry="6" fill="#0B1324" opacity="0.10"></ellipse>
+<g>
+<animateTransform attributeName="transform" type="translate" values="0 0; -2 0; 2 0; 0 0" dur="0.4s" repeatCount="indefinite"></animateTransform>
+<ellipse cx="72" cy="178" rx="16" ry="8" fill="#7E5235"></ellipse>
+<ellipse cx="128" cy="178" rx="16" ry="8" fill="#7E5235"></ellipse>
+<ellipse cx="100" cy="140" rx="66" ry="42" fill="#A8724A"></ellipse>
+<ellipse cx="100" cy="152" rx="38" ry="24" fill="#D9A877"></ellipse>
+<g opacity="0">
+<ellipse cx="160" cy="116" rx="9" ry="18" fill="#A8724A">
+<animateTransform attributeName="transform" type="rotate" values="-25 152 132; 15 152 132; -25 152 132" dur="0.8s" repeatCount="indefinite"></animateTransform>
+</ellipse>
+</g>
+<circle cx="58" cy="66" r="11" fill="#7E5235"></circle>
+<circle cx="142" cy="66" r="11" fill="#7E5235"></circle>
+<circle cx="58" cy="66" r="5" fill="#5A3A26"></circle>
+<circle cx="142" cy="66" r="5" fill="#5A3A26"></circle>
+<rect x="50" y="58" width="100" height="86" rx="42" fill="#A8724A"></rect>
+<ellipse cx="64" cy="112" rx="8" ry="4.5" fill="#F09A86" opacity="0.55"></ellipse>
+<ellipse cx="136" cy="112" rx="8" ry="4.5" fill="#F09A86" opacity="0.55"></ellipse>
+<g opacity="1" transform="translate(0 0)">
+<ellipse cx="80" cy="88" rx="5" ry="6" fill="#1A1410">
+<animate attributeName="ry" values="6;6;0.6;6" keyTimes="0;0.92;0.96;1" dur="4s" repeatCount="indefinite"></animate>
+</ellipse>
+<ellipse cx="120" cy="88" rx="5" ry="6" fill="#1A1410">
+<animate attributeName="ry" values="6;6;0.6;6" keyTimes="0;0.92;0.96;1" dur="4s" repeatCount="indefinite"></animate>
+</ellipse>
+<circle cx="81.5" cy="86" r="1.6" fill="#FFFFFF"></circle>
+<circle cx="121.5" cy="86" r="1.6" fill="#FFFFFF"></circle>
+</g>
+<g opacity="0" stroke="#1A1410" stroke-width="3.5" fill="none" stroke-linecap="round">
+<path d="M73 90 Q80 81 87 90"></path>
+<path d="M113 90 Q120 81 127 90"></path>
+</g>
+<g opacity="0" stroke="#1A1410" stroke-width="3" fill="none" stroke-linecap="round">
+<path d="M73 88 Q80 93 87 88"></path>
+<path d="M113 88 Q120 93 127 88"></path>
+</g>
+<rect x="74" y="100" width="52" height="34" rx="17" fill="#7E5235"></rect>
+<ellipse cx="91" cy="110" rx="3.5" ry="2.5" fill="#3A2518"></ellipse>
+<ellipse cx="109" cy="110" rx="3.5" ry="2.5" fill="#3A2518"></ellipse>
+<path opacity="0" d="M93 122 Q100 129 107 122" stroke="#2A1A10" stroke-width="2.5" fill="none" stroke-linecap="round"></path>
+<path opacity="0" d="M92 120 Q100 133 108 120 Z" fill="#2A1A10"></path>
+<path opacity="0" d="M94 125 L106 125" stroke="#2A1A10" stroke-width="2.5" stroke-linecap="round"></path>
+<ellipse opacity="1" cx="100" cy="124" rx="3.5" ry="4.5" fill="#2A1A10"></ellipse>
+<g transform="translate(100 42) rotate(-18)">
+<ellipse cx="0" cy="0" rx="16" ry="16" fill="#F2A541" stroke="#C97C12" stroke-width="3">
+<animate attributeName="rx" values="16;16;3;16;16" keyTimes="0;0.7;0.8;0.9;1" dur="3s" repeatCount="indefinite"></animate>
+</ellipse>
+<ellipse cx="0" cy="0" rx="9" ry="9" fill="none" stroke="#C97C12" stroke-width="2" opacity="0.7">
+<animate attributeName="rx" values="9;9;1.5;9;9" keyTimes="0;0.7;0.8;0.9;1" dur="3s" repeatCount="indefinite"></animate>
+</ellipse>
+</g>
+</g>
+<g opacity="0" fill="#F2A541">
+<g transform="translate(32 64)"><path d="M0 -9 L2.5 -2.5 L9 0 L2.5 2.5 L0 9 L-2.5 2.5 L-9 0 L-2.5 -2.5 Z"><animate attributeName="opacity" values="0;1;0" dur="1.2s" repeatCount="indefinite"></animate></path></g>
+<g transform="translate(168 36)"><path d="M0 -7 L2 -2 L7 0 L2 2 L0 7 L-2 2 L-7 0 L-2 -2 Z"><animate attributeName="opacity" values="0;1;0" dur="1.2s" begin="0.4s" repeatCount="indefinite"></animate></path></g>
+<g transform="translate(40 26)"><path d="M0 -6 L1.8 -1.8 L6 0 L1.8 1.8 L0 6 L-1.8 1.8 L-6 0 L-1.8 -1.8 Z"><animate attributeName="opacity" values="0;1;0" dur="1.2s" begin="0.8s" repeatCount="indefinite"></animate></path></g>
+</g>
+<g opacity="0" fill="#FFFFFF" stroke="#C5CCD6" stroke-width="2">
+<circle cx="154" cy="62" r="4"></circle>
+<circle cx="165" cy="46" r="6"></circle>
+<circle cx="180" cy="24" r="10"></circle>
+</g>
+<g opacity="1">
+<path d="M152 60 Q159 71 152 77 Q145 71 152 60 Z" fill="#6BB6FF">
+<animateTransform attributeName="transform" type="translate" values="0 0; 0 6; 0 0" dur="1.6s" repeatCount="indefinite"></animateTransform>
+</path>
+</g>
+<g opacity="0" fill="#5B6B85" font-family="Bricolage Grotesque, sans-serif" font-weight="700">
+<text x="150" y="58" font-size="16">z<animate attributeName="opacity" values="0;1;0" dur="2.4s" repeatCount="indefinite"></animate></text>
+<text x="162" y="40" font-size="20">z<animate attributeName="opacity" values="0;1;0" dur="2.4s" begin="0.6s" repeatCount="indefinite"></animate></text>
+<text x="176" y="20" font-size="24">z<animate attributeName="opacity" values="0;1;0" dur="2.4s" begin="1.2s" repeatCount="indefinite"></animate></text>
+</g>
+</svg>
+</DIV>
+
+<DIV style="flex: 1; display: flex; flex-direction: column; gap: 4px">
+<DIV style="font-weight: 800; font-size: 15px; color: #7C2D12">As despesas passaram das receitas</DIV>
+<DIV style="font-size: 14px; color: #7C2D12; line-height: 1.4">Revise os orçamentos de maior gasto antes do fechamento.</DIV>
+</DIV>
+<BUTTON class="btn btn-sm" type="button" style="background: #7C2D12; color: #FFFFFF">Revisar</BUTTON>
+</DIV>
+
+<DIV style="background: #FFFFFF; border-radius: 20px; padding: 20px 24px 28px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; box-shadow: 0 1px 2px rgba(11,19,36,0.06)">
+
+
+<DIV style="width: 130px; height: 130px; display: flex; align-items: center; justify-content: center">
+<svg viewBox="0 0 200 200" width="100%" height="100%" role="img" aria-label="Capi dormindo">
+<ellipse cx="100" cy="188" rx="56" ry="6" fill="#0B1324" opacity="0.10"></ellipse>
+<g>
+<animateTransform attributeName="transform" type="translate" values="0 0; 0 2; 0 0" dur="4s" repeatCount="indefinite"></animateTransform>
+<ellipse cx="72" cy="178" rx="16" ry="8" fill="#7E5235"></ellipse>
+<ellipse cx="128" cy="178" rx="16" ry="8" fill="#7E5235"></ellipse>
+<ellipse cx="100" cy="140" rx="66" ry="42" fill="#A8724A"></ellipse>
+<ellipse cx="100" cy="152" rx="38" ry="24" fill="#D9A877"></ellipse>
+<g opacity="0">
+<ellipse cx="160" cy="116" rx="9" ry="18" fill="#A8724A">
+<animateTransform attributeName="transform" type="rotate" values="-25 152 132; 15 152 132; -25 152 132" dur="0.8s" repeatCount="indefinite"></animateTransform>
+</ellipse>
+</g>
+<circle cx="58" cy="66" r="11" fill="#7E5235"></circle>
+<circle cx="142" cy="66" r="11" fill="#7E5235"></circle>
+<circle cx="58" cy="66" r="5" fill="#5A3A26"></circle>
+<circle cx="142" cy="66" r="5" fill="#5A3A26"></circle>
+<rect x="50" y="58" width="100" height="86" rx="42" fill="#A8724A"></rect>
+<ellipse cx="64" cy="112" rx="8" ry="4.5" fill="#F09A86" opacity="0.55"></ellipse>
+<ellipse cx="136" cy="112" rx="8" ry="4.5" fill="#F09A86" opacity="0.55"></ellipse>
+<g opacity="0" transform="translate(0 0)">
+<ellipse cx="80" cy="88" rx="5" ry="6" fill="#1A1410">
+<animate attributeName="ry" values="6;6;0.6;6" keyTimes="0;0.92;0.96;1" dur="4s" repeatCount="indefinite"></animate>
+</ellipse>
+<ellipse cx="120" cy="88" rx="5" ry="6" fill="#1A1410">
+<animate attributeName="ry" values="6;6;0.6;6" keyTimes="0;0.92;0.96;1" dur="4s" repeatCount="indefinite"></animate>
+</ellipse>
+<circle cx="81.5" cy="86" r="1.6" fill="#FFFFFF"></circle>
+<circle cx="121.5" cy="86" r="1.6" fill="#FFFFFF"></circle>
+</g>
+<g opacity="0" stroke="#1A1410" stroke-width="3.5" fill="none" stroke-linecap="round">
+<path d="M73 90 Q80 81 87 90"></path>
+<path d="M113 90 Q120 81 127 90"></path>
+</g>
+<g opacity="1" stroke="#1A1410" stroke-width="3" fill="none" stroke-linecap="round">
+<path d="M73 88 Q80 93 87 88"></path>
+<path d="M113 88 Q120 93 127 88"></path>
+</g>
+<rect x="74" y="100" width="52" height="34" rx="17" fill="#7E5235"></rect>
+<ellipse cx="91" cy="110" rx="3.5" ry="2.5" fill="#3A2518"></ellipse>
+<ellipse cx="109" cy="110" rx="3.5" ry="2.5" fill="#3A2518"></ellipse>
+<path opacity="1" d="M93 122 Q100 129 107 122" stroke="#2A1A10" stroke-width="2.5" fill="none" stroke-linecap="round"></path>
+<path opacity="0" d="M92 120 Q100 133 108 120 Z" fill="#2A1A10"></path>
+<path opacity="0" d="M94 125 L106 125" stroke="#2A1A10" stroke-width="2.5" stroke-linecap="round"></path>
+<ellipse opacity="0" cx="100" cy="124" rx="3.5" ry="4.5" fill="#2A1A10"></ellipse>
+<g transform="translate(100 42) rotate(12)">
+<ellipse cx="0" cy="0" rx="16" ry="16" fill="#F2A541" stroke="#C97C12" stroke-width="3">
+<animate attributeName="rx" values="16;16;16;16;16" keyTimes="0;0.7;0.8;0.9;1" dur="3s" repeatCount="indefinite"></animate>
+</ellipse>
+<ellipse cx="0" cy="0" rx="9" ry="9" fill="none" stroke="#C97C12" stroke-width="2" opacity="0.7">
+<animate attributeName="rx" values="9;9;9;9;9" keyTimes="0;0.7;0.8;0.9;1" dur="3s" repeatCount="indefinite"></animate>
+</ellipse>
+</g>
+</g>
+<g opacity="0" fill="#F2A541">
+<g transform="translate(32 64)"><path d="M0 -9 L2.5 -2.5 L9 0 L2.5 2.5 L0 9 L-2.5 2.5 L-9 0 L-2.5 -2.5 Z"><animate attributeName="opacity" values="0;1;0" dur="1.2s" repeatCount="indefinite"></animate></path></g>
+<g transform="translate(168 36)"><path d="M0 -7 L2 -2 L7 0 L2 2 L0 7 L-2 2 L-7 0 L-2 -2 Z"><animate attributeName="opacity" values="0;1;0" dur="1.2s" begin="0.4s" repeatCount="indefinite"></animate></path></g>
+<g transform="translate(40 26)"><path d="M0 -6 L1.8 -1.8 L6 0 L1.8 1.8 L0 6 L-1.8 1.8 L-6 0 L-1.8 -1.8 Z"><animate attributeName="opacity" values="0;1;0" dur="1.2s" begin="0.8s" repeatCount="indefinite"></animate></path></g>
+</g>
+<g opacity="0" fill="#FFFFFF" stroke="#C5CCD6" stroke-width="2">
+<circle cx="154" cy="62" r="4"></circle>
+<circle cx="165" cy="46" r="6"></circle>
+<circle cx="180" cy="24" r="10"></circle>
+</g>
+<g opacity="0">
+<path d="M152 60 Q159 71 152 77 Q145 71 152 60 Z" fill="#6BB6FF">
+<animateTransform attributeName="transform" type="translate" values="0 0; 0 6; 0 0" dur="1.6s" repeatCount="indefinite"></animateTransform>
+</path>
+</g>
+<g opacity="1" fill="#5B6B85" font-family="Bricolage Grotesque, sans-serif" font-weight="700">
+<text x="150" y="58" font-size="16">z<animate attributeName="opacity" values="0;1;0" dur="2.4s" repeatCount="indefinite"></animate></text>
+<text x="162" y="40" font-size="20">z<animate attributeName="opacity" values="0;1;0" dur="2.4s" begin="0.6s" repeatCount="indefinite"></animate></text>
+<text x="176" y="20" font-size="24">z<animate attributeName="opacity" values="0;1;0" dur="2.4s" begin="1.2s" repeatCount="indefinite"></animate></text>
+</g>
+</svg>
+</DIV>
+
+<DIV style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px">Nada por aqui ainda</DIV>
+<DIV style="font-size: 14px; color: #5B6B85; max-width: 280px; line-height: 1.5">Cadastre seu primeiro cartão para acompanhar faturas e limite.</DIV>
+<BUTTON class="btn btn-primary btn-sm" type="button" style="margin-top: 8px">Adicionar cartão</BUTTON>
+</DIV>
+</DIV>
+</DIV>
+
+
+</DIV>
+
+</div>
+</body>
+</html>

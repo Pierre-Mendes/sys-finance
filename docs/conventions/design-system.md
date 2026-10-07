@@ -44,6 +44,7 @@ montado em `App.vue`). Use só para conquista real: conta paga, conta atrasada q
 - `font-sans` = Manrope; `font-display` = Bricolage Grotesque (h1–h3 já usam). Fontes empacotadas via `@fontsource`:
   a CSP só permite `font-src 'self'`, então nada de Google Fonts.
 - O body usa `tabular-nums`, assim os valores em R$ se alinham nas colunas.
+- Sem degradês decorativos (`bg-gradient-*`): use a cor sólida do token (`designRules.test.ts` confere).
 - Raios: `rounded-lg` (8px, controles), `rounded-xl` (12px, itens), `rounded-2xl`/`rounded-3xl` (20px, cards).
   Não use raios arbitrários (`rounded-[2rem]`).
 - Botões: `GenericButton` com `variant` primary | secondary | ghost | danger, `size` md | sm, `loading`.
@@ -64,7 +65,11 @@ montado em `App.vue`). Use só para conquista real: conta paga, conta atrasada q
 ## Movimento
 
 - Curva padrão `ease-(--ease-out)`; mola (`--ease-spring`) só em toggle e celebração.
-- Utilitários: `animate-fade-up` (entrada; escalone com `[animation-delay:60ms]`), `animate-pop`, `.skeleton`.
+- Utilitários (definidos no `@theme` de `style.css`, valem em qualquer componente): `animate-fade-up` (entrada de
+  cards; escalone com `[animation-delay:60ms]`), `animate-fade-in` (conteúdo de aba/painel), `animate-fade-in-down`
+  (modais e menus), `animate-slide-in-right` (painel lateral), `animate-pop` e `.skeleton` (carregamento).
+- Não defina animação em `<style scoped>` para usar em outra tela: o scoped não alcança outros arquivos e a classe
+  vira no-op. `designRules.test.ts` falha se uma classe `animate-*` não existir para o arquivo que a usa.
 - Números de destaque: `useCountUp(ref)` (`presentation/composables/useCountUp.ts`).
 - `prefers-reduced-motion` zera animações globalmente (style.css). Nada pisca nem pulsa em loop para chamar
   atenção (`animate-pulse` em alertas, não).

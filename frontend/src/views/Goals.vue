@@ -10,6 +10,8 @@ import Swal from 'sweetalert2'
 import CapiMascot from '@/components/brand/CapiMascot.vue'
 import { useCelebrationStore } from '@/presentation/store/celebrationStore'
 import { contributionReachesGoal } from '@/core/domain/goals'
+import { formatBRL } from '@/core/domain/money'
+import { formatDateBR } from '@/core/domain/dates'
 
 const store = useGoalStore()
 const workspaceStore = useWorkspaceStore()
@@ -197,24 +199,24 @@ const getAccountName = (id: number | null) => {
                 <span class="font-black text-indigo-600">{{ getPercentage(goal.accumulatedAmount, goal.targetAmount) }}%</span>
               </div>
               <div class="w-full bg-gray-100 rounded-full h-4 overflow-hidden p-1 shadow-inner">
-                <div class="bg-gradient-to-r from-indigo-500 to-blue-500 h-2 rounded-full transition-all duration-1000 ease-out" :style="{ width: getPercentage(goal.accumulatedAmount, goal.targetAmount) + '%' }"></div>
+                <div class="bg-brand-600 h-2 rounded-full transition-all duration-1000 ease-out" :style="{ width: getPercentage(goal.accumulatedAmount, goal.targetAmount) + '%' }"></div>
               </div>
             </div>
 
             <div class="grid grid-cols-2 gap-6 mb-8 bg-gray-50 rounded-2xl p-4">
               <div>
                 <p class="text-xs text-gray-500 uppercase font-black tracking-widest mb-1">Acumulado</p>
-                <p class="text-lg font-extrabold text-gray-900">R$ {{ (goal.accumulatedAmount || 0).toLocaleString() }}</p>
+                <p class="text-lg font-extrabold text-gray-900">{{ formatBRL(goal.accumulatedAmount) }}</p>
               </div>
               <div class="text-right border-l border-gray-200 pl-4">
                 <p class="text-xs text-gray-500 uppercase font-black tracking-widest mb-1">Objetivo</p>
-                <p class="text-lg font-extrabold text-gray-900">R$ {{ (goal.targetAmount || 0).toLocaleString() }}</p>
+                <p class="text-lg font-extrabold text-gray-900">{{ formatBRL(goal.targetAmount) }}</p>
               </div>
             </div>
 
             <div v-if="goal.targetDate" class="mb-8 flex items-center gap-3 text-gray-500">
                <svg class="w-5 h-5 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-               <span class="text-sm font-medium">Até {{ new Date(goal.targetDate).toLocaleDateString() }}</span>
+               <span class="text-sm font-medium">Até {{ formatDateBR(goal.targetDate) }}</span>
             </div>
 
             <button @click="openContribution(goal)" class="w-full py-4 bg-white hover:bg-indigo-600 text-indigo-600 hover:text-white border-2 border-indigo-600 rounded-2xl font-black transition-all shadow-sm hover:shadow-indigo-100 flex items-center justify-center gap-2 group/btn">
