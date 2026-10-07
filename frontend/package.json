@@ -12,7 +12,8 @@
     "preview": "vite preview",
     "test:unit": "vitest",
     "test:e2e": "playwright test",
-    "design:export-capi": "EXPORT_CAPI=1 vitest run scripts/export-capi.spec.ts"
+    "design:export-capi": "EXPORT_CAPI=1 vitest run scripts/export-capi.spec.ts",
+    "design:build-site": "node scripts/build-design-site.mjs"
   },
   "dependencies": {
     "@fontsource-variable/bricolage-grotesque": "^5.3.0",

@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Movimento · Design system sysfinance</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&amp;family=Manrope:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+.btn{font-family: Manrope, sans-serif; font-weight: 700; font-size: 15px; height: 44px; padding: 0 18px; border-radius: 8px; border: 0; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; background: #2346D8; color: #FFFFFF; transition: background-color 120ms, transform 120ms}
+.btn:hover{background: #1A34A6}.btn:active{transform: scale(0.97)}
+.btn:focus-visible{outline: 3px solid #6F8BF0; outline-offset: 2px}
+@keyframes fadeUp{from{opacity: 0; transform: translateY(16px)}to{opacity: 1; transform: none}}
+.fade-up{animation: fadeUp 480ms cubic-bezier(.2,.8,.2,1) both}
+@keyframes shimmer{from{background-position: -320px 0}to{background-position: 320px 0}}
+.skel{background: linear-gradient(90deg, #EEF1F5 0%, #F8F9FB 50%, #EEF1F5 100%); background-size: 320px 100%; animation: shimmer 1.4s linear infinite; border-radius: 8px}
+@keyframes fill{from{width: 0}to{width: 100%}}
+.fill{animation: fill 1400ms cubic-bezier(.2,.8,.2,1) both}
+@keyframes pop{0%{opacity: 0; transform: scale(0.4) translateY(20px)}70%{opacity: 1; transform: scale(1.08)}100%{opacity: 1; transform: scale(1)}}
+.pop{animation: pop 600ms cubic-bezier(.34,1.56,.64,1) 1300ms both}
+@keyframes draw{to{stroke-dashoffset: 0}}
+.ring{stroke-dasharray: 176; stroke-dashoffset: 176; animation: draw 600ms cubic-bezier(.2,.8,.2,1) 150ms forwards}
+.check{stroke-dasharray: 40; stroke-dashoffset: 40; animation: draw 360ms cubic-bezier(.2,.8,.2,1) 700ms forwards}
+@keyframes scaleIn{0%{transform: scale(0.6)}60%{transform: scale(1.1)}100%{transform: scale(1)}}
+.badge-in{animation: scaleIn 500ms cubic-bezier(.34,1.56,.64,1) both}
+@media (prefers-reduced-motion: reduce){.fade-up,.skel,.fill,.pop,.ring,.check,.badge-in{animation-duration: 1ms !important; animation-delay: 0ms !important}}
+</style>
+<style>
+body{margin:0}
+</style>
+<style>
+.ds-bar{position:sticky;top:0;z-index:9999;display:flex;align-items:center;gap:12px;padding:10px 16px;background:#0B1324;color:#C5CCD6;font:600 14px/1.4 Manrope,system-ui,sans-serif}
+.ds-bar a{color:#fff;font-weight:700;text-decoration:none;padding:6px 10px;border-radius:8px}
+.ds-bar a:hover{background:#26324A}
+.ds-bar a:focus-visible{outline:3px solid #6F8BF0;outline-offset:2px}
+.ds-board{width:1440px;min-height:1100px}
+</style>
+</head>
+<body>
+<nav class="ds-bar" aria-label="Design system"><a href="index.html">← Todos os quadros</a><span>Movimento · versão estática</span></nav>
+<div class="ds-board">
+
+
+<DIV style="width: 1440px; height: 1100px; box-sizing: border-box; background: #F6F7F9; font-family: Manrope, sans-serif; color: #0B1324; padding: 64px 72px; display: flex; flex-direction: column; gap: 28px">
+<DIV style="display: flex; justify-content: space-between; align-items: flex-end; gap: 24px">
+<DIV style="display: flex; flex-direction: column; gap: 8px">
+<DIV style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5B6B85">Movimento</DIV>
+<H1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 52px; letter-spacing: -0.02em">Animar para explicar, não para enfeitar</H1>
+</DIV>
+<BUTTON class="btn" type="button">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"></path><path d="M4 4v4h4"></path></svg>
+Reproduzir tudo</BUTTON>
+</DIV>
+
+<DIV style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px">
+<DIV style="background: #FFFFFF; border-radius: 16px; padding: 16px 18px; display: flex; flex-direction: column; gap: 4px"><DIV style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 26px">120ms</DIV><DIV style="font-weight: 700; font-size: 14px">Rápido</DIV><DIV style="font-size: 13px; color: #5B6B85">Hover, pressionar, cor</DIV></DIV>
+<DIV style="background: #FFFFFF; border-radius: 16px; padding: 16px 18px; display: flex; flex-direction: column; gap: 4px"><DIV style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 26px">200ms</DIV><DIV style="font-weight: 700; font-size: 14px">Base</DIV><DIV style="font-size: 13px; color: #5B6B85">Toggle, abas, menus</DIV></DIV>
+<DIV style="background: #FFFFFF; border-radius: 16px; padding: 16px 18px; display: flex; flex-direction: column; gap: 4px"><DIV style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 26px">320–480ms</DIV><DIV style="font-weight: 700; font-size: 14px">Entrada</DIV><DIV style="font-size: 13px; color: #5B6B85">Modais, cards, toasts</DIV></DIV>
+<DIV style="background: #FFFFFF; border-radius: 16px; padding: 16px 18px; display: flex; flex-direction: column; gap: 4px"><DIV style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 26px">600ms+</DIV><DIV style="font-weight: 700; font-size: 14px">Celebração</DIV><DIV style="font-size: 13px; color: #5B6B85">Só para conquistas reais</DIV></DIV>
+</DIV>
+
+
+<DIV style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px">
+
+<DIV style="background: #FFFFFF; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 12px; height: 300px; box-sizing: border-box">
+<DIV style="font-weight: 800; font-size: 16px">1 · Logo na abertura</DIV>
+<DIV style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 14px; background: #F6F7F9; border-radius: 12px">
+<svg width="72" height="72" viewBox="0 0 64 64" aria-hidden="true">
+<rect width="64" height="64" rx="18" fill="#2346D8"></rect>
+<path d="M15 42 L26 31 L34 37 L47 22" stroke="#FFFFFF" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="48" stroke-dashoffset="48">
+<animate attributeName="stroke-dashoffset" values="48;0" dur="1s" begin="0.2s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.2 0.8 0.2 1"></animate>
+</path>
+<circle cx="48" cy="20" r="0" fill="#F2A541"><animate attributeName="r" values="0;9;7" dur="0.5s" begin="1.1s" fill="freeze"></animate></circle>
+</svg>
+<DIV class="fade-up" style="animation-delay: 1.2s; font-family: 'Bricolage Grotesque', sans-serif; font-size: 34px; letter-spacing: -0.02em"><SPAN style="font-weight: 600; color: #5B6B85">sys</SPAN><SPAN style="font-weight: 800">finance</SPAN></DIV>
+</DIV>
+<DIV style="font-size: 13px; color: #5B6B85">Linha desenha, moeda salta, nome entra. Só na tela de login e no carregamento inicial.</DIV>
+</DIV>
+
+<DIV style="background: #FFFFFF; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 12px; height: 300px; box-sizing: border-box">
+<DIV style="font-weight: 800; font-size: 16px">2 · Saldo contando</DIV>
+<DIV style="flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 0 20px; background: #F6F7F9; border-radius: 12px">
+<DIV style="font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #5B6B85">Saldo total</DIV>
+<DIV style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 42px; letter-spacing: -0.02em; font-variant-numeric: tabular-nums">R$ 12.480,90</DIV>
+</DIV>
+<DIV style="font-size: 13px; color: #5B6B85">Conta de 0 até o valor em 1,2s, desacelerando no fim. Números tabulares evitam que o texto “dance”.</DIV>
+</DIV>
+
+<DIV style="background: #FFFFFF; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 12px; height: 300px; box-sizing: border-box">
+<DIV style="font-weight: 800; font-size: 16px">3 · Entrada em cascata</DIV>
+<DIV style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 10px; padding: 0 16px; background: #F6F7F9; border-radius: 12px">
+<DIV class="fade-up" style="animation-delay: 0ms; height: 40px; background: #FFFFFF; border-radius: 12px; box-shadow: 0 1px 2px rgba(11,19,36,0.06)"></DIV>
+<DIV class="fade-up" style="animation-delay: 60ms; height: 40px; background: #FFFFFF; border-radius: 12px; box-shadow: 0 1px 2px rgba(11,19,36,0.06)"></DIV>
+<DIV class="fade-up" style="animation-delay: 120ms; height: 40px; background: #FFFFFF; border-radius: 12px; box-shadow: 0 1px 2px rgba(11,19,36,0.06)"></DIV>
+<DIV class="fade-up" style="animation-delay: 180ms; height: 40px; background: #FFFFFF; border-radius: 12px; box-shadow: 0 1px 2px rgba(11,19,36,0.06)"></DIV>
+</DIV>
+<DIV style="font-size: 13px; color: #5B6B85">Cards do painel sobem 16px com 60ms entre eles. No máximo 6 itens animados; o resto aparece direto.</DIV>
+</DIV>
+
+<DIV style="background: #FFFFFF; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 12px; height: 300px; box-sizing: border-box">
+<DIV style="font-weight: 800; font-size: 16px">4 · Carregando com a Capi</DIV>
+<DIV style="flex: 1; display: flex; align-items: center; gap: 12px; padding: 0 16px; background: #F6F7F9; border-radius: 12px">
+
+
+<DIV style="width: 96px; height: 96px; display: flex; align-items: center; justify-content: center">
+<svg viewBox="0 0 200 200" width="100%" height="100%" role="img" aria-label="Capi pensando">
+<ellipse cx="100" cy="188" rx="56" ry="6" fill="#0B1324" opacity="0.10"></ellipse>
+<g>
+<animateTransform attributeName="transform" type="translate" values="0 0; 0 -3; 0 0" dur="4s" repeatCount="indefinite"></animateTransform>
+<ellipse cx="72" cy="178" rx="16" ry="8" fill="#7E5235"></ellipse>
+<ellipse cx="128" cy="178" rx="16" ry="8" fill="#7E5235"></ellipse>
+<ellipse cx="100" cy="140" rx="66" ry="42" fill="#A8724A"></ellipse>
+<ellipse cx="100" cy="152" rx="38" ry="24" fill="#D9A877"></ellipse>
+<g opacity="0">
+<ellipse cx="160" cy="116" rx="9" ry="18" fill="#A8724A">
+<animateTransform attributeName="transform" type="rotate" values="-25 152 132; 15 152 132; -25 152 132" dur="0.8s" repeatCount="indefinite"></animateTransform>
+</ellipse>
+</g>
+<circle cx="58" cy="66" r="11" fill="#7E5235"></circle>
+<circle cx="142" cy="66" r="11" fill="#7E5235"></circle>
+<circle cx="58" cy="66" r="5" fill="#5A3A26"></circle>
+<circle cx="142" cy="66" r="5" fill="#5A3A26"></circle>
+<rect x="50" y="58" width="100" height="86" rx="42" fill="#A8724A"></rect>
+<ellipse cx="64" cy="112" rx="8" ry="4.5" fill="#F09A86" opacity="0.55"></ellipse>
+<ellipse cx="136" cy="112" rx="8" ry="4.5" fill="#F09A86" opacity="0.55"></ellipse>
+<g opacity="1" transform="translate(2 -3)">
+<ellipse cx="80" cy="88" rx="5" ry="6" fill="#1A1410">
+<animate attributeName="ry" values="6;6;0.6;6" keyTimes="0;0.92;0.96;1" dur="4s" repeatCount="indefinite"></animate>
+</ellipse>
+<ellipse cx="120" cy="88" rx="5" ry="6" fill="#1A1410">
+<animate attributeName="ry" values="6;6;0.6;6" keyTimes="0;0.92;0.96;1" dur="4s" repeatCount="indefinite"></animate>
+</ellipse>
+<circle cx="81.5" cy="86" r="1.6" fill="#FFFFFF"></circle>
+<circle cx="121.5" cy="86" r="1.6" fill="#FFFFFF"></circle>
+</g>
+<g opacity="0" stroke="#1A1410" stroke-width="3.5" fill="none" stroke-linecap="round">
+<path d="M73 90 Q80 81 87 90"></path>
+<path d="M113 90 Q120 81 127 90"></path>
+</g>
+<g opacity="0" stroke="#1A1410" stroke-width="3" fill="none" stroke-linecap="round">
+<path d="M73 88 Q80 93 87 88"></path>
+<path d="M113 88 Q120 93 127 88"></path>
+</g>
+<rect x="74" y="100" width="52" height="34" rx="17" fill="#7E5235"></rect>
+<ellipse cx="91" cy="110" rx="3.5" ry="2.5" fill="#3A2518"></ellipse>
+<ellipse cx="109" cy="110" rx="3.5" ry="2.5" fill="#3A2518"></ellipse>
+<path opacity="0" d="M93 122 Q100 129 107 122" stroke="#2A1A10" stroke-width="2.5" fill="none" stroke-linecap="round"></path>
+<path opacity="0" d="M92 120 Q100 133 108 120 Z" fill="#2A1A10"></path>
+<path opacity="1" d="M94 125 L106 125" stroke="#2A1A10" stroke-width="2.5" stroke-linecap="round"></path>
+<ellipse opacity="0" cx="100" cy="124" rx="3.5" ry="4.5" fill="#2A1A10"></ellipse>
+<g transform="translate(100 42) rotate(0)">
+<ellipse cx="0" cy="0" rx="16" ry="16" fill="#F2A541" stroke="#C97C12" stroke-width="3">
+<animate attributeName="rx" values="16;16;3;16;16" keyTimes="0;0.7;0.8;0.9;1" dur="3s" repeatCount="indefinite"></animate>
+</ellipse>
+<ellipse cx="0" cy="0" rx="9" ry="9" fill="none" stroke="#C97C12" stroke-width="2" opacity="0.7">
+<animate attributeName="rx" values="9;9;1.5;9;9" keyTimes="0;0.7;0.8;0.9;1" dur="3s" repeatCount="indefinite"></animate>
+</ellipse>
+</g>
+</g>
+<g opacity="0" fill="#F2A541">
+<g transform="translate(32 64)"><path d="M0 -9 L2.5 -2.5 L9 0 L2.5 2.5 L0 9 L-2.5 2.5 L-9 0 L-2.5 -2.5 Z"><animate attributeName="opacity" values="0;1;0" dur="1.2s" repeatCount="indefinite"></animate></path></g>
+<g transform="translate(168 36)"><path d="M0 -7 L2 -2 L7 0 L2 2 L0 7 L-2 2 L-7 0 L-2 -2 Z"><animate attributeName="opacity" values="0;1;0" dur="1.2s" begin="0.4s" repeatCount="indefinite"></animate></path></g>
+<g transform="translate(40 26)"><path d="M0 -6 L1.8 -1.8 L6 0 L1.8 1.8 L0 6 L-1.8 1.8 L-6 0 L-1.8 -1.8 Z"><animate attributeName="opacity" values="0;1;0" dur="1.2s" begin="0.8s" repeatCount="indefinite"></animate></path></g>
+</g>
+<g opacity="1" fill="#FFFFFF" stroke="#C5CCD6" stroke-width="2">
+<circle cx="154" cy="62" r="4"></circle>
+<circle cx="165" cy="46" r="6"></circle>
+<circle cx="180" cy="24" r="10"></circle>
+</g>
+<g opacity="0">
+<path d="M152 60 Q159 71 152 77 Q145 71 152 60 Z" fill="#6BB6FF">
+<animateTransform attributeName="transform" type="translate" values="0 0; 0 6; 0 0" dur="1.6s" repeatCount="indefinite"></animateTransform>
+</path>
+</g>
+<g opacity="0" fill="#5B6B85" font-family="Bricolage Grotesque, sans-serif" font-weight="700">
+<text x="150" y="58" font-size="16">z<animate attributeName="opacity" values="0;1;0" dur="2.4s" repeatCount="indefinite"></animate></text>
+<text x="162" y="40" font-size="20">z<animate attributeName="opacity" values="0;1;0" dur="2.4s" begin="0.6s" repeatCount="indefinite"></animate></text>
+<text x="176" y="20" font-size="24">z<animate attributeName="opacity" values="0;1;0" dur="2.4s" begin="1.2s" repeatCount="indefinite"></animate></text>
+</g>
+</svg>
+</DIV>
+
+<DIV style="flex: 1; display: flex; flex-direction: column; gap: 10px">
+<DIV class="skel" style="height: 14px; width: 70%"></DIV>
+<DIV class="skel" style="height: 28px; width: 100%"></DIV>
+<DIV class="skel" style="height: 14px; width: 50%"></DIV>
+</DIV>
+</DIV>
+<DIV style="font-size: 13px; color: #5B6B85">Esqueleto com brilho no lugar do spinner genérico. A Capi pensando aparece só se demorar mais de 1s.</DIV>
+</DIV>
+
+<DIV style="background: #FFFFFF; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 12px; height: 300px; box-sizing: border-box">
+<DIV style="font-weight: 800; font-size: 16px">5 · Meta concluída</DIV>
+<DIV style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 4px; padding: 0 20px; background: #F6F7F9; border-radius: 12px; position: relative; overflow: hidden">
+<DIV style="display: flex; align-items: center; gap: 8px">
+<DIV style="flex: 1; display: flex; flex-direction: column; gap: 10px">
+<DIV style="font-weight: 700; font-size: 14px">Viagem de férias</DIV>
+<DIV style="height: 12px; background: #E4E8EF; border-radius: 999px; overflow: hidden"><DIV class="fill" style="height: 100%; background: #F2A541; border-radius: 999px"></DIV></DIV>
+<DIV class="badge-in" style="animation-delay: 1.4s; align-self: flex-start; font-size: 12px; font-weight: 800; padding: 3px 10px; border-radius: 999px; background: #FDE7C4; color: #7A4A06">Conquista desbloqueada</DIV>
+</DIV>
+<DIV class="pop">
+
+
+<DIV style="width: 110px; height: 110px; display: flex; align-items: center; justify-content: center">
+<svg viewBox="0 0 200 200" width="100%" height="100%" role="img" aria-label="Capi comemorando">
+<ellipse cx="100" cy="188" rx="56" ry="6" fill="#0B1324" opacity="0.10"></ellipse>
+<g>
+<animateTransform attributeName="transform" type="translate" values="0 0; 0 -16; 0 0" dur="0.8s" repeatCount="indefinite"></animateTransform>
+<ellipse cx="72" cy="178" rx="16" ry="8" fill="#7E5235"></ellipse>
+<ellipse cx="128" cy="178" rx="16" ry="8" fill="#7E5235"></ellipse>
+<ellipse cx="100" cy="140" rx="66" ry="42" fill="#A8724A"></ellipse>
+<ellipse cx="100" cy="152" rx="38" ry="24" fill="#D9A877"></ellipse>
+<g opacity="1">
+<ellipse cx="160" cy="116" rx="9" ry="18" fill="#A8724A">
+<animateTransform attributeName="transform" type="rotate" values="-25 152 132; 15 152 132; -25 152 132" dur="0.8s" repeatCount="indefinite"></animateTransform>
+</ellipse>
+</g>
+<circle cx="58" cy="66" r="11" fill="#7E5235"></circle>
+<circle cx="142" cy="66" r="11" fill="#7E5235"></circle>
+<circle cx="58" cy="66" r="5" fill="#5A3A26"></circle>
+<circle cx="142" cy="66" r="5" fill="#5A3A26"></circle>
+<rect x="50" y="58" width="100" height="86" rx="42" fill="#A8724A"></rect>
+<ellipse cx="64" cy="112" rx="8" ry="4.5" fill="#F09A86" opacity="0.55"></ellipse>
+<ellipse cx="136" cy="112" rx="8" ry="4.5" fill="#F09A86" opacity="0.55"></ellipse>
+<g opacity="0" transform="translate(0 0)">
+<ellipse cx="80" cy="88" rx="5" ry="6" fill="#1A1410">
+<animate attributeName="ry" values="6;6;0.6;6" keyTimes="0;0.92;0.96;1" dur="4s" repeatCount="indefinite"></animate>
+</ellipse>
+<ellipse cx="120" cy="88" rx="5" ry="6" fill="#1A1410">
+<animate attributeName="ry" values="6;6;0.6;6" keyTimes="0;0.92;0.96;1" dur="4s" repeatCount="indefinite"></animate>
+</ellipse>
+<circle cx="81.5" cy="86" r="1.6" fill="#FFFFFF"></circle>
+<circle cx="121.5" cy="86" r="1.6" fill="#FFFFFF"></circle>
+</g>
+<g opacity="1" stroke="#1A1410" stroke-width="3.5" fill="none" stroke-linecap="round">
+<path d="M73 90 Q80 81 87 90"></path>
+<path d="M113 90 Q120 81 127 90"></path>
+</g>
+<g opacity="0" stroke="#1A1410" stroke-width="3" fill="none" stroke-linecap="round">
+<path d="M73 88 Q80 93 87 88"></path>
+<path d="M113 88 Q120 93 127 88"></path>
+</g>
+<rect x="74" y="100" width="52" height="34" rx="17" fill="#7E5235"></rect>
+<ellipse cx="91" cy="110" rx="3.5" ry="2.5" fill="#3A2518"></ellipse>
+<ellipse cx="109" cy="110" rx="3.5" ry="2.5" fill="#3A2518"></ellipse>
+<path opacity="0" d="M93 122 Q100 129 107 122" stroke="#2A1A10" stroke-width="2.5" fill="none" stroke-linecap="round"></path>
+<path opacity="1" d="M92 120 Q100 133 108 120 Z" fill="#2A1A10"></path>
+<path opacity="0" d="M94 125 L106 125" stroke="#2A1A10" stroke-width="2.5" stroke-linecap="round"></path>
+<ellipse opacity="0" cx="100" cy="124" rx="3.5" ry="4.5" fill="#2A1A10"></ellipse>
+<g transform="translate(100 42) rotate(0)">
+<ellipse cx="0" cy="0" rx="16" ry="16" fill="#F2A541" stroke="#C97C12" stroke-width="3">
+<animate attributeName="rx" values="16;16;3;16;16" keyTimes="0;0.7;0.8;0.9;1" dur="3s" repeatCount="indefinite"></animate>
+</ellipse>
+<ellipse cx="0" cy="0" rx="9" ry="9" fill="none" stroke="#C97C12" stroke-width="2" opacity="0.7">
+<animate attributeName="rx" values="9;9;1.5;9;9" keyTimes="0;0.7;0.8;0.9;1" dur="3s" repeatCount="indefinite"></animate>
+</ellipse>
+</g>
+</g>
+<g opacity="1" fill="#F2A541">
+<g transform="translate(32 64)"><path d="M0 -9 L2.5 -2.5 L9 0 L2.5 2.5 L0 9 L-2.5 2.5 L-9 0 L-2.5 -2.5 Z"><animate attributeName="opacity" values="0;1;0" dur="1.2s" repeatCount="indefinite"></animate></path></g>
+<g transform="translate(168 36)"><path d="M0 -7 L2 -2 L7 0 L2 2 L0 7 L-2 2 L-7 0 L-2 -2 Z"><animate attributeName="opacity" values="0;1;0" dur="1.2s" begin="0.4s" repeatCount="indefinite"></animate></path></g>
+<g transform="translate(40 26)"><path d="M0 -6 L1.8 -1.8 L6 0 L1.8 1.8 L0 6 L-1.8 1.8 L-6 0 L-1.8 -1.8 Z"><animate attributeName="opacity" values="0;1;0" dur="1.2s" begin="0.8s" repeatCount="indefinite"></animate></path></g>
+</g>
+<g opacity="0" fill="#FFFFFF" stroke="#C5CCD6" stroke-width="2">
+<circle cx="154" cy="62" r="4"></circle>
+<circle cx="165" cy="46" r="6"></circle>
+<circle cx="180" cy="24" r="10"></circle>
+</g>
+<g opacity="0">
+<path d="M152 60 Q159 71 152 77 Q145 71 152 60 Z" fill="#6BB6FF">
+<animateTransform attributeName="transform" type="translate" values="0 0; 0 6; 0 0" dur="1.6s" repeatCount="indefinite"></animateTransform>
+</path>
+</g>
+<g opacity="0" fill="#5B6B85" font-family="Bricolage Grotesque, sans-serif" font-weight="700">
+<text x="150" y="58" font-size="16">z<animate attributeName="opacity" values="0;1;0" dur="2.4s" repeatCount="indefinite"></animate></text>
+<text x="162" y="40" font-size="20">z<animate attributeName="opacity" values="0;1;0" dur="2.4s" begin="0.6s" repeatCount="indefinite"></animate></text>
+<text x="176" y="20" font-size="24">z<animate attributeName="opacity" values="0;1;0" dur="2.4s" begin="1.2s" repeatCount="indefinite"></animate></text>
+</g>
+</svg>
+</DIV>
+
+</DIV>
+</DIV>
+</DIV>
+<DIV style="font-size: 13px; color: #5B6B85">Barra enche, a Capi salta comemorando e o selo de conquista aparece. Liga com “Metas &amp; Conquistas”.</DIV>
+</DIV>
+
+<DIV style="background: #FFFFFF; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 12px; height: 300px; box-sizing: border-box">
+<DIV style="font-weight: 800; font-size: 16px">6 · Conta paga</DIV>
+<DIV style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; background: #F6F7F9; border-radius: 12px">
+<svg width="72" height="72" viewBox="0 0 64 64" aria-hidden="true">
+<circle class="ring" cx="32" cy="32" r="28" fill="none" stroke="#0E7A55" stroke-width="5" stroke-linecap="round" transform="rotate(-90 32 32)"></circle>
+<path class="check" d="M20 33 L28 41 L45 24" fill="none" stroke="#0E7A55" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<DIV class="fade-up" style="animation-delay: 900ms; font-weight: 800; font-size: 16px">Conta de luz paga</DIV>
+</DIV>
+<DIV style="font-size: 13px; color: #5B6B85">Anel fecha e o check desenha. Substitui o SweetAlert de sucesso por um retorno no próprio item.</DIV>
+</DIV>
+</DIV>
+
+
+<DIV style="background: #0B1324; color: #FFFFFF; border-radius: 20px; padding: 20px 24px; display: flex; gap: 32px; align-items: center">
+<DIV style="font-weight: 800; font-size: 15px; flex-shrink: 0">Regras</DIV>
+<DIV style="font-size: 14px; color: #C5CCD6; line-height: 1.5">Curva padrão <SPAN style="color: #FFFFFF; font-family: ui-monospace, Menlo, monospace">cubic-bezier(.2,.8,.2,1)</SPAN>; mola só em toggle e celebração. Com <SPAN style="color: #FFFFFF; font-family: ui-monospace, Menlo, monospace">prefers-reduced-motion</SPAN> tudo vai direto ao estado final e a Capi fica parada. Nada pisca nem pulsa em loop para chamar atenção.</DIV>
+</DIV>
+</DIV>
+
+</div>
+</body>
+</html>
