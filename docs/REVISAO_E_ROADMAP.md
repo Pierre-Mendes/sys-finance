@@ -110,10 +110,10 @@ Arquivo: `.github/workflows/security.yml`
 | ~~Alta~~ | ~~Rotas `/api/investments` sem `GatekeeperMiddleware`; `PUT/DELETE /api/workspaces/{id}` conferia o papel no workspace ativo e não no `{id}`~~ **Corrigido** (módulo `investments` + `{id}` precisa ser o workspace ativo). |
 | ~~Alta~~ | ~~Token em `localStorage` exposto a XSS~~ **Corrigido**: sessão em cookie `HttpOnly` + `SameSite` + CSRF double-submit. |
 | Média | Logout apaga o cookie, mas o JWT segue válido até expirar (sem revogação no servidor). Próximo passo: versão de sessão por usuário ("sair de todos os dispositivos"). |
-| Média | Controllers devolvem `$e->getMessage()` cru ao cliente (vaza detalhes internos). Padronizar erros de domínio vs. 500 genérico. |
+| ~~Média~~ | ~~Controllers devolvem `$e->getMessage()` cru ao cliente~~ **Corrigido**: `PublicError` esconde erros internos (banco, HTTP, PHP), registra no log/Sentry e devolve um código de referência. |
 | Média | `recovery-question` revela se um e-mail está cadastrado (enumeração de usuários). |
 | Média | Rate limit de login conta também tentativas bem-sucedidas; tabela `rate_limits` cresce sem limpeza. |
-| Média | Criação de transação + rateio não roda em transação de banco (`BEGIN/COMMIT`): uma falha no meio deixa dados parciais. |
+| ~~Média~~ | ~~Criação de transação + rateio sem transação de banco~~ **Corrigido**: criar/editar/excluir/pagar/desconsiderar rodam em `BEGIN/COMMIT`. |
 | Baixa | `TransactionService::getFilteredForUser` filtra em memória e `CreditCardService::getAllCards` faz N+1. |
 | Baixa | Views antigas (`Categories.vue`, `Budgets.vue`…) usam `axios` direto em vez do `HttpClient`, duplicando headers. |
 | Baixa | SQL do Dashboard é específico de MySQL; os testes (SQLite) não cobrem esse serviço. |
