@@ -62,6 +62,7 @@
       </nav>
 
       <div class="p-4 border-t border-ink-700 flex flex-col gap-3">
+         <ThemeToggle :compact="isCollapsed" />
          <button @click="isCollapsed = !isCollapsed" class="hidden lg:flex w-full items-center justify-center p-2 bg-ink-800 hover:bg-ink-700 rounded-lg text-gray-400 hover:text-white transition cursor-pointer">
             <svg v-if="!isCollapsed" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path></svg>
             <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path></svg>
@@ -227,6 +228,7 @@ import { toast } from 'vue3-toastify'
 import Swal from 'sweetalert2'
 import BrandLogo from '@/components/brand/BrandLogo.vue'
 import EmptyState from '@/components/ui/EmptyState.vue'
+import ThemeToggle from '@/components/ui/ThemeToggle.vue'
 import { BRAND_NAME } from '@/core/domain/brand'
 import { NAV_GROUPS } from './navigation'
 

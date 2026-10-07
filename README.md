@@ -1,4 +1,8 @@
-# 🚀 Gerenciador Financeiro Pessoal (SaaS Multi-Tenant)
+<p align="center">
+  <img src="design-system/brand/logo-light.svg" alt="sysfinance" width="280">
+</p>
+
+# sysfinance · Gerenciador Financeiro Pessoal (SaaS Multi-Tenant)
 
 > Um ecossistema de elite para gestão financeira, projetado para o controle absoluto do seu patrimônio, seja ele individual ou compartilhado via visões colaborativas.
 
@@ -17,7 +21,7 @@ O coração do projeto é o **Cockpit Financeiro**, uma engine inteligente que s
 Construído com foco em fluidez de estado e tipagem, o frontend utiliza o padrão **Clean Architecture**, isolando as lógicas de negócio dos componentes visuais.
 *   **Core / Engine**: Vue 3 (Composition API) orquestrado pelo Vite, entregando Hot-Module-Replacement quase instantâneo na fase de desenvolvimento.
 *   **Data & API Layer**: `axios` configurado como HTTP Client (no `HttpClient.ts`) que atua através de Interceptors injetando o JWT (Token) e identificador do Workspace atual (`X-Workspace-Id`) em absolutamente cada requisição. O roteamento de erros também é unificado nesta camada, escrevendo falhas globais direto no Console do DevTools para monitoria constante.
-*   **Presentation / UI**: Formulada em **Tailwind CSS**, abraçando um modelo `Mobile-First` responsivo total. Padrões de Micro-animações enriquecem as transições de Dashboard e navegações entre os Workspaces; renderização de gráficos complexos a cargo do **ApexCharts**.
+*   **Presentation / UI**: **Tailwind CSS 4** sobre os tokens do [design system](#-design-system), modelo `Mobile-First`, modo claro/escuro, animações que respeitam `prefers-reduced-motion` e gráficos com **ApexCharts**. Guia completo de desenvolvimento do frontend em [`Design.md`](Design.md).
 
 ### ⚙️ Arquitetura Backend
 O Backend é uma API RESTful de alta resposta orientada a Injeção de Dependências.
@@ -28,6 +32,26 @@ O Backend é uma API RESTful de alta resposta orientada a Injeção de Dependên
     *   **Repositories** executam a persistência isolando a conexão PDO, permitindo facilmente a adoção de mockups nos Testes.
 *   **Gatekeepers / Segurança**: Middlewares (`AuthMiddleware`, `WorkspaceMiddleware`) filtram acessos baseados na força do Token JWT.
 *   **Migrations**: A estrutura evolutiva do banco está sob custódia oficial do **Phinx**, garantindo integridade das mutações do DB da Produção sem perigo de quebra (Idempotência nativa aplicada nas últimas versões).
+
+---
+
+## 🎨 Design System
+
+| <img src="design-system/capi/capi-happy.svg" width="90" alt=""> | <img src="design-system/capi/capi-celebrating.svg" width="90" alt=""> | <img src="design-system/capi/capi-thinking.svg" width="90" alt=""> | <img src="design-system/capi/capi-alert.svg" width="90" alt=""> | <img src="design-system/capi/capi-sleeping.svg" width="90" alt=""> |
+|:-:|:-:|:-:|:-:|:-:|
+
+A interface segue o design system **sysfinance**: Azul Cofre como cor principal, âmbar para conquistas,
+Manrope + Bricolage Grotesque, modo escuro e a **Capi**, a capivara mascote que aparece em estados vazios,
+carregamentos, alertas e quando você paga uma conta ou conclui uma meta.
+
+| Onde | O que tem |
+|---|---|
+| [`design-system/`](design-system/README.md) | Tokens (`tokens.json`), logo, Capi em SVG e o código do canvas de design |
+| [`Design.md`](Design.md) | Como desenvolver o frontend: estrutura, tela nova, estados, cores, modo escuro, movimento, acessibilidade |
+| [`docs/conventions/design-system.md`](docs/conventions/design-system.md) | Regras detalhadas de cor, tipo, forma e movimento |
+
+Os tokens em `design-system/tokens.json` são a fonte da verdade; um teste do frontend falha se
+`frontend/src/style.css` divergir deles.
 
 ---
 
@@ -128,7 +152,7 @@ O ecossistema é mantido vivo de forma automática através das `GitHub Actions`
 *   **CI (`verify.yml`)**: PHPUnit (com cobertura), Vitest e build do frontend.
 *   **Security & Quality Gate (`security.yml`)**: SAST (Semgrep OWASP Top 10 + CodeQL), SCA (`composer audit`, `npm audit`, OWASP Dependency-Check semanal), Gitleaks, DAST (OWASP ZAP contra a app em Docker) e SonarCloud opcional, consolidados no job **Quality Gate**.
 
-> Documentação e convenções: [`docs/INDEX.md`](docs/INDEX.md) · Revisão, pendências e roadmap: [`docs/REVISAO_E_ROADMAP.md`](docs/REVISAO_E_ROADMAP.md).
+> Documentação e convenções: [`docs/INDEX.md`](docs/INDEX.md) · Design e frontend: [`Design.md`](Design.md) · Revisão, pendências e roadmap: [`docs/REVISAO_E_ROADMAP.md`](docs/REVISAO_E_ROADMAP.md).
 > **Deploy:** a chave do JWT é gerada e guardada no banco automaticamente; `JWT_SECRET` é opcional (tem prioridade se definido).
 
 ---

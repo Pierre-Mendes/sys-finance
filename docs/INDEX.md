@@ -19,7 +19,7 @@ Para **código**, prefira CodeGraph/Serena em vez de ler arquivos (veja [convent
 | [conventions/backend-php.md](conventions/backend-php.md) | Controllers, Services, Repositories, DTOs, rotas, DI em `public/index.php` |
 | [conventions/database.md](conventions/database.md) | Migrations Phinx, nomes de tabelas/colunas, SQL portável MySQL/SQLite |
 | [conventions/frontend-vue.md](conventions/frontend-vue.md) | Views, componentes, stores Pinia, repositórios HTTP, UI |
-| [conventions/design-system.md](conventions/design-system.md) | Cores, fontes, logo, Capi (mascote), animações e acessibilidade visual |
+| [conventions/design-system.md](conventions/design-system.md) | Cores, fontes, logo, Capi (mascote), animações e acessibilidade visual. Comece por [`Design.md`](../Design.md) (guia do frontend) e [`design-system/`](../design-system/README.md) |
 | [conventions/security.md](conventions/security.md) | Qualquer entrada do usuário, SQL, HTML, upload, auth, permissões |
 | [conventions/testing.md](conventions/testing.md) | Escrever/rodar testes PHPUnit e Vitest, testes no navegador |
 | [conventions/git-and-ci.md](conventions/git-and-ci.md) | Commits, branches, PRs, pipelines e Quality Gate |

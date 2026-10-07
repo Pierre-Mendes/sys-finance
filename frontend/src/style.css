@@ -1,4 +1,8 @@
 @import "tailwindcss";
+@import "./styles/dark.css";
+
+/* dark: segue a classe .dark no <html> (useTheme), não só o tema do sistema */
+@custom-variant dark (&:where(.dark, .dark *));
 
 /*
  * Design system sysfinance: tokens em docs/conventions/design-system.md.
@@ -64,6 +68,8 @@
   --color-income-50: #E6F4EE;
   --color-expense: #C2410C;
   --color-expense-50: #FDEEE6;
+  --color-expense-900: #7C2D12;
+  --color-income-900: #0B5B40;
   --color-warning: #B45309;
 
   /* Nomes antigos apontam para os tokens novos (as telas existentes herdam a paleta) */

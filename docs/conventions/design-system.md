@@ -1,7 +1,8 @@
 # Design system (sysfinance)
 
-Tokens em `frontend/src/style.css` (bloco `@theme` do Tailwind 4). Canvas de referência com marca, componentes e
-movimento: artefato "sys-finance Design System" no claude.ai.
+Fonte da verdade: [`design-system/tokens.json`](../../design-system/tokens.json), replicada em `frontend/src/style.css`
+(bloco `@theme` do Tailwind 4) e `frontend/src/styles/dark.css`; `designTokens.test.ts` confere os dois.
+Logo, Capi e canvas de design: [`design-system/`](../../design-system/README.md). Guia de desenvolvimento: [`Design.md`](../../Design.md).
 
 ## Marca
 
@@ -24,6 +25,10 @@ movimento: artefato "sys-finance Design System" no claude.ai.
 
 Sem `label` ela é decorativa (`aria-hidden`); passe `label` quando ela for a única informação visual.
 
+Comemoração: `useCelebrationStore().celebrate(titulo, detalhe)` mostra a Capi comemorando (`CelebrationToast`,
+montado em `App.vue`). Use só para conquista real: conta paga, conta atrasada quitada, meta concluída
+(`contributionReachesGoal`). Reagendar, editar ou salvar continuam em `toast.success`.
+
 ## Cores
 
 - `brand-*` (Azul Cofre, #2346D8 no 600): ações primárias e links. As escalas `blue-*` e `indigo-*` do Tailwind
@@ -44,6 +49,16 @@ Sem `label` ela é decorativa (`aria-hidden`); passe `label` quando ela for a ú
 - Botões: `GenericButton` com `variant` primary | secondary | ghost | danger, `size` md | sm, `loading`.
 - Menu lateral: dados em `components/layout/navigation.ts` (grupos Dinheiro, Planejamento, Análise, Conta).
   Rota nova entra lá; o teste `navigation.test.ts` falha se uma tela interna ficar fora do menu.
+
+## Modo escuro
+
+- `useTheme` (`initTheme()` em `main.ts`) guarda Claro/Escuro/Sistema em `localStorage` (`sysfinance:theme`) e
+  liga `.dark` no `<html>`; `ThemeToggle` fica no rodapé da sidebar.
+- A variante `dark:` do Tailwind segue essa classe (`@custom-variant` em `style.css`).
+- `styles/dark.css` traduz as classes claras comuns (superfícies, textos, bordas, fundos `*-50`, texto `*-600..900`)
+  para a paleta `--dk-*`. Classe nova sem tradução: use `dark:` no componente.
+- Texto escuro fixo em hex (`text-[#7C2D12]`) não muda no escuro: use token (`text-expense-900`).
+- ApexCharts: `useTheme` ajusta `window.Apex` (texto, grade, tooltip) para gráficos criados depois da troca.
 
 ## Movimento
 

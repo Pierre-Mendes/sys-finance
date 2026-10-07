@@ -74,8 +74,8 @@
     <div v-if="healthStatus === 'critical'" role="alert" class="mb-8 bg-expense-50 rounded-2xl py-3 pl-2 pr-4 flex flex-wrap items-center gap-x-3 gap-y-2 animate-fade-up">
         <CapiMascot mood="alert" :size="76" />
         <div class="flex-1 min-w-[200px]">
-            <h4 class="font-extrabold text-[#7C2D12] text-[15px]">As despesas do mês passaram das receitas</h4>
-            <p class="text-[#7C2D12] text-sm leading-snug">Revise os orçamentos de maior gasto antes do fechamento para proteger seu caixa.</p>
+            <h4 class="font-extrabold text-expense-900 text-[15px]">As despesas do mês passaram das receitas</h4>
+            <p class="text-expense-900 text-sm leading-snug">Revise os orçamentos de maior gasto antes do fechamento para proteger seu caixa.</p>
         </div>
         <router-link to="/budgets" class="min-h-9 inline-flex items-center px-3.5 rounded-lg bg-[#7C2D12] hover:bg-[#5F2310] text-white text-sm font-bold transition">Revisar orçamentos</router-link>
     </div>

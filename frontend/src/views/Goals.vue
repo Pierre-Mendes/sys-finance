@@ -8,6 +8,8 @@ import LoaderSpinner from '@/components/ui/LoaderSpinner.vue'
 import { toast } from 'vue3-toastify'
 import Swal from 'sweetalert2'
 import CapiMascot from '@/components/brand/CapiMascot.vue'
+import { useCelebrationStore } from '@/presentation/store/celebrationStore'
+import { contributionReachesGoal } from '@/core/domain/goals'
 
 const store = useGoalStore()
 const workspaceStore = useWorkspaceStore()
@@ -112,13 +114,16 @@ const openContribution = (goal: Goal) => {
 
 const saveContribution = async () => {
   if (contributionAmount.value <= 0) return
+  const goal = selectedGoal.value!
+  const reached = contributionReachesGoal(Number(goal.accumulatedAmount) || 0, Number(goal.targetAmount) || 0, contributionAmount.value)
   const success = await store.addContribution(selectedGoal.value!.id, contributionAmount.value, contributionAccountId.value, contributionDesc.value)
   if (success) {
     showContributionModal.value = false
     contributionAmount.value = 0
     contributionAccountId.value = null
     contributionDesc.value = ''
-    toast.success("Aporte registrado!")
+    if (reached) useCelebrationStore().celebrate('Meta concluída!', goal.title)
+    else toast.success("Aporte registrado!")
     // Force refresh accounts if an account was used
     if (contributionAccountId.value || selectedGoal.value?.accountId) {
         await accountStore.forceRefreshAccounts()

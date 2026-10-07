@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Componentes</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&amp;family=Manrope:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+.btn{font-family: Manrope, sans-serif; font-weight: 700; font-size: 15px; height: 44px; padding: 0 18px; border-radius: 8px; border: 0; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: background-color 120ms cubic-bezier(.2,.8,.2,1), transform 120ms cubic-bezier(.2,.8,.2,1), box-shadow 120ms}
+.btn:active{transform: scale(0.97)}
+.btn:focus-visible, .seg:focus-visible, .sw:focus-visible, .inp:focus-visible{outline: 3px solid #6F8BF0; outline-offset: 2px}
+.btn-primary{background: #2346D8; color: #FFFFFF}.btn-primary:hover{background: #1A34A6}
+.btn-secondary{background: #FFFFFF; color: #0B1324; box-shadow: inset 0 0 0 1.5px #C5CCD6}.btn-secondary:hover{background: #F6F7F9}
+.btn-ghost{background: transparent; color: #2346D8}.btn-ghost:hover{background: #E8EDFC}
+.btn-danger{background: #C2410C; color: #FFFFFF}.btn-danger:hover{background: #9A3412}
+.btn-sm{height: 36px; font-size: 14px; padding: 0 14px}
+.inp{font-family: Manrope, sans-serif; font-size: 16px; height: 44px; border-radius: 8px; border: 1.5px solid #C5CCD6; padding: 0 14px; color: #0B1324; background: #FFFFFF; box-sizing: border-box; width: 100%}
+.inp:hover{border-color: #5B6B85}
+.spin{width: 16px; height: 16px; border-radius: 999px; border: 2.5px solid rgba(255,255,255,0.35); border-top-color: #FFFFFF; animation: spin 700ms linear infinite}
+@keyframes spin{to{transform: rotate(360deg)}}
+@keyframes toastIn{from{opacity: 0; transform: translateY(12px) scale(0.98)}to{opacity: 1; transform: none}}
+.toast{animation: toastIn 320ms cubic-bezier(.2,.8,.2,1) both}
+.row{transition: background-color 120ms}.row:hover{background: #F6F7F9}
+@media (prefers-reduced-motion: reduce){.toast,.spin{animation-duration: 1ms}}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1400px; box-sizing: border-box; background: #F6F7F9; font-family: Manrope, sans-serif; color: #0B1324; padding: 64px 72px; position: relative; display: flex; flex-direction: column; gap: 28px">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5B6B85">Componentes · clique para testar</div>
+<h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 52px; letter-spacing: -0.02em">Peças do dia a dia</h1>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; align-items: start">
+
+<div style="display: flex; flex-direction: column; gap: 20px">
+<div style="background: #FFFFFF; border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 1px 2px rgba(11,19,36,0.06)">
+<div style="font-weight: 800; font-size: 16px">Botões</div>
+<div style="display: flex; flex-wrap: wrap; gap: 10px">
+<button class="btn btn-primary" type="button">Novo lançamento</button>
+<button class="btn btn-secondary" type="button">Exportar</button>
+<button class="btn btn-ghost" type="button">Ver todos</button>
+<button class="btn btn-danger" type="button">Excluir</button>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center">
+<button class="btn btn-primary btn-sm" type="button">Pequeno</button>
+<button class="btn btn-secondary btn-sm" type="button">Pequeno</button>
+<button class="btn btn-primary" type="button" onClick="{{save}}" style="min-width: 150px">
+<sc-if value="{{saving}}" hint-placeholder-val="{{ false }}"><span class="spin"></span>Salvando…</sc-if>
+<sc-if value="{{notSaving}}" hint-placeholder-val="{{ true }}">Salvar conta</sc-if>
+</button>
+</div>
+<div style="font-size: 13px; color: #5B6B85; line-height: 1.5">Altura mínima 44px. Clique em “Salvar conta” para ver o estado de carregando e o aviso de sucesso.</div>
+</div>
+
+<div style="background: #FFFFFF; border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 1px 2px rgba(11,19,36,0.06)">
+<div style="font-weight: 800; font-size: 16px">Campos</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="desc" style="font-size: 14px; font-weight: 700">Descrição</label>
+<input id="desc" class="inp" type="text" placeholder="Ex.: Mercado da semana">
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="valor" style="font-size: 14px; font-weight: 700">Valor</label>
+<div style="position: relative">
+<span style="position: absolute; left: 14px; top: 12px; font-weight: 700; color: #5B6B85; font-size: 16px">R$</span>
+<input id="valor" class="inp" type="text" inputmode="decimal" value="1.250,00" style="padding-left: 46px; font-variant-numeric: tabular-nums; font-weight: 700">
+</div>
+<div style="font-size: 13px; color: #5B6B85">Use vírgula para os centavos.</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="venc" style="font-size: 14px; font-weight: 700">Vencimento</label>
+<input id="venc" class="inp" type="text" value="31/02/2026" aria-invalid="true" aria-describedby="venc-err" style="border-color: #C2410C">
+<div id="venc-err" style="font-size: 13px; color: #9A3412; font-weight: 600; display: flex; align-items: center; gap: 6px">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v6M12 16.5v.5"></path></svg>
+Essa data não existe. Confira o dia.</div>
+</div>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 20px">
+<div style="background: #FFFFFF; border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 1px 2px rgba(11,19,36,0.06)">
+<div style="font-weight: 800; font-size: 16px">Controles</div>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<div style="display: flex; flex-direction: column"><span id="v360" style="font-weight: 700; font-size: 15px">Visão 360</span><span style="font-size: 13px; color: #5B6B85">Somar todos os workspaces</span></div>
+<button class="sw" type="button" role="switch" aria-checked="{{onStr}}" aria-labelledby="v360" onClick="{{toggle}}" style="width: 52px; height: 32px; border-radius: 999px; border: 0; padding: 0; cursor: pointer; position: relative; background: {{trackBg}}; transition: background-color 200ms cubic-bezier(.2,.8,.2,1)">
+<span style="position: absolute; top: 4px; left: 4px; width: 24px; height: 24px; border-radius: 999px; background: #FFFFFF; box-shadow: 0 1px 3px rgba(11,19,36,0.25); transform: translateX({{knobX}}px); transition: transform 320ms cubic-bezier(.34,1.56,.64,1)"></span>
+</button>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="font-size: 14px; font-weight: 700">Período</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); background: #EEF1F5; border-radius: 10px; padding: 4px; gap: 4px">
+<sc-for list="{{periods}}" as="p" hint-placeholder-count="3">
+<button class="seg" type="button" aria-pressed="{{p.pressed}}" onClick="{{p.pick}}" style="height: 36px; border: 0; border-radius: 8px; font-family: Manrope, sans-serif; font-weight: 700; font-size: 14px; cursor: pointer; background: {{p.bg}}; color: {{p.fg}}; box-shadow: {{p.shadow}}; transition: background-color 200ms, color 200ms">{{p.label}}</button>
+</sc-for>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="font-size: 14px; font-weight: 700">Status</div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: #E6F4EE; color: #0B5B40"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>Pago</span>
+<span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: #FEF3C7; color: #854D0E"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8"></circle><path d="M12 8v4l2.5 2"></path></svg>Pendente</span>
+<span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: #FDEEE6; color: #9A3412"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 7v6M12 16.5v.5"></path></svg>Vencido</span>
+<span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: #E8EDFC; color: #1A34A6">Recorrente</span>
+</div>
+</div>
+</div>
+
+<div style="background: #FFFFFF; border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 1px 2px rgba(11,19,36,0.06)">
+<div style="display: flex; justify-content: space-between; align-items: center">
+<div style="font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #5B6B85">Saldo total</div>
+<span style="font-size: 12px; font-weight: 800; padding: 3px 8px; border-radius: 999px; background: #E6F4EE; color: #0B5B40">▲ vs. mês passado</span>
+</div>
+<div style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 40px; letter-spacing: -0.02em; font-variant-numeric: tabular-nums">R$ [SALDO]</div>
+<div style="font-size: 13px; color: #5B6B85">KPI: rótulo, valor grande tabular, comparação com seta + texto.</div>
+</div>
+
+<div style="background: #FFFFFF; border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 1px 2px rgba(11,19,36,0.06)">
+<div style="display: flex; justify-content: space-between; align-items: center">
+<div style="font-weight: 800; font-size: 16px">Meta: reserva de emergência</div>
+<div style="font-weight: 800; font-size: 15px; color: #C97C12; font-variant-numeric: tabular-nums">68%</div>
+</div>
+<div style="height: 12px; background: #EEF1F5; border-radius: 999px; overflow: hidden" role="progressbar" aria-valuenow="68" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso da meta">
+<div style="height: 100%; width: 68%; background: #F2A541; border-radius: 999px"></div>
+</div>
+<div style="font-size: 13px; color: #5B6B85">Ao chegar em 100%, a Capi comemora (veja Movimento).</div>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 20px">
+<div style="background: #FFFFFF; border-radius: 20px; padding: 8px 8px 12px; display: flex; flex-direction: column; box-shadow: 0 1px 2px rgba(11,19,36,0.06)">
+<div style="font-weight: 800; font-size: 16px; padding: 16px 16px 8px">Lançamentos</div>
+<sc-for list="{{tx}}" as="t" hint-placeholder-count="4">
+<div class="row" style="display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-radius: 12px">
+<div style="width: 40px; height: 40px; border-radius: 12px; background: {{t.iconBg}}; color: {{t.iconFg}}; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px; flex-shrink: 0">{{t.initial}}</div>
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+<div style="font-weight: 700; font-size: 15px">{{t.desc}}</div>
+<div style="font-size: 13px; color: #5B6B85">{{t.meta}}</div>
+</div>
+<div style="font-weight: 800; font-size: 15px; font-variant-numeric: tabular-nums; color: {{t.color}}">{{t.amount}}</div>
+</div>
+</sc-for>
+</div>
+
+<div style="background: #FDEEE6; border-radius: 20px; padding: 16px 20px 16px 8px; display: flex; align-items: center; gap: 8px" role="alert">
+<dc-import name="Capi" mood="alerta" size="84" hint-size="84px,84px"></dc-import>
+<div style="flex: 1; display: flex; flex-direction: column; gap: 4px">
+<div style="font-weight: 800; font-size: 15px; color: #7C2D12">As despesas passaram das receitas</div>
+<div style="font-size: 14px; color: #7C2D12; line-height: 1.4">Revise os orçamentos de maior gasto antes do fechamento.</div>
+</div>
+<button class="btn btn-sm" type="button" style="background: #7C2D12; color: #FFFFFF">Revisar</button>
+</div>
+
+<div style="background: #FFFFFF; border-radius: 20px; padding: 20px 24px 28px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; box-shadow: 0 1px 2px rgba(11,19,36,0.06)">
+<dc-import name="Capi" mood="dormindo" size="130" hint-size="130px,130px"></dc-import>
+<div style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px">Nada por aqui ainda</div>
+<div style="font-size: 14px; color: #5B6B85; max-width: 280px; line-height: 1.5">Cadastre seu primeiro cartão para acompanhar faturas e limite.</div>
+<button class="btn btn-primary btn-sm" type="button" style="margin-top: 8px">Adicionar cartão</button>
+</div>
+</div>
+</div>
+
+<sc-if value="{{toast}}" hint-placeholder-val="{{ false }}">
+<div class="toast" role="status" style="position: absolute; right: 72px; top: 64px; background: #0B1324; color: #FFFFFF; border-radius: 12px; padding: 12px 16px; display: flex; align-items: center; gap: 12px; box-shadow: 0 20px 48px rgba(11,19,36,0.18)">
+<div style="width: 28px; height: 28px; border-radius: 999px; background: #0E7A55; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></div>
+<div style="font-weight: 700; font-size: 15px">Conta salva</div>
+<button class="btn btn-sm" type="button" style="background: transparent; color: #9AB0FF; padding: 0 8px">Desfazer</button>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1400}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { on: true, period: 'Mês', saving: false, toast: false };
+  }
+  componentWillUnmount() {
+    clearTimeout(this.t1);
+    clearTimeout(this.t2);
+  }
+  renderVals() {
+    const s = this.state;
+    const tx = [
+      ['Salário', 'Receita · Conta corrente', '+ R$ 8.420,00', true],
+      ['Mercado', 'Alimentação · Cartão final 4412', '− R$ 386,20', false],
+      ['Aluguel', 'Moradia · Pix', '− R$ 2.100,00', false],
+      ['Streaming', 'Lazer · Recorrente', '− R$ 39,90', false]
+    ];
+    return {
+      onStr: s.on ? 'true' : 'false',
+      trackBg: s.on ? '#2346D8' : '#C5CCD6',
+      knobX: s.on ? 20 : 0,
+      toggle: () => this.setState({ on: !s.on }),
+      periods: ['Mês', 'Trimestre', 'Ano'].map((label) => {
+        const sel = s.period === label;
+        return { label, pressed: sel ? 'true' : 'false', bg: sel ? '#FFFFFF' : 'transparent', fg: sel ? '#0B1324' : '#5B6B85', shadow: sel ? '0 1px 3px rgba(11,19,36,0.12)' : 'none', pick: () => this.setState({ period: label }) };
+      }),
+      saving: s.saving,
+      notSaving: !s.saving,
+      toast: s.toast,
+      save: () => {
+        if (s.saving) return;
+        this.setState({ saving: true, toast: false });
+        clearTimeout(this.t1);
+        clearTimeout(this.t2);
+        this.t1 = setTimeout(() => this.setState({ saving: false, toast: true }), 1400);
+        this.t2 = setTimeout(() => this.setState({ toast: false }), 4800);
+      },
+      tx: tx.map((t) => ({ desc: t[0], meta: t[1], amount: t[2], initial: t[0].charAt(0), color: t[3] ? '#0E7A55' : '#0B1324', iconBg: t[3] ? '#E6F4EE' : '#EEF1F5', iconFg: t[3] ? '#0B5B40' : '#26324A' }))
+    };
+  }
+}
+</script>
+</body>
+</html>
