@@ -157,4 +157,3 @@ class HybridAIEngine {
         return $isIncome ? TransactionType::ASSET : TransactionType::BILL;
     }
 }
-}

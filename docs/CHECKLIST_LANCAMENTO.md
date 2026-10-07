@@ -15,6 +15,7 @@ Legenda: ✅ ok · 🔧 corrigido nesta revisão · ⚠️ pendente (não bloque
 | Integridade | Lançamento com rateio que falhava no meio ficava gravado pela metade (e descontava o saldo). Criar/editar/excluir/pagar/desconsiderar agora são atômicos |
 | Backup | Não existia. Serviço `backup` diário com retenção de 14 dias + backup automático antes de cada migration + `restore.sh` |
 | Rollback | Deploy agora aceita `ref` (qualquer SHA/tag), faz health check e volta sozinho para a última versão boa se falhar |
+| Importação | Extrato de layout desconhecido dava **erro fatal**: `HybridAIEngine.php` tinha uma `}` sobrando e a tabela `bank_statement_templates` só existia num `.sql` nunca aplicado (agora é migration) |
 | Pequenos | Botão de cadastro sem duplo envio; chamadas ao Telegram com timeout |
 
 ## As 20 perguntas

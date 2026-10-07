@@ -24,6 +24,9 @@ jobs:
           coverage: pcov
           tools: composer:v2
 
+      - name: Install pdftotext (importação de extratos em PDF)
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils
+
       - name: Install Dependencies
         run: composer install --prefer-dist --no-progress
 
