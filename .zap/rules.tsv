@@ -23,3 +23,5 @@
 10202	INFO	Absence of Anti-CSRF Tokens (API JSON usa double-submit cookie + header X-CSRF-Token)
 90004	WARN	Insufficient Site Isolation Against Spectre (COEP/CORP/COOP no .htaccess)
 90005	IGNORE	Sec-Fetch-* Header is Missing (headers de requisição enviados pelo navegador; o spider do ZAP não os envia)
+10094	IGNORE	Base64 Disclosure (falso positivo: fonte woff2 pequena embutida no CSS pelo Vite e a chave PÚBLICA de licença do ApexCharts no JS; nenhum segredo)
+90003	FAIL	Sub Resource Integrity Attribute Missing (o build adiciona integrity sha384 em JS/CSS: frontend/build/subresourceIntegrity.ts)
