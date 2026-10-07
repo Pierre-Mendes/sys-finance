@@ -5,16 +5,16 @@
         <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
           <div class="relative w-full sm:w-64">
              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                 <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                 <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
              </div>
              <input v-model="searchQuery" type="text" placeholder="Buscar conta..." class="w-full pl-10 pr-10 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-gray-700 bg-white shadow-sm transition" />
              
              <!-- Clear search button -->
-             <div v-if="searchQuery" @click="searchQuery = ''" class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer text-gray-400 hover:text-red-500 transition" title="Limpar busca">
+             <div v-if="searchQuery" @click="searchQuery = ''" class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer text-gray-500 hover:text-red-500 transition" title="Limpar busca">
                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
              </div>
           </div>
-          <button @click="openCreateModal" class="w-full sm:w-auto bg-primary hover:bg-blue-600 px-5 py-2.5 rounded-lg text-white font-medium shadow transition cursor-pointer flex items-center justify-center gap-2 whitespace-nowrap">
+          <button @click="openCreateModal" class="w-full sm:w-auto bg-primary hover:bg-brand-800 px-5 py-2.5 rounded-lg text-white font-medium shadow transition cursor-pointer flex items-center justify-center gap-2 whitespace-nowrap">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>Nova Conta
           </button>
         </div>
@@ -27,8 +27,8 @@
               <th class="p-4 cursor-pointer hover:bg-gray-100 transition group select-none" @click="toggleSort">
                   <div class="flex items-center gap-2">
                       Nome da Conta
-                      <svg v-if="sortOrder === 'asc'" class="w-4 h-4 text-gray-400 group-hover:text-primary transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
-                      <svg v-else class="w-4 h-4 text-gray-400 group-hover:text-primary transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                      <svg v-if="sortOrder === 'asc'" class="w-4 h-4 text-gray-500 group-hover:text-primary transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                      <svg v-else class="w-4 h-4 text-gray-500 group-hover:text-primary transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                   </div>
               </th>
               <th class="p-4 w-40 text-right sm:text-center">Ações</th>
@@ -52,7 +52,7 @@
             </tr>
             <TableLoader v-if="isLoading" :columns="2" message="CARREGANDO CONTAS..." />
             <tr v-if="paginatedAccounts.length === 0 && !isLoading">
-              <td colspan="2" class="p-8 text-center text-gray-500">Nenhuma conta encontrada.</td>
+              <td colspan="2"><EmptyState title="Nenhuma conta por aqui" description="Cadastre sua conta corrente, poupança ou carteira para acompanhar o saldo." /></td>
             </tr>
           </tbody>
         </table>
@@ -109,7 +109,7 @@
           </div>
           <div class="flex justify-end gap-3">
             <button type="button" @click="openModal = false" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition cursor-pointer font-medium">Cancelar</button>
-            <button type="submit" class="px-4 py-2 bg-primary hover:bg-blue-600 text-white font-medium rounded-lg shadow transition cursor-pointer">Salvar</button>
+            <button type="submit" class="px-4 py-2 bg-primary hover:bg-brand-800 text-white font-medium rounded-lg shadow transition cursor-pointer">Salvar</button>
           </div>
         </form>
       </div>
@@ -125,6 +125,7 @@ import { toast } from 'vue3-toastify'
 import Swal from 'sweetalert2'
 import MainLayout from '@/components/layout/MainLayout.vue'
 import TableLoader from '@/components/ui/TableLoader.vue'
+import EmptyState from '@/components/ui/EmptyState.vue'
 
 const router = useRouter()
 const accounts = ref<any[]>([])
@@ -275,7 +276,7 @@ const deleteAccount = async (acc: any) => {
         text: `Deseja realmente excluir a conta bancária "${acc.name}"? O saldo não será afetado a menos que você delete as transações associadas.`,
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#ef4444',
+        confirmButtonColor: '#C2410C',
         cancelButtonColor: '#9ca3af',
         confirmButtonText: 'Sim, excluir!',
         cancelButtonText: 'Cancelar'

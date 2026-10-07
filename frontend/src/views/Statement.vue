@@ -20,7 +20,7 @@
     </div>
 
     <!-- Empty State -->
-    <div v-if="!selectedAccountId" class="bg-white rounded-[2.5rem] p-20 text-center border-2 border-dashed border-gray-100">
+    <div v-if="!selectedAccountId" class="bg-white rounded-3xl p-20 text-center border-2 border-dashed border-gray-100">
         <div class="w-24 h-24 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-6">
             <svg class="w-12 h-12 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
         </div>
@@ -32,15 +32,15 @@
         <div v-for="i in 5" :key="i" class="h-24 bg-gray-50 rounded-3xl animate-pulse"></div>
     </div>
 
-    <div v-else-if="statement.length === 0" class="bg-white rounded-[2.5rem] p-20 text-center border border-gray-50">
-        <p class="text-gray-400 font-bold uppercase tracking-widest text-xs">Sem movimentações recentes</p>
+    <div v-else-if="statement.length === 0" class="bg-white rounded-3xl p-20 text-center border border-gray-50">
+        <p class="text-gray-500 font-bold uppercase tracking-widest text-xs">Sem movimentações recentes</p>
     </div>
 
     <!-- Statement Table -->
-    <div v-else class="bg-white rounded-[2.5rem] shadow-sm border border-gray-50 overflow-hidden">
+    <div v-else class="bg-white rounded-3xl shadow-sm border border-gray-50 overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-left">
-                <thead class="bg-gray-50/50 text-gray-400 text-[10px] font-black uppercase tracking-widest border-b border-gray-50">
+                <thead class="bg-gray-50/50 text-gray-500 text-xs font-black uppercase tracking-widest border-b border-gray-50">
                     <tr>
                         <th class="px-8 py-5">Data</th>
                         <th class="px-8 py-5">Movimentação</th>
@@ -58,11 +58,11 @@
                             <div class="flex flex-col">
                                 <span class="text-gray-900 font-black text-sm">{{ item.title }}</span>
                                 <span v-if="item.status === 'PENDING'" class="text-[9px] font-black text-amber-500 uppercase tracking-tighter">Pendente</span>
-                                <span v-else-if="item.status === 'CANCELED'" class="text-[9px] font-black text-gray-400 uppercase tracking-tighter">Desconsiderada</span>
+                                <span v-else-if="item.status === 'CANCELED'" class="text-[9px] font-black text-gray-500 uppercase tracking-tighter">Desconsiderada</span>
                             </div>
                         </td>
                         <td class="px-8 py-6">
-                            <span class="px-3 py-1 bg-gray-100 text-gray-500 rounded-full text-[10px] font-black uppercase tracking-tight">
+                            <span class="px-3 py-1 bg-gray-100 text-gray-500 rounded-full text-xs font-black uppercase tracking-tight">
                                 {{ item.categoryName }}
                             </span>
                         </td>

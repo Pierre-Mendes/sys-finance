@@ -58,7 +58,7 @@
                           <option value="MONTHLY">Mensal</option>
                           <option value="YEARLY">Anual</option>
                       </select>
-                      <p class="text-[10px] text-gray-500 mt-1 uppercase" v-if="txForm.recurrence_type !== 'NONE'">Cria novo mês ao dar baixa</p>
+                      <p class="text-xs text-gray-500 mt-1 uppercase" v-if="txForm.recurrence_type !== 'NONE'">Cria novo mês ao dar baixa</p>
                   </div>
                   <div class="flex-1">
                       <label class="block text-xs font-medium text-gray-600 mb-1">Prioridade</label>
@@ -145,7 +145,7 @@
 
           <div class="flex justify-end gap-3 pt-3">
             <button type="button" @click="close" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition cursor-pointer font-medium">Cancelar</button>
-            <button type="submit" class="px-4 py-2 bg-primary hover:bg-blue-600 text-white font-medium rounded-lg shadow transition cursor-pointer">Salvar</button>
+            <button type="submit" class="px-4 py-2 bg-primary hover:bg-brand-800 text-white font-medium rounded-lg shadow transition cursor-pointer">Salvar</button>
           </div>
         </form>
       </div>

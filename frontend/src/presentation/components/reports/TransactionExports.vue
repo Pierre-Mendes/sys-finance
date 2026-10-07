@@ -5,27 +5,27 @@
         <span class="block text-lg font-bold text-gray-800">Exportar lançamentos</span>
         <span class="block text-xs text-gray-500">Lista de lançamentos em PDF ou CSV, com filtros próprios.</span>
       </span>
-      <svg class="w-5 h-5 text-gray-400 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+      <svg class="w-5 h-5 text-gray-500 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
     </summary>
     <div class="px-5 sm:px-6 pb-6">
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         <label class="block">
-          <span class="block text-xs font-bold text-gray-400 uppercase mb-1">Data início</span>
+          <span class="block text-xs font-bold text-gray-500 uppercase mb-1">Data início</span>
           <input v-model="filters.from_date" type="date" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm" />
         </label>
         <label class="block">
-          <span class="block text-xs font-bold text-gray-400 uppercase mb-1">Data fim</span>
+          <span class="block text-xs font-bold text-gray-500 uppercase mb-1">Data fim</span>
           <input v-model="filters.to_date" type="date" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm" />
         </label>
         <label class="block">
-          <span class="block text-xs font-bold text-gray-400 uppercase mb-1">Conta</span>
+          <span class="block text-xs font-bold text-gray-500 uppercase mb-1">Conta</span>
           <select v-model="filters.account_id" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm">
             <option :value="null">Todas as contas</option>
             <option v-for="acc in accounts" :key="acc.id" :value="acc.id">{{ acc.name }}</option>
           </select>
         </label>
         <label class="block">
-          <span class="block text-xs font-bold text-gray-400 uppercase mb-1">Tipo</span>
+          <span class="block text-xs font-bold text-gray-500 uppercase mb-1">Tipo</span>
           <select v-model="filters.type" @change="filters.category_id = null" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm">
             <option :value="null">Entradas e saídas</option>
             <option value="income">Apenas entradas</option>
@@ -33,7 +33,7 @@
           </select>
         </label>
         <label class="block">
-          <span class="block text-xs font-bold text-gray-400 uppercase mb-1">Categoria</span>
+          <span class="block text-xs font-bold text-gray-500 uppercase mb-1">Categoria</span>
           <select v-model="filters.category_id" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm">
             <option :value="null">Todas as categorias</option>
             <option v-for="cat in filteredCategories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>

@@ -8,7 +8,7 @@
           e nós criamos para você.
         </p>
       </div>
-      <button @click="dismiss" class="text-gray-400 hover:text-gray-600 text-sm" aria-label="Dispensar">✕</button>
+      <button @click="dismiss" class="text-gray-500 hover:text-gray-600 text-sm" aria-label="Dispensar">✕</button>
     </div>
 
     <ul class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">

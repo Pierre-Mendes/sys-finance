@@ -1,6 +1,9 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import * as Sentry from '@sentry/vue'
+// Fontes empacotadas: a CSP só aceita font-src 'self'.
+import '@fontsource-variable/manrope'
+import '@fontsource-variable/bricolage-grotesque'
 import './style.css'
 // CSS das bibliotecas como arquivos (servidos de 'self'): a CSP não precisa de style-src 'unsafe-inline'.
 import 'sweetalert2/dist/sweetalert2.min.css'

@@ -117,7 +117,7 @@
                                </div>
                             </td>
                             <td class="p-4 text-gray-600 text-sm">{{ new Date(m.joinedAt).toLocaleDateString() }}</td>
-                            <td class="p-4 font-mono font-bold text-gray-400 text-sm">
+                            <td class="p-4 font-mono font-bold text-gray-500 text-sm">
                                 <span v-if="m.usedInviteCode">{{ m.usedInviteCode }}</span>
                                 <span v-else>-</span>
                             </td>
@@ -196,7 +196,7 @@
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col max-h-full">
             <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
                  <h3 class="text-xl font-bold text-gray-800">Fundar Novo Espaço Compartilhado</h3>
-                 <button @click="createWorkspaceModal = false" class="text-gray-400 hover:text-red-500 transition"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+                 <button @click="createWorkspaceModal = false" class="text-gray-500 hover:text-red-500 transition"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
             </div>
             <div class="p-6 overflow-y-auto">
                  <div class="mb-4">
@@ -377,7 +377,7 @@ const deleteWorkspace = async () => {
         text: `Isso apagará o workspace "${activeWorkspaceName.value}", todas suas transações, contas e categorias para sempre. Deseja prosseguir?`,
         icon: 'error',
         showCancelButton: true,
-        confirmButtonColor: '#ef4444',
+        confirmButtonColor: '#C2410C',
         confirmButtonText: 'Sim, Apagar Tudo!'
     })
     
@@ -421,7 +421,7 @@ const transferOwner = async (member: any) => {
         text: `Transferir o título de Dono para ${member.firstName}? Você será rebaixado para um membro comum.`,
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#3b82f6',
+        confirmButtonColor: '#2346D8',
         confirmButtonText: 'Sim, Transferir Cargo'
     })
     
@@ -547,7 +547,7 @@ const revokeAccess = async (member: any) => {
         text: `Remover o membro ${member.firstName} definitivamente da sua Visão?`,
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#ef4444',
+        confirmButtonColor: '#C2410C',
         confirmButtonText: 'Sim, expulsar!'
     })
     
@@ -568,7 +568,7 @@ const deleteInvite = async (inv: any) => {
         text: `Ninguém que possua a chave ${inv.code} conseguirá entrar na Visão. Apagar?`,
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#ef4444',
+        confirmButtonColor: '#C2410C',
         confirmButtonText: 'Sim, desativar código'
     })
     

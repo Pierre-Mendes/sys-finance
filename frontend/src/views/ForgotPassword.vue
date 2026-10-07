@@ -1,8 +1,9 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800 p-4">
-    <div class="w-full max-w-md bg-card rounded-2xl shadow-2xl overflow-hidden border border-gray-700">
+  <div class="min-h-screen flex items-center justify-center bg-ink-900 p-4">
+    <div class="w-full max-w-md rounded-2xl shadow-2xl overflow-hidden border border-ink-700 bg-ink-800 animate-fade-up">
       <div class="p-8">
-        <h2 class="text-3xl font-bold text-white mb-2 text-center">Recuperar Conta</h2>
+        <div class="flex justify-center mb-6"><BrandLogo tone="dark" :size="44" /></div>
+        <h2 class="text-2xl font-extrabold text-white mb-2 text-center">Recuperar Conta</h2>
         <p class="text-gray-400 text-center mb-8">Siga as instruções para redefinir sua senha</p>
         
         <!-- Step 1: Email -->
@@ -14,7 +15,7 @@
               placeholder="seu@email.com" />
           </div>
           <button type="submit" :disabled="isSubmitting"
-            class="w-full bg-primary hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2">
+            class="w-full bg-primary hover:bg-brand-800 text-white font-semibold py-3 px-4 rounded-lg shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2">
             <span>Continuar</span>
           </button>
         </form>
@@ -32,7 +33,7 @@
               placeholder="Digite sua resposta aqui" />
           </div>
           <button type="submit"
-            class="w-full bg-primary hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg shadow-lg transition-all flex items-center justify-center gap-2">
+            class="w-full bg-primary hover:bg-brand-800 text-white font-semibold py-3 px-4 rounded-lg shadow-lg transition-all flex items-center justify-center gap-2">
             <span>Validar Resposta</span>
           </button>
           <button @click="step = 1" type="button" class="w-full text-gray-500 text-sm hover:text-white transition">Voltar</button>
@@ -60,7 +61,7 @@
         
         <p class="mt-8 text-center text-sm text-gray-400">
           Lembrou a senha? 
-          <router-link to="/" class="text-primary hover:text-blue-400 font-medium transition">
+          <router-link to="/" class="text-brand-400 hover:text-brand-100 font-medium transition">
             Voltar ao Login
           </router-link>
         </p>
@@ -74,6 +75,7 @@ import { ref, reactive } from 'vue'
 import api from '@/data/api/HttpClient'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
+import BrandLogo from '@/components/brand/BrandLogo.vue'
 
 const router = useRouter()
 const step = ref(1)

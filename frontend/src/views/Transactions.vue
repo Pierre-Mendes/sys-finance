@@ -13,7 +13,7 @@
           </button>
 
           <!-- No celular o "+" da barra inferior faz o mesmo -->
-          <button @click="openCreateModal" class="hidden md:flex w-full sm:w-auto bg-primary hover:bg-blue-600 px-5 py-2.5 rounded-lg text-white font-medium shadow transition cursor-pointer items-center justify-center gap-2 whitespace-nowrap">
+          <button @click="openCreateModal" class="hidden md:flex w-full sm:w-auto bg-primary hover:bg-brand-800 px-5 py-2.5 rounded-lg text-white font-medium shadow transition cursor-pointer items-center justify-center gap-2 whitespace-nowrap">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>Novo Lançamento
           </button>
         </div>
@@ -25,7 +25,7 @@
               <label class="block text-xs font-medium text-gray-500 mb-1">Buscar por Texto</label>
               <div class="relative w-full">
                   <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                     <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                     <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                   </div>
                   <input v-model="searchQuery" type="text" placeholder="Nome, conta ou categoria..." class="w-full pl-10 pr-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-gray-700 bg-white shadow-sm transition" />
               </div>
@@ -89,9 +89,9 @@
               </p>
               <div class="flex items-center justify-between gap-2 mt-2">
                 <div class="flex items-center gap-2 min-w-0">
-                  <span v-if="t.status === 'PAID'" class="px-2 py-0.5 text-[10px] font-bold bg-green-100 text-green-700 rounded-full uppercase">Pago</span>
-                  <span v-else-if="t.status === 'CANCELED'" class="px-2 py-0.5 text-[10px] font-bold bg-gray-100 text-gray-600 rounded-full uppercase">Desconsiderada</span>
-                  <span v-else class="px-2 py-0.5 text-[10px] font-bold bg-amber-100 text-amber-700 rounded-full uppercase">Pendente</span>
+                  <span v-if="t.status === 'PAID'" class="px-2 py-0.5 text-xs font-bold bg-green-100 text-green-700 rounded-full uppercase">Pago</span>
+                  <span v-else-if="t.status === 'CANCELED'" class="px-2 py-0.5 text-xs font-bold bg-gray-100 text-gray-600 rounded-full uppercase">Desconsiderada</span>
+                  <span v-else class="px-2 py-0.5 text-xs font-bold bg-amber-100 text-amber-700 rounded-full uppercase">Pendente</span>
                   <span v-if="t.dueDate && t.status === 'PENDING'" class="text-[11px] whitespace-nowrap" :class="isOverdue(t.dueDate) ? 'text-red-600 font-semibold' : 'text-gray-500'">
                     Vence {{ formatDate(t.dueDate).slice(0, 5) }}
                   </span>
@@ -108,8 +108,8 @@
               </div>
             </div>
           </li>
-          <li v-if="isLoading" class="p-8 text-center text-sm text-gray-400">Carregando lançamentos...</li>
-          <li v-else-if="paginatedTransactions.length === 0" class="p-8 text-center text-gray-500">Nenhum lançamento encontrado.</li>
+          <li v-if="isLoading" class="p-8 text-center text-sm text-gray-500">Carregando lançamentos...</li>
+          <li v-else-if="paginatedTransactions.length === 0"><EmptyState title="Nenhum lançamento encontrado" description="Ajuste os filtros ou registre uma nova entrada ou saída." /></li>
         </ul>
 
         <div class="hidden md:block overflow-x-auto">
@@ -119,8 +119,8 @@
               <th class="p-4 cursor-pointer hover:bg-gray-100 transition group select-none" @click="toggleSort">
                   <div class="flex items-center gap-2">
                       Data
-                      <svg v-if="sortOrder === 'desc'" class="w-4 h-4 text-gray-400 group-hover:text-primary transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                      <svg v-else class="w-4 h-4 text-gray-400 group-hover:text-primary transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                      <svg v-if="sortOrder === 'desc'" class="w-4 h-4 text-gray-500 group-hover:text-primary transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                      <svg v-else class="w-4 h-4 text-gray-500 group-hover:text-primary transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
                   </div>
               </th>
               <th class="p-4">Título</th>
@@ -139,15 +139,15 @@
                        <span :class="['w-2 h-2 rounded-full flex-shrink-0', t.type === 'asset' ? 'bg-green-500' : 'bg-red-500']"></span>
                       <div class="flex flex-col">
                           <span class="truncate max-w-[200px]" :title="t.title">{{ t.title }}</span>
-                          <span v-if="t.priority && t.priority !== 'NORMAL'" class="text-[9px] uppercase tracking-wider mt-0.5" :class="t.priority === 'HIGH' ? 'text-red-500 font-bold' : 'text-gray-400'">Prioridade: {{ t.priority }}</span>
+                          <span v-if="t.priority && t.priority !== 'NORMAL'" class="text-[9px] uppercase tracking-wider mt-0.5" :class="t.priority === 'HIGH' ? 'text-red-500 font-bold' : 'text-gray-500'">Prioridade: {{ t.priority }}</span>
                       </div>
                   </div>
               </td>
               <td class="p-4">
                   <div class="flex flex-col gap-1 items-start">
-                      <span v-if="t.status === 'PAID'" class="px-2 py-0.5 text-[10px] font-bold bg-green-100 text-green-700 rounded-full uppercase border border-green-200">Pago</span>
-                      <span v-else-if="t.status === 'CANCELED'" class="px-2 py-0.5 text-[10px] font-bold bg-gray-100 text-gray-600 rounded-full uppercase border border-gray-200">Desconsiderada</span>
-                      <span v-else class="px-2 py-0.5 text-[10px] font-bold bg-amber-100 text-amber-700 rounded-full uppercase border border-amber-200 shadow-sm animate-pulse-slow">Pendente</span>
+                      <span v-if="t.status === 'PAID'" class="px-2 py-0.5 text-xs font-bold bg-green-100 text-green-700 rounded-full uppercase border border-green-200">Pago</span>
+                      <span v-else-if="t.status === 'CANCELED'" class="px-2 py-0.5 text-xs font-bold bg-gray-100 text-gray-600 rounded-full uppercase border border-gray-200">Desconsiderada</span>
+                      <span v-else class="px-2 py-0.5 text-xs font-bold bg-amber-100 text-amber-700 rounded-full uppercase border border-amber-200 shadow-sm animate-pulse-slow">Pendente</span>
                       
                       <span v-if="t.dueDate" class="text-[11px] font-medium whitespace-nowrap mt-0.5" :class="{'text-red-600 font-semibold': t.status === 'PENDING' && isOverdue(t.dueDate), 'text-gray-500': t.status !== 'PENDING' || !isOverdue(t.dueDate)}">
                           Vence: {{ formatDate(t.dueDate) }}
@@ -178,9 +178,7 @@
             </tr>
             <TableLoader v-if="isLoading" :columns="6" message="CARREGANDO LANÇAMENTOS..." />
             <tr v-if="paginatedTransactions.length === 0 && !isLoading">
-              <td colspan="6" class="p-8 text-center text-gray-500 flex-col items-center justify-center">
-                  Nenhum lançamento encontrado.
-              </td>
+              <td colspan="6"><EmptyState title="Nenhum lançamento encontrado" description="Ajuste os filtros ou registre uma nova entrada ou saída." /></td>
             </tr>
           </tbody>
         </table>
@@ -231,6 +229,7 @@ import TableLoader from '@/components/ui/TableLoader.vue'
 import TransactionModal from '@/presentation/components/domain/TransactionModal.vue'
 import StatementImportModal from '@/presentation/components/domain/StatementImportModal.vue'
 import { transactionRepository } from '@/data/repositories/TransactionRepositoryImpl'
+import EmptyState from '@/components/ui/EmptyState.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -417,7 +416,7 @@ const deleteTransaction = async (t: any) => {
         text: `Deseja realmente excluir o lançamento "${t.title}" no valor de R$ ${formatCurrency(t.amount)}? O saldo da conta será afetado reversamente.`,
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#ef4444',
+        confirmButtonColor: '#C2410C',
         cancelButtonColor: '#9ca3af',
         confirmButtonText: 'Sim, excluir!',
         cancelButtonText: 'Cancelar'

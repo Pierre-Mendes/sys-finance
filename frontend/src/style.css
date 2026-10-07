@@ -1,41 +1,163 @@
 @import "tailwindcss";
 
+/*
+ * Design system sysfinance: tokens em docs/conventions/design-system.md.
+ * Fontes empacotadas (servidas de 'self'): a CSP não libera Google Fonts.
+ */
 @theme {
-  --color-primary: #3B82F6;
-  --color-secondary: #10B981;
-  --color-dark: #111827;
-  --color-card: #1F2937;
+  --font-sans: "Manrope Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Bricolage Grotesque Variable", "Manrope Variable", ui-sans-serif, system-ui, sans-serif;
+
+  /* Azul Cofre: marca e ações primárias */
+  --color-brand-50: #E8EDFC;
+  --color-brand-100: #D3DCFA;
+  --color-brand-200: #B0C0F6;
+  --color-brand-300: #8AA1F2;
+  --color-brand-400: #6F8BF0;
+  --color-brand-500: #4466E6;
+  --color-brand-600: #2346D8;
+  --color-brand-700: #1E3BBE;
+  --color-brand-800: #1A34A6;
+  --color-brand-900: #172B80;
+  --color-brand-950: #0F1C52;
+
+  /* blue e indigo do Tailwind viram a escala da marca: as telas antigas usavam os dois como "cor principal" */
+  --color-blue-50: var(--color-brand-50);
+  --color-blue-100: var(--color-brand-100);
+  --color-blue-200: var(--color-brand-200);
+  --color-blue-300: var(--color-brand-300);
+  --color-blue-400: var(--color-brand-400);
+  --color-blue-500: var(--color-brand-500);
+  --color-blue-600: var(--color-brand-600);
+  --color-blue-700: var(--color-brand-700);
+  --color-blue-800: var(--color-brand-800);
+  --color-blue-900: var(--color-brand-900);
+  --color-blue-950: var(--color-brand-950);
+  --color-indigo-50: var(--color-brand-50);
+  --color-indigo-100: var(--color-brand-100);
+  --color-indigo-200: var(--color-brand-200);
+  --color-indigo-300: var(--color-brand-300);
+  --color-indigo-400: var(--color-brand-400);
+  --color-indigo-500: var(--color-brand-500);
+  --color-indigo-600: var(--color-brand-600);
+  --color-indigo-700: var(--color-brand-700);
+  --color-indigo-800: var(--color-brand-800);
+  --color-indigo-900: var(--color-brand-900);
+  --color-indigo-950: var(--color-brand-950);
+
+  /* Âmbar Capi: destaques, conquistas e mascote */
+  --color-capi-100: #FDE7C4;
+  --color-capi-500: #F2A541;
+  --color-capi-700: #C97C12;
+
+  /* Tinta: texto e superfícies */
+  --color-ink-50: #F6F7F9;
+  --color-ink-100: #EEF1F5;
+  --color-ink-200: #C5CCD6;
+  --color-ink-500: #5B6B85;
+  --color-ink-700: #26324A;
+  --color-ink-800: #141E33;
+  --color-ink-900: #0B1324;
+
+  /* Semânticas: sempre acompanhadas de sinal ou ícone, nunca só a cor */
+  --color-income: #0E7A55;
+  --color-income-50: #E6F4EE;
+  --color-expense: #C2410C;
+  --color-expense-50: #FDEEE6;
+  --color-warning: #B45309;
+
+  /* Nomes antigos apontam para os tokens novos (as telas existentes herdam a paleta) */
+  --color-primary: #2346D8;
+  --color-secondary: #0E7A55;
+  --color-dark: #0B1324;
+  --color-card: #0B1324;
+
+  /* Raios: 8 controles, 12 itens, 20 cards. 2xl e 3xl convergem para o raio de card. */
+  --radius-2xl: 1.25rem;
+  --radius-3xl: 1.25rem;
+
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --animate-fade-up: fade-up 480ms var(--ease-out) both;
+  --animate-pop: pop 600ms var(--ease-spring) both;
+  --animate-shimmer: shimmer 1.4s linear infinite;
+
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes pop {
+    0% { opacity: 0; transform: scale(0.6); }
+    60% { opacity: 1; transform: scale(1.08); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  @keyframes shimmer {
+    from { background-position: -320px 0; }
+    to { background-position: 320px 0; }
+  }
 }
 
 @layer base {
   body {
-    background-color: var(--color-gray-50);
-    color: var(--color-gray-900);
+    background-color: var(--color-ink-50);
+    color: var(--color-ink-900);
+    font-family: var(--font-sans);
+    /* Valores em R$ alinham nas colunas */
+    font-variant-numeric: tabular-nums;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Premium Scrollbars */
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+  }
+
+  /* Anel de foco único para todo controle navegável por teclado */
+  :focus-visible {
+    outline: 3px solid var(--color-brand-400);
+    outline-offset: 2px;
+  }
+
   ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
   }
   ::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: var(--color-ink-100);
     border-radius: 10px;
   }
   ::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
+    background: var(--color-ink-200);
     border-radius: 10px;
-    border: 2px solid #f1f1f1;
+    border: 2px solid var(--color-ink-100);
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #a1a1a1;
+    background: var(--color-ink-500);
   }
-  
-  /* Firefox */
+
   * {
     scrollbar-width: thin;
-    scrollbar-color: #c1c1c1 #f1f1f1;
+    scrollbar-color: var(--color-ink-200) var(--color-ink-100);
+  }
+
+  /* Quem pede menos movimento vê o estado final direto */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 1ms !important;
+      animation-iteration-count: 1 !important;
+      animation-delay: 0ms !important;
+      transition-duration: 1ms !important;
+    }
+  }
+}
+
+@layer components {
+  .skeleton {
+    background: linear-gradient(90deg, var(--color-ink-100) 0%, #F8F9FB 50%, var(--color-ink-100) 100%);
+    background-size: 320px 100%;
+    animation: var(--animate-shimmer);
+    border-radius: 0.5rem;
   }
 }

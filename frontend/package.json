@@ -11,6 +11,8 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@fontsource-variable/bricolage-grotesque": "^5.3.0",
+    "@fontsource-variable/manrope": "^5.3.0",
     "@sentry/vue": "^10.48.0",
     "apexcharts": "^5.10.5",
     "pinia": "^3.0.4",
