@@ -33,6 +33,14 @@ class FakePushSender implements PushSender {
     }
 }
 
+class FakeChatNotifier implements \App\Notifications\ChatNotifier {
+    public array $sent = [];
+    public function notify(int $userId, string $title, string $body): bool {
+        $this->sent[] = [$userId, $title, $body];
+        return true;
+    }
+}
+
 class BillReminderServiceTest extends TestCase
 {
     private const OWNER = 1;
@@ -184,5 +192,22 @@ class BillReminderServiceTest extends TestCase
         $this->assertSame('2 contas atrasadas há mais de 30 dias', $owner[0]['title']);
         $this->assertStringContainsString('R$ 1.000,00', $owner[0]['message']);
         $this->assertSame('/dashboard?review=overdue', $owner[0]['action_url']);
+    }
+
+    public function test_linked_chat_receives_one_summary_per_user(): void
+    {
+        $chat = new FakeChatNotifier();
+        $service = new BillReminderService(
+            new BillReminderRepository($this->db), $this->settings, $this->subs, new NotificationService($this->db), $this->push, $chat
+        );
+        $this->bill('Aluguel', '2026-10-13');
+        $this->bill('Luz', '2026-10-11');
+
+        $service->run($this->at('2026-10-10 09:00'));
+        $service->run($this->at('2026-10-10 15:00'));
+
+        $this->assertSame([self::OWNER, self::PARTNER], array_column($chat->sent, 0), 'Um resumo por membro, sem repetir na rodada seguinte');
+        $this->assertSame('2 contas pedem atenção', $chat->sent[0][1]);
+        $this->assertStringContainsString('Aluguel', $chat->sent[0][2]);
     }
 }

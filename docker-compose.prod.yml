@@ -38,6 +38,9 @@ services:
       - CSP_CONNECT_SRC=${CSP_CONNECT_SRC:-https://*.sentry.io}
       - SENTRY_DSN=${SENTRY_DSN:-}  # erros da API (PHP); com GlitchTip no Docker: http://<chave>@glitchtip:8000/<id>
       - SENTRY_FRONTEND_DSN=${SENTRY_FRONTEND_DSN:-}  # erros do navegador (Vue), repassados pelo túnel /api/monitoring/sentry
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN:-}  # bot do Telegram (docs/guides/telegram.md)
+      - TELEGRAM_BOT_USERNAME=${TELEGRAM_BOT_USERNAME:-}
+      - APP_URL=${APP_URL:-}  # URL pública HTTPS (usada pelo bin/telegram-setup.php)
       - APP_TIMEZONE=${APP_TIMEZONE:-America/Sao_Paulo}
       - VAPID_SUBJECT=${VAPID_SUBJECT:-}  # opcional: mailto: ou https:// de contato para os serviços de push
     depends_on:
@@ -63,6 +66,7 @@ services:
       - APP_ENV=production
       - APP_TIMEZONE=${APP_TIMEZONE:-America/Sao_Paulo}
       - SENTRY_DSN=${SENTRY_DSN:-}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN:-}  # lembretes também no Telegram de quem vinculou o bot
       - VAPID_SUBJECT=${VAPID_SUBJECT:-}
     depends_on:
       db:

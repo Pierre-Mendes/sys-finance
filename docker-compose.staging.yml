@@ -36,6 +36,7 @@ services:
       - CSP_CONNECT_SRC=${CSP_CONNECT_SRC:-https://*.sentry.io}
       - SENTRY_DSN=${SENTRY_DSN:-}  # erros da API (PHP); com GlitchTip no Docker: http://<chave>@glitchtip:8000/<id>
       - SENTRY_FRONTEND_DSN=${SENTRY_FRONTEND_DSN:-}  # erros do navegador (Vue), repassados pelo túnel /api/monitoring/sentry
+      # Sem bot do Telegram no staging: um token só pode ter um webhook (o de produção).
       - APP_TIMEZONE=${APP_TIMEZONE:-America/Sao_Paulo}
       - VAPID_SUBJECT=${VAPID_SUBJECT:-}  # opcional: mailto: ou https:// de contato para os serviços de push
     depends_on:

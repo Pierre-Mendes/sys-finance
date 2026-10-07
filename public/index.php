@@ -297,6 +297,26 @@ $app->group('/api/goals', function (\Slim\Routing\RouteCollectorProxy $group) us
     $group->get('/{id}/forecast', [$goalController, 'forecast']);
 })->add($workspaceMiddleware)->add($authMiddleware);
 
+// Bot do Telegram: lançar e consultar pelo chat (docs/guides/telegram.md)
+$telegramLinks = new \App\Repositories\TelegramLinkRepository($db);
+$telegramBot = new \App\Telegram\TelegramBot(
+    $telegramLinks, $txService, $accountRepo, $categoryRepo, new \App\Repositories\ReportRepository($db), $workspaceService
+);
+$telegramSecretStore = new \App\Security\SecretStore($db);
+$telegramController = new \App\Controllers\TelegramController(
+    $telegramBot,
+    $telegramLinks,
+    \App\Telegram\TelegramConfig::isEnabled() ? fn () => \App\Telegram\TelegramConfig::webhookSecret($telegramSecretStore) : null,
+    \App\Telegram\TelegramConfig::botUsername()
+);
+// Webhook: autenticado pelo secret do setWebhook (header X-Telegram-Bot-Api-Secret-Token), não por sessão.
+$app->post('/api/telegram/webhook', [$telegramController, 'webhook']);
+$app->group('/api/telegram', function (\Slim\Routing\RouteCollectorProxy $group) use ($telegramController) {
+    $group->get('', [$telegramController, 'status']);
+    $group->post('/link', [$telegramController, 'createLink']);
+    $group->delete('/link', [$telegramController, 'deleteLink']);
+})->add($workspaceMiddleware)->add($authMiddleware);
+
 // Add Error Middleware last
 $errorMiddleware = $app->addErrorMiddleware(!$isProd, true, true, $logger);
 

@@ -32,6 +32,10 @@ $service = new BillReminderService(
     new PushSubscriptionRepository($db),
     new NotificationService($db),
     new WebPushSender(new SecretStore($db)),
+    // Avisos também no Telegram de quem vinculou o bot (Configurações → Telegram).
+    \App\Telegram\TelegramConfig::token()
+        ? new \App\Notifications\TelegramNotifier(new \App\Repositories\TelegramLinkRepository($db), \App\Telegram\TelegramConfig::token())
+        : null,
 );
 
 $now = new DateTimeImmutable('now', $timezone);
