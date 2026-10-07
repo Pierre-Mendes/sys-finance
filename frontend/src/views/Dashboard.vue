@@ -233,8 +233,8 @@
                 </select>
             </div>
             <div class="flex-1 w-full relative">
-                <apexchart v-show="!isRefreshing && evolutionChartSeries[0]?.data?.length > 0" type="area" height="100%" :options="evolutionChartOpts" :series="evolutionChartSeries"></apexchart>
-                <div v-if="!isRefreshing && evolutionChartSeries[0]?.data?.length === 0" class="flex h-full items-center justify-center text-gray-500 text-sm">Sem dados suficientes.</div>
+                <BaseChart v-show="!isRefreshing && evolutionData.length > 0" height="100%" :option="evolutionChartOption" label="Gráfico da evolução do saldo no período" />
+                <div v-if="!isRefreshing && evolutionData.length === 0" class="flex h-full items-center justify-center text-gray-500 text-sm">Sem dados suficientes.</div>
             </div>
         </div>
 
@@ -244,8 +244,8 @@
                 <h3 class="text-lg font-bold text-gray-800">Fluxo de Caixa</h3>
             </div>
             <div class="flex-1 w-full relative">
-                <apexchart v-show="!isRefreshing && flowChartSeries[0]?.data?.length > 0" type="bar" height="100%" :options="flowChartOpts" :series="flowChartSeries"></apexchart>
-                <div v-if="!isRefreshing && flowChartSeries[0]?.data?.length === 0" class="flex h-full items-center justify-center text-gray-500 text-sm">Sem movimentos contabilizados.</div>
+                <BaseChart v-show="!isRefreshing && evolutionData.length > 0" height="100%" :option="flowChartOption" label="Gráfico de barras de receitas e despesas no período" />
+                <div v-if="!isRefreshing && evolutionData.length === 0" class="flex h-full items-center justify-center text-gray-500 text-sm">Sem movimentos contabilizados.</div>
             </div>
         </div>
     </div>
@@ -263,8 +263,8 @@
                 </select>
             </div>
             <div class="flex-1 flex items-center justify-center relative">
-                <!-- Não desmontar durante a atualização: remover o gráfico no meio do desenho gera "Element not found" no ApexCharts -->
-                <apexchart v-if="categoryChartSeries.length" :class="{ 'opacity-50': isRefreshing }" type="donut" width="300" :options="categoryChartOpts" :series="categoryChartSeries"></apexchart>
+                <!-- Durante a atualização o gráfico continua montado (só esmaece) para não piscar -->
+                <BaseChart v-if="categoryData.length" :class="['max-w-[300px]', { 'opacity-50': isRefreshing }]" :height="260" :option="categoryChartOption" label="Gráfico de rosca dos gastos por categoria" />
                 <div v-else-if="!isRefreshing" class="text-gray-500 text-sm">Sem dados suficientes.</div>
             </div>
         </div>
@@ -314,7 +314,10 @@ import OverdueReview from '@/presentation/components/domain/OverdueReview.vue'
 import ForecastCard from '@/presentation/components/reports/ForecastCard.vue'
 import CapiMascot from '@/components/brand/CapiMascot.vue'
 import { useCountUp } from '@/presentation/composables/useCountUp'
-import { escapeHtml } from '@/core/security/escapeHtml'
+import BaseChart from '@/components/ui/BaseChart.vue'
+import { areaSeries, axisTooltip, barSeries, cartesian, chartTheme, donutOption } from '@/presentation/charts/chartOptions'
+import { useTheme } from '@/presentation/composables/useTheme'
+import { formatBRL, formatBRLCompact } from '@/core/domain/money'
 import api from '@/data/api/HttpClient'
 import { useWorkspaceStore } from '@/presentation/store/workspaceStore'
 
@@ -374,82 +377,47 @@ const formatCurrency = (val: number) => {
     return Number(val || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 
-// Charts Configuration
-const evolutionChartOpts = computed(() => {
-    const dataList = evolutionPeriod.value === 'monthly' ? analytics.value.charts.evolution.monthly : analytics.value.charts.evolution.daily;
-    const categories = dataList.map((i: any) => i.period);
+// Gráficos (ECharts): opções computed, refeitas ao trocar período, dados ou tema
+const { isDark } = useTheme()
+const BALANCE = '#2346D8'
+const FLOW_COLORS = ['#0E7A55', '#F4A06A'] // receita escura x despesa clara: diferem também em luminosidade
+const CATEGORY_COLORS = ['#2346D8', '#F2A541', '#0E7A55', '#C2410C', '#6F8BF0', '#A8724A', '#5B6B85']
+const money2 = (v: number) => parseFloat(Number(v).toFixed(2))
 
+const evolutionData = computed<any[]>(() =>
+    evolutionPeriod.value === 'monthly' ? analytics.value.charts.evolution.monthly : analytics.value.charts.evolution.daily)
+const categoryData = computed<any[]>(() =>
+    categoryView.value === 'general' ? analytics.value.charts.categories.general : analytics.value.charts.categories.creditCard)
+
+const evolutionChartOption = computed(() => {
+    const t = chartTheme(isDark.value)
+    // Evolução = saldo acumulado do fluxo (receitas - despesas) período a período
+    let acc = 0
+    const data = evolutionData.value.map((i: any) => money2((acc += Number(i.income) - Number(i.expense))))
     return {
-        chart: { type: 'area', toolbar: { show: false }, fontFamily: 'inherit', parentHeightOffset: 0 },
-        colors: ['#2346D8'],
-        dataLabels: { enabled: false },
-        stroke: { curve: 'smooth', width: 2 },
-        fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0, stops: [0, 100] } },
-        xaxis: { categories, tooltip: { enabled: false } },
-        yaxis: { labels: { formatter: (val: number) => 'R$ ' + val.toLocaleString('pt-BR', { notation: 'compact' }) } },
-        grid: { borderColor: '#f1f1f1', strokeDashArray: 4 }
+        ...cartesian(t, { categories: evolutionData.value.map((i: any) => i.period), yFormatter: formatBRLCompact }),
+        tooltip: axisTooltip(t, [BALANCE], formatBRL),
+        series: [areaSeries('Saldo acumulado', BALANCE, data, t)],
     }
 })
 
-const evolutionChartSeries = computed(() => {
-    const dataList = evolutionPeriod.value === 'monthly' ? analytics.value.charts.evolution.monthly : analytics.value.charts.evolution.daily;
-    // Calculate cumulative balance points (or just net flow)
-    // Actually as requested, line chart is Evolution. So we must accumulate.
-    let acc = 0;
-    const data = dataList.map((i: any) => {
-        acc += (Number(i.income) - Number(i.expense));
-        return parseFloat(acc.toFixed(2));
-    });
-
-    return [{ name: 'Saldo Evolutivo', data }]
-})
-
-const flowChartOpts = computed(() => {
-    const dataList = evolutionPeriod.value === 'monthly' ? analytics.value.charts.evolution.monthly : analytics.value.charts.evolution.daily;
-    const categories = dataList.map((i: any) => i.period);
+const flowChartOption = computed(() => {
+    const t = chartTheme(isDark.value)
     return {
-        chart: { type: 'bar', toolbar: { show: false }, fontFamily: 'inherit', parentHeightOffset: 0 },
-        plotOptions: { bar: { columnWidth: '50%', borderRadius: 4 } },
-        colors: ['#0E7A55', '#F4A06A'], // receita escura x despesa clara: diferem também em luminosidade
-        dataLabels: { enabled: false },
-        xaxis: { categories },
-        yaxis: { labels: { formatter: (val: number) => 'R$ ' + val.toLocaleString('pt-BR', { notation: 'compact' }) } },
-        grid: { borderColor: '#f1f1f1', strokeDashArray: 4 },
-        legend: { position: 'top', horizontalAlign: 'right' }
+        ...cartesian(t, { categories: evolutionData.value.map((i: any) => i.period), yFormatter: formatBRLCompact, legend: 'right' }),
+        tooltip: axisTooltip(t, FLOW_COLORS, formatBRL),
+        series: [
+            barSeries('Receitas', FLOW_COLORS[0]!, evolutionData.value.map((i: any) => money2(i.income))),
+            barSeries('Despesas', FLOW_COLORS[1]!, evolutionData.value.map((i: any) => money2(i.expense))),
+        ],
     }
 })
 
-const flowChartSeries = computed(() => {
-    const dataList = evolutionPeriod.value === 'monthly' ? analytics.value.charts.evolution.monthly : analytics.value.charts.evolution.daily;
-    const income = dataList.map((i: any) => parseFloat(Number(i.income).toFixed(2)));
-    const expense = dataList.map((i: any) => parseFloat(Number(i.expense).toFixed(2)));
-    return [
-        { name: 'Receitas', data: income },
-        { name: 'Despesas', data: expense }
-    ]
-})
-
-const categoryChartOpts = computed(() => {
-    const dataList = categoryView.value === 'general' ? analytics.value.charts.categories.general : analytics.value.charts.categories.creditCard;
-    // O ApexCharts monta tooltip/legenda com innerHTML: nomes de categoria (dados do usuário) precisam ser escapados.
-    const labels = dataList.length > 0 ? dataList.map((i: any) => escapeHtml(i.name)) : ['Sem Dados'];
-    return {
-        chart: { type: 'donut', fontFamily: 'inherit' },
-        labels: labels,
-        colors: ['#2346D8', '#F2A541', '#0E7A55', '#C2410C', '#6F8BF0', '#A8724A', '#5B6B85'],
-        dataLabels: { enabled: false },
-        legend: { position: 'bottom', show: false },
-        stroke: { show: false },
-        tooltip: {
-            y: { formatter: (val: number) => 'R$ ' + val.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) }
-        }
-    }
-})
-
-const categoryChartSeries = computed(() => {
-    const dataList = categoryView.value === 'general' ? analytics.value.charts.categories.general : analytics.value.charts.categories.creditCard;
-    return dataList.length > 0 ? dataList.map((i: any) => parseFloat(Number(i.total).toFixed(2))) : [0];
-})
+// Nome de categoria é dado do usuário: o ECharts desenha em canvas e o tooltip usa textContent (chartOptions.ts).
+const categoryChartOption = computed(() =>
+    donutOption(chartTheme(isDark.value), categoryData.value.map((i: any, idx: number) => ({
+        name: i.name, value: money2(i.total), color: CATEGORY_COLORS[idx % CATEGORY_COLORS.length]!,
+    })), formatBRL))
 
 const fetchAnalytics = async () => {
     isRefreshing.value = true;

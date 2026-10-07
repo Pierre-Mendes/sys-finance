@@ -43,12 +43,13 @@ rules:
       include: ["frontend/src/**/*.vue", "frontend/src/**/*.ts"]
     pattern-regex: 'Authorization\s*:\s*`Bearer'
 
-  - id: apexcharts-unescaped-user-labels
+  - id: echarts-html-string-formatter
     languages: [generic]
     severity: WARNING
     message: >-
-      ApexCharts monta legenda/tooltip com innerHTML. Rótulos com nome digitado pelo usuário
-      precisam de escapeHtml().
+      O ECharts insere string de formatter como innerHTML, e style= no markup é bloqueado pela CSP.
+      Use axisTooltip/donutOption/tooltipContent de presentation/charts/chartOptions.ts (DOM + textContent).
     paths:
-      include: ["frontend/src/**/*.vue"]
-    pattern-regex: 'labels\s*:\s*(?![^\n]*escapeHtml)[^\n]*\.map\([^\n]*\.name\)'
+      include: ["frontend/src/**/*.vue", "frontend/src/**/*.ts"]
+      exclude: ["frontend/src/presentation/charts/**"]
+    pattern-regex: 'formatter\s*:\s*(\([^)]*\)|\w+)\s*=>\s*`[^`]*<'

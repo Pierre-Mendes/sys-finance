@@ -21,7 +21,7 @@ O coração do projeto é o **Cockpit Financeiro**, uma engine inteligente que s
 Construído com foco em fluidez de estado e tipagem, o frontend utiliza o padrão **Clean Architecture**, isolando as lógicas de negócio dos componentes visuais.
 *   **Core / Engine**: Vue 3 (Composition API) orquestrado pelo Vite, entregando Hot-Module-Replacement quase instantâneo na fase de desenvolvimento.
 *   **Data & API Layer**: `axios` configurado como HTTP Client (no `HttpClient.ts`) que atua através de Interceptors injetando o JWT (Token) e identificador do Workspace atual (`X-Workspace-Id`) em absolutamente cada requisição. O roteamento de erros também é unificado nesta camada, escrevendo falhas globais direto no Console do DevTools para monitoria constante.
-*   **Presentation / UI**: **Tailwind CSS 4** sobre os tokens do [design system](#-design-system), modelo `Mobile-First`, modo claro/escuro, animações que respeitam `prefers-reduced-motion` e gráficos com **ApexCharts**. Guia completo de desenvolvimento do frontend em [`Design.md`](Design.md).
+*   **Presentation / UI**: **Tailwind CSS 4** sobre os tokens do [design system](#-design-system), modelo `Mobile-First`, modo claro/escuro, animações que respeitam `prefers-reduced-motion` e gráficos com **Apache ECharts**. Guia completo de desenvolvimento do frontend em [`Design.md`](Design.md).
 
 ### ⚙️ Arquitetura Backend
 O Backend é uma API RESTful de alta resposta orientada a Injeção de Dependências.

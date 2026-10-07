@@ -40,12 +40,13 @@ describe('useTheme', () => {
     expect(preference.value).toBe('light')
   })
 
-  it('ajusta as cores globais do ApexCharts sem perder opções existentes', () => {
+  it('isDark acompanha a troca (os gráficos recalculam as cores a partir dele)', () => {
     mockSystem(false)
-    ;(window as any).Apex = { chart: { injectStyleSheet: false } }
     initTheme()
+    const { isDark } = useTheme()
     setTheme('dark')
-    expect((window as any).Apex.chart).toMatchObject({ injectStyleSheet: false, foreColor: '#C5CCD6' })
-    expect((window as any).Apex.tooltip.theme).toBe('dark')
+    expect(isDark.value).toBe(true)
+    setTheme('light')
+    expect(isDark.value).toBe(false)
   })
 })

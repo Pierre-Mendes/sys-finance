@@ -29,16 +29,6 @@ const apply = () => {
   root.classList.toggle('dark', dark)
   root.style.colorScheme = dark ? 'dark' : 'light'
   document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? THEME_COLORS.dark : THEME_COLORS.light)
-
-  // ApexCharts lê window.Apex ao criar cada gráfico: cores de texto/grade e tooltip seguem o tema
-  const w = window as any
-  const apex = w.Apex || {}
-  w.Apex = {
-    ...apex,
-    chart: { ...(apex.chart || {}), foreColor: dark ? '#C5CCD6' : '#5B6B85' },
-    grid: { ...(apex.grid || {}), borderColor: dark ? '#2A3754' : '#EEF1F5' },
-    tooltip: { ...(apex.tooltip || {}), theme: dark ? 'dark' : 'light' },
-  }
 }
 
 let started = false

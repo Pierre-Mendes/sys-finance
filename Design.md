@@ -14,7 +14,8 @@ do design system, **quais regras** valem e **como** desenvolver uma tela nova se
 | Testes (Vitest, Playwright) | [`docs/conventions/testing.md`](docs/conventions/testing.md) |
 | Tokens no código | `frontend/src/style.css` (`@theme`) e `frontend/src/styles/dark.css` |
 | Marca e mascote | `frontend/src/components/brand/` (`BrandLogo`, `CapiMascot`, `CelebrationToast`) |
-| Componentes base | `frontend/src/components/ui/` (`GenericButton`, `EmptyState`, `TableLoader`, `ThemeToggle`, `CreatableSelect`) |
+| Componentes base | `frontend/src/components/ui/` (`GenericButton`, `EmptyState`, `TableLoader`, `ThemeToggle`, `CreatableSelect`, `BaseChart`) |
+| Gráficos (ECharts) | `frontend/src/presentation/charts/chartOptions.ts` (tema, eixos, séries, tooltip) |
 | Layout e menu | `frontend/src/components/layout/` (`MainLayout.vue`, `navigation.ts`) |
 | Composables visuais | `frontend/src/presentation/composables/` (`useTheme`, `useCountUp`) |
 
@@ -111,7 +112,7 @@ O tema (Claro, Escuro ou Sistema) fica no rodapé do menu e é salvo no navegado
 A CSP de produção (`public/.htaccess`) permite só recursos do próprio domínio:
 
 - nada de Google Fonts, CDN ou `<style>`/`<script>` inline em HTML gerado; fontes vêm de `@fontsource`;
-- dado do usuário em `v-html`, SweetAlert `html`, ApexCharts e PDF/CSV passa por `escapeHtml()`.
+- dado do usuário em `v-html`, SweetAlert `html` e PDF/CSV passa por `escapeHtml()`; nos gráficos o tooltip já é seguro (DOM + `textContent`).
 
 ### Testes
 

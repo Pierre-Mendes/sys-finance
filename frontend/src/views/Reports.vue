@@ -73,7 +73,7 @@
           <section class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
             <h3 class="font-bold text-gray-800">Receitas × despesas</h3>
             <p class="text-xs text-gray-500 mb-2">{{ type === 'monthly' ? '12 meses até ' + report.period.label : 'Mês a mês em ' + report.period.label }}</p>
-            <apexchart type="bar" height="280" :options="flowOptions" :series="flowSeries" />
+            <BaseChart :height="280" :option="flowOption" label="Gráfico de barras de receitas e despesas por mês" />
           </section>
           <section class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
             <div class="flex items-start justify-between gap-3">
@@ -87,7 +87,7 @@
                 {{ balanceExpanded ? 'Ver menos' : 'Ver mais' }}
               </button>
             </div>
-            <apexchart v-if="isDesktop || balanceExpanded" type="area" height="280" :options="balanceOptions" :series="balanceSeries" />
+            <BaseChart v-if="isDesktop || balanceExpanded" :height="280" :option="balanceOption" label="Gráfico do saldo acumulado no fim de cada mês" />
           </section>
         </div>
 
@@ -96,7 +96,7 @@
             <h3 class="font-bold text-gray-800 mb-2">{{ pie.title }}</h3>
             <p v-if="!pie.slices.length" class="py-10 text-center text-sm text-gray-500">{{ pie.empty }}</p>
             <template v-else>
-              <apexchart type="donut" height="240" :options="pieOptions(pie.slices)" :series="pie.slices.map(s => s.value)" />
+              <BaseChart :height="240" :option="pieOption(pie.slices)" :label="`Gráfico de rosca: ${pie.title.toLowerCase()}; valores na lista abaixo`" />
               <!-- Lista com valores: a cor nunca é o único jeito de identificar a categoria -->
               <ul class="mt-3 space-y-1.5 text-sm">
                 <li v-for="(s, i) in pie.slices" :key="s.name" class="flex items-center gap-2">
@@ -129,7 +129,7 @@
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
             <section class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
               <h3 class="font-bold text-gray-800 mb-2">Despesas por dia da semana</h3>
-              <apexchart type="bar" height="240" :options="weekdayOptions" :series="weekdaySeries" />
+              <BaseChart :height="240" :option="weekdayOption" label="Gráfico de barras das despesas por dia da semana" />
             </section>
             <section class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
               <h3 class="font-bold text-gray-800">Despesas por dia do mês</h3>
@@ -215,7 +215,9 @@ import ForecastCard from '@/presentation/components/reports/ForecastCard.vue'
 import TransactionExports from '@/presentation/components/reports/TransactionExports.vue'
 import { fetchReportSummary, downloadReport, type ReportType } from '@/data/api/reportApi'
 import { formatBRL, formatBRLCompact, formatChange } from '@/core/domain/money'
-import { escapeHtml } from '@/core/security/escapeHtml'
+import BaseChart from '@/components/ui/BaseChart.vue'
+import { areaSeries, axisTooltip, barSeries, cartesian, chartTheme, donutOption, referenceLine } from '@/presentation/charts/chartOptions'
+import { useTheme } from '@/presentation/composables/useTheme'
 
 // Ordem fixa da paleta categórica (validada para daltonismo); "Outras" em cinza.
 const PALETTE = ['#2a78d6', '#eb6834', '#1baf7a', '#eda100', '#e87ba4', '#008300', '#4a3aa7', '#9ca3af']
@@ -319,71 +321,50 @@ const historyCards = computed(() => {
 })
 
 // ---- Gráficos
-const baseChart = { toolbar: { show: false }, zoom: { enabled: false }, fontFamily: 'inherit' }
-const axisLabels = { style: { colors: '#6b7280' } }
-const grid = { borderColor: '#f1f1f1', strokeDashArray: 4 }
+const { isDark } = useTheme()
+const theme = computed(() => chartTheme(isDark.value))
+const BALANCE = '#2346D8'
+const WEEKDAYS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
 
-const flowSeries = computed(() => [
-  { name: 'Receitas', data: report.value.timeline.map((m: any) => m.income) },
-  { name: 'Despesas', data: report.value.timeline.map((m: any) => m.expense) },
-])
-const flowOptions = computed(() => ({
-  chart: baseChart,
-  colors: [INCOME, EXPENSE],
-  plotOptions: { bar: { columnWidth: '60%', borderRadius: 4, borderRadiusApplication: 'end' } },
-  stroke: { show: true, width: 2, colors: ['transparent'] },
-  dataLabels: { enabled: false },
-  xaxis: { categories: report.value.timeline.map((m: any) => m.label), labels: axisLabels },
-  yaxis: { labels: { ...axisLabels, formatter: formatBRLCompact } },
-  legend: { position: 'top', horizontalAlign: 'left' },
-  grid,
-  tooltip: { shared: true, intersect: false, y: { formatter: (v: number) => formatBRL(v) } },
-}))
+const flowOption = computed(() => {
+  const t = theme.value
+  return {
+    ...cartesian(t, { categories: report.value.timeline.map((m: any) => m.label), yFormatter: formatBRLCompact, legend: 'left' }),
+    tooltip: axisTooltip(t, [INCOME, EXPENSE], formatBRL),
+    series: [
+      barSeries('Receitas', INCOME, report.value.timeline.map((m: any) => m.income)),
+      barSeries('Despesas', EXPENSE, report.value.timeline.map((m: any) => m.expense)),
+    ],
+  }
+})
 
-const balanceSeries = computed(() => [{ name: 'Saldo acumulado', data: report.value.timeline.map((m: any) => m.balance) }])
-const balanceOptions = computed(() => ({
-  chart: baseChart,
-  colors: ['#2a78d6'],
-  stroke: { width: 2, curve: 'smooth' },
-  fill: { type: 'gradient', gradient: { opacityFrom: 0.25, opacityTo: 0.02 } },
-  markers: { size: 4, strokeColors: '#fff', strokeWidth: 2 },
-  dataLabels: { enabled: false },
-  xaxis: { categories: report.value.timeline.map((m: any) => m.label), labels: axisLabels, tooltip: { enabled: false } },
-  yaxis: { labels: { ...axisLabels, formatter: formatBRLCompact } },
-  annotations: { yaxis: [{ y: 0, borderColor: '#9ca3af', strokeDashArray: 4 }] },
-  grid,
-  tooltip: { y: { formatter: (v: number) => formatBRL(v) } },
-}))
+const balanceOption = computed(() => {
+  const t = theme.value
+  return {
+    ...cartesian(t, { categories: report.value.timeline.map((m: any) => m.label), yFormatter: formatBRLCompact }),
+    tooltip: axisTooltip(t, [BALANCE], formatBRL),
+    series: [areaSeries('Saldo acumulado', BALANCE, report.value.timeline.map((m: any) => m.balance), t, { markLine: referenceLine(t, 0) })],
+  }
+})
 
 interface Slice { name: string; value: number }
 const pieSections = computed<{ key: string; title: string; empty: string; slices: Slice[]; total: number }[]>(() => [
   { key: 'expense', title: 'Despesas por categoria', empty: 'Nenhuma despesa paga no período.', slices: report.value.pies.expense, total: report.value.kpis.expense },
   { key: 'income', title: 'Receitas por categoria', empty: 'Nenhuma receita recebida no período.', slices: report.value.pies.income, total: report.value.kpis.income },
 ])
-// O ApexCharts monta legenda/tooltip com innerHTML: nome de categoria (dado do usuário) sempre escapado.
-const pieOptions = (slices: Slice[]) => ({
-  chart: baseChart,
-  labels: slices.map(s => escapeHtml(s.name)),
-  colors: slices.map((s, i) => (s.name === 'Outras' ? PALETTE[7] : PALETTE[i])),
-  legend: { show: false },
-  dataLabels: { enabled: false },
-  stroke: { width: 2, colors: ['#fff'] },
-  plotOptions: { pie: { donut: { size: '62%' } } },
-  tooltip: { y: { formatter: (v: number) => formatBRL(v) } },
-})
+// Nome de categoria é dado do usuário: o ECharts desenha em canvas e o tooltip usa textContent (chartOptions.ts).
+const pieOption = (slices: Slice[]) =>
+  donutOption(theme.value, slices.map((s, i) => ({ ...s, color: s.name === 'Outras' ? PALETTE[7]! : PALETTE[i]! })), formatBRL)
 const pct = (v: number, total: number) => (total > 0 ? `${((v / total) * 100).toLocaleString('pt-BR', { maximumFractionDigits: 1 })}%` : '—')
 
-const weekdaySeries = computed(() => [{ name: 'Despesas', data: report.value.byWeekday }])
-const weekdayOptions = computed(() => ({
-  chart: baseChart,
-  colors: [EXPENSE],
-  plotOptions: { bar: { columnWidth: '55%', borderRadius: 4, borderRadiusApplication: 'end' } },
-  dataLabels: { enabled: false },
-  xaxis: { categories: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'], labels: axisLabels },
-  yaxis: { labels: { ...axisLabels, formatter: formatBRLCompact } },
-  grid,
-  tooltip: { y: { formatter: (v: number) => formatBRL(v) } },
-}))
+const weekdayOption = computed(() => {
+  const t = theme.value
+  return {
+    ...cartesian(t, { categories: WEEKDAYS, yFormatter: formatBRLCompact }),
+    tooltip: axisTooltip(t, [EXPENSE], formatBRL),
+    series: [barSeries('Despesas', EXPENSE, report.value.byWeekday)],
+  }
+})
 
 const firstWeekday = computed(() => {
   const [y, m] = String(report.value?.period.from ?? '').split('-').map(Number)
