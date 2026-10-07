@@ -49,7 +49,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: '20'
+          node-version: '24'
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
 
@@ -64,3 +64,7 @@ jobs:
       - name: Build Check
         working-directory: frontend
         run: npm run build
+
+      - name: SRI Check (integrity do index.html confere com os arquivos)
+        working-directory: frontend
+        run: node build/check-sri.mjs dist
