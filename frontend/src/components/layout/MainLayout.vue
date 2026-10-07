@@ -317,14 +317,14 @@ const unreadCount = computed(() => {
 
 const fetchSysInvites = async () => {
     try {
-        const { data } = await api.get('/api/system-invites')
+        const { data } = await api.get('/api/system-invites', { skipErrorPage: true })
         sysInvites.value = data.data || [];
     } catch(e) {}
 }
 
 const fetchGeneralNotifications = async () => {
     try {
-        const { data } = await api.get('/api/notifications')
+        const { data } = await api.get('/api/notifications', { skipErrorPage: true })
         generalNotifications.value = data.data || [];
     } catch (e) {}
 }

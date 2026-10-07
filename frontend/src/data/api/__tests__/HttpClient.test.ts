@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import api, { readCookie } from '../HttpClient'
+import { currentError, clearError } from '@/core/errors/appError'
 
 /** Roda os interceptors de requisição sem fazer chamada de rede. */
 async function prepared(method: string) {
@@ -36,5 +37,14 @@ describe('HttpClient', () => {
     const get = await prepared('get')
     expect(get.headers['X-CSRF-Token']).toBeUndefined()
     expect(get.headers['X-Workspace-Id']).toBe('7')
+  })
+
+  it('falha ao carregar dados da tela troca a tela pela página de erro', async () => {
+    clearError()
+    const onRejected = (api.interceptors.response as any).handlers.filter(Boolean)[0].rejected
+    const error = { config: { method: 'get', url: '/api/dashboard' }, response: { status: 500, data: { error: 'x (ref. deadbeef)' } } }
+    await expect(onRejected(error)).rejects.toBe(error)
+    expect(currentError.value).toEqual({ code: 500, reference: 'deadbeef' })
+    clearError()
   })
 })

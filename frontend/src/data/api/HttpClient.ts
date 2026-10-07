@@ -1,4 +1,12 @@
 import axios from 'axios'
+import { errorPageFor, showError } from '@/core/errors/appError'
+
+declare module 'axios' {
+    interface AxiosRequestConfig {
+        /** Chamadas de fundo (sino, convites): falha não troca a tela pela página de erro. */
+        skipErrorPage?: boolean
+    }
+}
 
 /**
  * Cliente HTTP único da SPA.
@@ -62,7 +70,11 @@ api.interceptors.response.use(
         if (error.response?.status === 401 && !url.includes('/api/auth/login') && localStorage.getItem('user')) {
             clearLocalSession()
             if (window.location.pathname !== '/') window.location.assign('/')
+            return Promise.reject(error)
         }
+        // Leitura que monta a tela falhou (500, 403, 400, sem conexão): mostra a página de erro.
+        const page = errorPageFor(error)
+        if (page) showError(page)
         return Promise.reject(error)
     }
 )
