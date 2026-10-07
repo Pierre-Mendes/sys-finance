@@ -55,7 +55,7 @@
 
         <!-- Create Invite Card -->
         <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-6 relative transition" :class="activeWorkspaceRole === 'owner' ? 'opacity-100 pointer-events-auto' : 'opacity-50 pointer-events-none'">
-            <div v-if="activeWorkspaceRole !== 'owner'" class="absolute inset-0 z-10 flex items-center justify-center p-4 backdrop-blur-[2px] rounded-xl"><span class="bg-gray-800 text-white px-4 py-2 rounded-lg font-semibold text-sm shadow animate-pulse">Apenas Proprietários podem gerar convites</span></div>
+            <div v-if="activeWorkspaceRole !== 'owner'" class="absolute inset-0 z-10 flex items-center justify-center p-4 backdrop-blur-[2px] rounded-xl"><span class="bg-gray-800 text-white px-4 py-2 rounded-lg font-semibold text-sm shadow">Apenas Proprietários podem gerar convites</span></div>
             
             <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2 mb-4">
                 <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>

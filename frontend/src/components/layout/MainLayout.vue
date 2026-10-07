@@ -178,7 +178,7 @@
                 <h4 v-if="generalNotifications?.length > 0" class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 mt-4 block">Alertas</h4>
                 <TransitionGroup name="list" tag="div" class="space-y-3">
                     <div v-for="notif in generalNotifications" :key="'notif'+notif.id" :class="['border rounded-xl p-4 transition-all duration-300 relative group', !notif.read_at ? 'bg-indigo-50/40 border-indigo-100' : 'bg-white border-gray-100']">
-                        <div v-if="!notif.read_at" class="w-3 h-3 bg-indigo-500 absolute -top-1 -right-1 rounded-full shadow-sm animate-pulse border-2 border-white z-10"></div>
+                        <div v-if="!notif.read_at" class="w-3 h-3 bg-indigo-500 absolute -top-1 -right-1 rounded-full shadow-sm border-2 border-white z-10"></div>
                         
                         <!-- Individual Delete Button -->
                         <button @click.stop="deleteNotification(notif.id)" class="absolute top-2 right-2 p-1 text-gray-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100" title="Excluir">
@@ -378,12 +378,4 @@ const logout = async () => {
   transform: translateX(30px);
 }
 
-@keyframes fade-in-down {
-    0% { opacity: 0; transform: translateY(-10px); }
-    100% { opacity: 1; transform: translateY(0); }
-}
-
-.animate-fade-in-down {
-    animation: fade-in-down 0.3s ease-out;
-}
 </style>

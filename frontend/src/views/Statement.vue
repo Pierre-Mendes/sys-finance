@@ -29,7 +29,7 @@
     </div>
 
     <div v-else-if="isLoading" class="space-y-4">
-        <div v-for="i in 5" :key="i" class="h-24 bg-gray-50 rounded-3xl animate-pulse"></div>
+        <div v-for="i in 5" :key="i" class="h-24 rounded-3xl skeleton" aria-hidden="true"></div>
     </div>
 
     <div v-else-if="statement.length === 0" class="bg-white rounded-3xl p-20 text-center border border-gray-50">

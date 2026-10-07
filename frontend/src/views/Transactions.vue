@@ -20,7 +20,7 @@
       </div>
       
       <!-- Expandable Filters Panel -->
-      <div v-show="showFilters" class="bg-white border border-gray-200 rounded-xl p-4 mb-6 shadow-sm flex flex-col md:flex-row gap-4 items-end animate-fadeIn">
+      <div v-show="showFilters" class="bg-white border border-gray-200 rounded-xl p-4 mb-6 shadow-sm flex flex-col md:flex-row gap-4 items-end animate-fade-in">
           <div class="flex-1 w-full">
               <label class="block text-xs font-medium text-gray-500 mb-1">Buscar por Texto</label>
               <div class="relative w-full">
@@ -147,7 +147,7 @@
                   <div class="flex flex-col gap-1 items-start">
                       <span v-if="t.status === 'PAID'" class="px-2 py-0.5 text-xs font-bold bg-green-100 text-green-700 rounded-full uppercase border border-green-200">Pago</span>
                       <span v-else-if="t.status === 'CANCELED'" class="px-2 py-0.5 text-xs font-bold bg-gray-100 text-gray-600 rounded-full uppercase border border-gray-200">Desconsiderada</span>
-                      <span v-else class="px-2 py-0.5 text-xs font-bold bg-amber-100 text-amber-700 rounded-full uppercase border border-amber-200 shadow-sm animate-pulse-slow">Pendente</span>
+                      <span v-else class="px-2 py-0.5 text-xs font-bold bg-amber-100 text-amber-700 rounded-full uppercase border border-amber-200 shadow-sm">Pendente</span>
                       
                       <span v-if="t.dueDate" class="text-[11px] font-medium whitespace-nowrap mt-0.5" :class="{'text-red-600 font-semibold': t.status === 'PENDING' && isOverdue(t.dueDate), 'text-gray-500': t.status !== 'PENDING' || !isOverdue(t.dueDate)}">
                           Vence: {{ formatDate(t.dueDate) }}
@@ -454,8 +454,3 @@ const payTransaction = async (t: any) => {
     }
 }
 </script>
-<style>
-.animate-pulse-slow {
-   animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-</style>

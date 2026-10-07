@@ -197,7 +197,7 @@ const getAccountName = (id: number | null) => {
                 <span class="font-black text-indigo-600">{{ getPercentage(goal.accumulatedAmount, goal.targetAmount) }}%</span>
               </div>
               <div class="w-full bg-gray-100 rounded-full h-4 overflow-hidden p-1 shadow-inner">
-                <div class="bg-gradient-to-r from-indigo-500 to-blue-500 h-2 rounded-full transition-all duration-1000 ease-out" :style="{ width: getPercentage(goal.accumulatedAmount, goal.targetAmount) + '%' }"></div>
+                <div class="bg-brand-600 h-2 rounded-full transition-all duration-1000 ease-out" :style="{ width: getPercentage(goal.accumulatedAmount, goal.targetAmount) + '%' }"></div>
               </div>
             </div>
 
