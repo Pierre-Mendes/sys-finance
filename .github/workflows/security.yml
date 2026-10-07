@@ -101,7 +101,7 @@ jobs:
 
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: '20'
+          node-version: '24'
 
       - name: npm audit (High/Critical bloqueiam)
         working-directory: frontend
@@ -117,7 +117,7 @@ jobs:
 
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: '20'
+          node-version: '24'
 
       - name: Instalar dependências (para o analisador resolver as árvores)
         run: |

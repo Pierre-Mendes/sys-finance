@@ -62,7 +62,7 @@ services:
       start_period: 120s
 
   frontend:
-    image: node:22-alpine
+    image: node:24-alpine
     container_name: financas-frontend
     working_dir: /app
     # npm ci só quando o package-lock.json muda (node_modules fica num volume do container).
