@@ -8,7 +8,7 @@
         "slim/psr7": "^1.6",
         "dompdf/dompdf": "^3.1",
         "robmorgan/phinx": "^0.16.12",
-        "guzzlehttp/guzzle": "^7.10",
+        "guzzlehttp/guzzle": "^8.2",
         "monolog/monolog": "^3.10",
         "sentry/sentry": "^4.24",
         "minishlink/web-push": "^11.0"
