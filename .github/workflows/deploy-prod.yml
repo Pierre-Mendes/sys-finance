@@ -24,63 +24,13 @@ jobs:
           command_timeout: 30m
           script: |
             set -euo pipefail
-            case "$DEPLOY_REF" in
-              *[!A-Za-z0-9._/-]*|"") echo "ref inválido: $DEPLOY_REF"; exit 1 ;;
-            esac
-
             mkdir -p ~/sys-finance
             cd ~/sys-finance
             if [ ! -d ".git" ]; then
               git clone https://github.com/Pierre-Mendes/sys-finance.git .
             fi
-            COMPOSE="docker compose -f docker-compose.prod.yml"
-            # GlitchTip (monitoramento de erros) entra quando configurado no .env da VPS
-            if grep -Eq '^GLITCHTIP_SECRET_KEY=.+' .env 2>/dev/null; then
-              COMPOSE="$COMPOSE -f docker-compose.monitoring.yml"
-            fi
-
-            # Versão que está no ar agora (para voltar atrás se a nova falhar)
-            PREV=$(cat .last_good_deploy 2>/dev/null || git rev-parse HEAD)
-
-            git fetch --tags origin
-            if git rev-parse -q --verify "origin/$DEPLOY_REF^{commit}" >/dev/null; then
-              TARGET="origin/$DEPLOY_REF"
-            else
-              TARGET="$DEPLOY_REF"
-            fi
-            git checkout -q --detach "$TARGET"
-            NEW=$(git rev-parse HEAD)
-            echo "Publicando $NEW (anterior: $PREV)"
-
-            # phpMyAdmin nunca fica exposto em produção (agora só sob demanda, via túnel SSH)
-            docker rm -f financas-pma-prod >/dev/null 2>&1 || true
-
-            # Backup antes de qualquer migration
-            $COMPOSE up -d db backup
-            docker exec financas-backup-prod backup.sh once
-
-            healthy() {
-              for i in $(seq 1 30); do
-                if curl -fsS -o /dev/null http://127.0.0.1/api/metrics; then return 0; fi
-                sleep 2
-              done
-              return 1
-            }
-
-            if $COMPOSE up -d --build \
-               && docker exec financas-web-prod php vendor/bin/phinx migrate -e production \
-               && healthy; then
-              echo "$NEW" > .last_good_deploy
-              docker image prune -f >/dev/null
-              echo "Deploy OK: $NEW"
-              exit 0
-            fi
-
-            echo "::error::Deploy de $NEW falhou. Voltando o código para $PREV."
-            git checkout -q --detach "$PREV"
-            $COMPOSE up -d --build
-            healthy || echo "::error::A versão anterior também não respondeu. Verifique os logs: $COMPOSE logs web"
-            LAST_BACKUP=$(ls -1t backups/*.sql.gz 2>/dev/null | head -1 || true)
-            echo "Se a migration alterou o banco, restaure o backup feito antes do deploy:"
-            echo "  docker exec -it financas-backup-prod restore.sh /$LAST_BACKUP"
-            exit 1
+            git fetch -q origin main
+            # Roda o deploy.sh do main a partir de uma cópia: o checkout da versão alvo não altera o script em execução
+            DEPLOY_SCRIPT=$(mktemp)
+            git show origin/main:scripts/deploy.sh > "$DEPLOY_SCRIPT"
+            SYSFINANCE_DIR="$PWD" bash "$DEPLOY_SCRIPT" "$DEPLOY_REF"
