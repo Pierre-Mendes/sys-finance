@@ -58,4 +58,33 @@ class AuthServiceTest extends TestCase
         $result = $this->authService->login('e@e.com', 'pass');
         $this->assertSame($user, $result);
     }
+
+    public function test_login_rejects_the_stored_hash_used_as_password(): void
+    {
+        // Quem obtém o hash (vazamento de backup/banco) não pode entrar digitando o próprio hash
+        $hashed = password_hash('pass', PASSWORD_DEFAULT);
+        $user = new User('P', 'M', 'e@e.com', $hashed, 'BRL', 1, 'CODE');
+        $this->userRepo->shouldReceive('findByEmail')->andReturn($user);
+
+        $this->expectException(Exception::class);
+        $this->authService->login('e@e.com', $hashed);
+    }
+
+    public function test_legacy_plain_text_password_still_logs_in_and_is_rehashed(): void
+    {
+        $user = new User('P', 'M', 'e@e.com', 'old-plain', 'BRL', 1, 'CODE');
+        $this->userRepo->shouldReceive('findByEmail')->andReturn($user);
+
+        $this->authService->login('e@e.com', 'old-plain');
+        $this->assertTrue(password_verify('old-plain', $user->getPassword()));
+    }
+
+    public function test_login_rejects_empty_password_even_if_stored_value_is_empty(): void
+    {
+        $user = new User('P', 'M', 'e@e.com', '', 'BRL', 1, 'CODE');
+        $this->userRepo->shouldReceive('findByEmail')->andReturn($user);
+
+        $this->expectException(Exception::class);
+        $this->authService->login('e@e.com', '');
+    }
 }
