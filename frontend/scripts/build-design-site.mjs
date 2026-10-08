@@ -217,6 +217,11 @@ ul{list-style:none;padding:0;margin:32px 0 0;display:grid;grid-template-columns:
 .thumb{display:block;width:100%;overflow:hidden;position:relative;background:var(--line);pointer-events:none}
 .thumb iframe{border:0;transform-origin:0 0;position:absolute;left:0;top:0;background:#fff}
 .label{display:block;padding:14px 18px;font-weight:700}
+.cta{display:flex;flex-direction:column;gap:6px;margin:24px 0 16px;padding:20px 24px;border-radius:20px;background:#2346D8;color:#fff;text-decoration:none;max-width:760px;transition:background-color 200ms}
+.cta:hover{background:#1A34A6}
+.cta:focus-visible{outline:3px solid #6F8BF0;outline-offset:2px}
+.cta-title{font-family:'Bricolage Grotesque',Manrope,sans-serif;font-weight:800;font-size:22px}
+.cta-text{color:#D3DCFA;line-height:1.5}
 @media (prefers-reduced-motion: reduce){.card a{transition:none}}
 </style>
 </head>
@@ -226,9 +231,12 @@ ul{list-style:none;padding:0;margin:32px 0 0;display:grid;grid-template-columns:
 <svg width="48" height="48" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="18" fill="#2346D8"/><path d="M15 42 L26 31 L34 37 L47 22" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="48" cy="20" r="7" fill="#F2A541"/></svg>
 <h1>Design system sysfinance</h1>
 </header>
-<p>Versão estática do canvas de design, gerada a partir de <code>design-system/canvas/</code>. Mostra cada quadro no estado inicial:
-as animações rodam, mas os cliques (alternar tema, pagar conta, reproduzir animação) só funcionam no
-<a href="${CANVAS_URL}">canvas interativo no claude.ai</a>, que é privado e precisa ser compartilhado pelo menu Share.</p>
+<a class="cta" href="${CANVAS_URL}">
+  <span class="cta-title">Abrir o canvas interativo no claude.ai →</span>
+  <span class="cta-text">O canvas completo: navegue entre os quadros com zoom, clique nos componentes, alterne o toggle, pague contas no painel e reproduza as animações. Abre para quem recebeu o compartilhamento pelo menu Share do canvas.</span>
+</a>
+<p>Abaixo, cada quadro como página estática, gerada a partir de <code>design-system/canvas/</code>: abre rápido e as
+animações rodam, mas os cliques só funcionam no canvas interativo.</p>
 <p>Para regenerar depois de mudar o canvas: <code>cd frontend &amp;&amp; npm run design:build-site</code>.</p>
 <ul>
 ${cards}
