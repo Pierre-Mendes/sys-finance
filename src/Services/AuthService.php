@@ -77,8 +77,10 @@ class AuthService {
             return $user;
         }
 
-        // Fallback for incredibly old plain-text passwords
-        if (hash_equals((string) $user->getPassword(), $password)) {
+        // Fallback for incredibly old plain-text passwords. Only when the stored value is NOT a hash:
+        // otherwise anyone holding the hash (leaked backup) could log in by typing the hash itself.
+        $stored = (string) $user->getPassword();
+        if ($stored !== '' && password_get_info($stored)['algo'] === null && hash_equals($stored, $password)) {
             $user->setPassword(password_hash($password, PASSWORD_BCRYPT));
             $user = $this->ensureUserCode($user);
             $this->userRepository->save($user);

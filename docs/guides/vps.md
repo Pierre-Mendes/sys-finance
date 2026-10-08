@@ -53,6 +53,9 @@ VITE_API_BASE_URL=http://SEU_IP_OU_DOMINIO
 
 ## 4. How to Deploy
 
+> Servidor em casa (homelab) com Tailscale: veja [homelab.md](homelab.md). O roteiro de deploy (backup, migrations,
+> health check e rollback) fica em `scripts/deploy.sh`, usado tanto pelo workflow quanto direto no servidor.
+
 ### Automatic Sandbox (Port 8082)
 - Every time you merge a PR or push to the `main` branch, the system will automatically update the **Sandbox** environment at `http://<IP_DO_SEU_VPS>:8082`.
 

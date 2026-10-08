@@ -5,6 +5,7 @@ namespace App\Middleware;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use Slim\Psr7\Response;
+use App\Security\ClientIp;
 use PDO;
 
 class RateLimiterMiddleware
@@ -22,7 +23,8 @@ class RateLimiterMiddleware
 
     public function __invoke(Request $request, RequestHandler $handler): Response
     {
-        $ip = $request->getServerParams()['REMOTE_ADDR'] ?? '127.0.0.1';
+        // Atrás de proxy (tailscale serve, Caddy...) o REMOTE_ADDR é o do proxy para todos: ver TRUSTED_PROXIES
+        $ip = ClientIp::from($request);
         $endpoint = $request->getUri()->getPath();
 
         // Check current attempts

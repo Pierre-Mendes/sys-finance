@@ -26,7 +26,10 @@ Checklist para qualquer mudança que toque entrada do usuário, dados de outro t
     `CORS_ALLOWED_ORIGINS` explícito (com `*` o navegador não envia cookie).
   - Nunca `localStorage.setItem('token', ...)` nem `Authorization: Bearer` montado no frontend (regra Semgrep).
 - Senhas com `password_hash`/`password_verify`; comparações de segredo com `hash_equals`.
-- Endpoints públicos sensíveis com `RateLimiterMiddleware`.
+- Endpoints públicos sensíveis com `RateLimiterMiddleware`. O IP vem de `ClientIp::from` (`src/Security/ClientIp.php`): atrás de proxy,
+  defina `TRUSTED_PROXIES` para o limite valer por cliente; o `X-Forwarded-For` só é lido quando a conexão vem de um proxy
+  dessa lista (o que o cliente escreve no cabeçalho é ignorado). Variável nova lida pelo PHP sob o Apache precisa
+  entrar no `PassEnv` do `Dockerfile`.
 
 ## Injeção (A03)
 

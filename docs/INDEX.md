@@ -28,6 +28,7 @@ Para **código**, prefira CodeGraph/Serena em vez de ler arquivos (veja [convent
 
 | Arquivo | Assunto |
 |---|---|
+| [guides/homelab.md](guides/homelab.md) | Servidor de casa com Tailscale: HTTPS só na tailnet, deploy com `scripts/deploy.sh`, Telegram via Funnel |
 | [guides/vps.md](guides/vps.md) | Preparar a VPS e deploy |
 | [guides/telegram.md](guides/telegram.md) | Configurar o bot do Telegram |
 | [guides/monitoring.md](guides/monitoring.md) | Sentry/GlitchTip no Docker: erros da API, do agendador e do navegador |
