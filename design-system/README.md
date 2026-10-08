@@ -37,8 +37,11 @@ Como abrir:
 
 - **No computador:** abra `design-system/site/index.html` no navegador (duplo clique) ou rode
   `npx serve design-system/site`.
-- **Pelo GitHub:** o GitHub mostra o código do HTML, não a página. Para ter um link, publique a pasta no
-  GitHub Pages (Settings → Pages) ou em qualquer hospedagem de arquivos estáticos.
+- **Online:** **[https://pierre-mendes.github.io/sys-finance/](https://pierre-mendes.github.io/sys-finance/)**, publicado pelo workflow `design-pages.yml` sempre que
+  `design-system/site/` muda na `main` (ou manualmente em Actions → Design System → Run workflow).
+  - Pré-requisito único: Settings → Pages → Build and deployment → Source: **GitHub Actions**.
+  - Repositório privado: o Pages exige plano GitHub Pro/Team, e o site publicado fica **público** (sem login),
+    a não ser no GitHub Enterprise Cloud com Pages privado. Não coloque nada sigiloso no canvas.
 
 O site usa Google Fonts e estilos inline, por isso **não** vai para `frontend/public`: a CSP do app bloquearia os dois.
 

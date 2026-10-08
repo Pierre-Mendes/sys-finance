@@ -47,7 +47,7 @@ carregamentos, alertas e quando você paga uma conta ou conclui uma meta.
 | Onde | O que tem |
 |---|---|
 | [`design-system/`](design-system/README.md) | Tokens (`tokens.json`), logo, Capi em SVG e o código do canvas de design |
-| [`design-system/site/`](design-system/site/index.html) | Canvas de design em HTML estático: abra `index.html` no navegador |
+| [https://pierre-mendes.github.io/sys-finance/](https://pierre-mendes.github.io/sys-finance/) | Canvas de design publicado no GitHub Pages (fonte em [`design-system/site/`](design-system/site/index.html)) |
 | [`Design.md`](Design.md) | Como desenvolver o frontend: estrutura, tela nova, estados, cores, modo escuro, movimento, acessibilidade |
 | [`docs/conventions/design-system.md`](docs/conventions/design-system.md) | Regras detalhadas de cor, tipo, forma e movimento |
 

@@ -18,6 +18,7 @@
 |---|---|---|
 | `verify.yml` (CI Pipeline) | push/PR na main | PHPUnit com cobertura, Vitest, build |
 | `security.yml` (Security & Quality Gate) | push/PR na main, semanal | Semgrep, CodeQL, composer/npm audit, Gitleaks, OWASP ZAP, SonarCloud opcional, Dependency-Check semanal, **Quality Gate** |
+| `design-pages.yml` | push na `main` que muda `design-system/site/` (ou manual) | Publica o canvas estático no GitHub Pages (https://pierre-mendes.github.io/sys-finance/); requer Pages com Source = GitHub Actions |
 | `ai-review.yml` | desativado (só manual) | Revisão por IA; reative com uma `OPENAI_API_KEY` válida (instruções no arquivo) |
 | `deploy-sandbox.yml` | push na main/sandbox | Deploy de staging via SSH |
 | `deploy-prod.yml` | manual | Deploy de produção via SSH |
