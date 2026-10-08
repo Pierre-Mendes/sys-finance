@@ -4,7 +4,7 @@
 //
 // Cada quadro é renderizado uma vez com o estado inicial: {{campos}}, <sc-for>, <sc-if> e <dc-import>
 // viram HTML comum. Animações CSS e SVG continuam; cliques (toggle, "Pagar", "Reproduzir") não.
-import { readFileSync, writeFileSync, mkdirSync, readdirSync, rmSync, copyFileSync, existsSync } from 'node:fs'
+import { readFileSync, writeFileSync, mkdirSync, readdirSync, rmSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { JSDOM } from 'jsdom'
@@ -16,10 +16,6 @@ const OUT = process.env.DESIGN_SITE_OUT ? resolve(process.env.DESIGN_SITE_OUT) :
 const CANVAS_URL = 'https://claude.ai/artifact/EpKQjikiEQyb6b7XGnpEZu'
 
 const index = JSON.parse(readFileSync(join(CANVAS, 'canvas.json'), 'utf8'))
-// Exportação do canvas interativo (claude.ai → Share → baixar HTML): um arquivo autocontido, copiado como está
-const INTERACTIVE_SRC = join(CANVAS, 'canvas-interativo.html')
-const INTERACTIVE_PAGE = 'interativo.html'
-const hasInteractive = existsSync(INTERACTIVE_SRC)
 
 // ---------- avaliação de {{campos}} ----------
 
@@ -235,13 +231,12 @@ ul{list-style:none;padding:0;margin:32px 0 0;display:grid;grid-template-columns:
 <svg width="48" height="48" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="18" fill="#2346D8"/><path d="M15 42 L26 31 L34 37 L47 22" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="48" cy="20" r="7" fill="#F2A541"/></svg>
 <h1>Design system sysfinance</h1>
 </header>
-${hasInteractive ? `<a class="cta" href="${INTERACTIVE_PAGE}">
-  <span class="cta-title">Abrir a versão interativa →</span>
-  <span class="cta-text">O canvas completo: navegue entre os quadros com zoom, clique nos componentes, alterne o toggle, pague contas no painel e reproduza as animações.</span>
-</a>` : ''}
-<p>Abaixo, cada quadro também como página estática (abre rápido e funciona sem JavaScript pesado): as animações rodam,
-mas os cliques ${hasInteractive ? 'ficam na versão interativa acima' : `só funcionam no <a href="${CANVAS_URL}">canvas interativo no claude.ai</a>`}.
-O original editável fica no <a href="${CANVAS_URL}">claude.ai</a> (privado; compartilhe pelo menu Share).</p>
+<a class="cta" href="${CANVAS_URL}">
+  <span class="cta-title">Abrir o canvas interativo no claude.ai →</span>
+  <span class="cta-text">O canvas completo: navegue entre os quadros com zoom, clique nos componentes, alterne o toggle, pague contas no painel e reproduza as animações. Abre para quem recebeu o compartilhamento pelo menu Share do canvas.</span>
+</a>
+<p>Abaixo, cada quadro como página estática, gerada a partir de <code>design-system/canvas/</code>: abre rápido e as
+animações rodam, mas os cliques só funcionam no canvas interativo.</p>
 <p>Para regenerar depois de mudar o canvas: <code>cd frontend &amp;&amp; npm run design:build-site</code>.</p>
 <ul>
 ${cards}
@@ -261,6 +256,5 @@ const boards = index.order
   .map((file) => ({ file, entry: index.boards[file], page: file.replace(/\.dc\.html$/, '.html') }))
 
 for (const b of boards) writeFileSync(join(OUT, b.page), boardPage(b.file, b.entry))
-if (hasInteractive) copyFileSync(INTERACTIVE_SRC, join(OUT, INTERACTIVE_PAGE))
 writeFileSync(join(OUT, 'index.html'), indexPage(boards))
 console.log(`${OUT}: ${readdirSync(OUT).length} arquivos (${boards.map((b) => b.page).join(', ')}, index.html)`)

@@ -13,7 +13,7 @@ Identidade visual e base de interface do sysfinance. O guia de como aplicar isto
 | [`brand/`](brand) | Símbolo, logo claro/escuro/monocromático e ícone do app. |
 | [`capi/`](capi) | A mascote nos cinco humores (SVG estático exportado de `CapiMascot.vue`). |
 | [`canvas/`](canvas) | Código-fonte do canvas de design (marca, avaliação, fundamentos, componentes, movimento e painel). |
-| [`site/`](site/index.html) | **Canvas para abrir sem o claude.ai**: `interativo.html` (o canvas completo, clicável) e uma página estática por quadro. Gerado de `canvas/`. |
+| [`site/`](site/index.html) | **Versão estática do canvas**: HTML puro, abre em qualquer navegador sem o claude.ai. Gerada de `canvas/`. |
 
 ## Canvas de design
 
@@ -23,18 +23,15 @@ fica no claude.ai: **[https://claude.ai/artifact/EpKQjikiEQyb6b7XGnpEZu](https:/
 - É privado por padrão: para outra pessoa abrir, o dono compartilha pelo menu **Share** do próprio canvas.
 - A pasta [`canvas/`](canvas) guarda uma cópia do código-fonte de cada quadro, para histórico e revisão em PR;
   esses arquivos são do formato do editor e não abrem sozinhos no navegador.
-- `canvas/canvas-interativo.html` é a exportação do canvas (no claude.ai: **Share → baixar HTML**). É um arquivo único
-  e autocontido (fontes e runtime embutidos, sem dados da conta) que abre offline e mantém os cliques.
-- Mudou o canvas? Copie os quadros alterados para `canvas/`, exporte de novo para `canvas/canvas-interativo.html` e rode
-  `cd frontend && npm run design:build-site` no mesmo PR da mudança de código. O teste `designSite.test.ts` falha se
-  `site/` ficar desatualizado.
+- Mudou o canvas? Copie os quadros alterados para `canvas/` e rode `cd frontend && npm run design:build-site`
+  no mesmo PR da mudança de código. O teste `designSite.test.ts` falha se `site/` ficar desatualizado.
 
 ### Versão estática (`site/`)
 
-[`site/index.html`](site/index.html) abre com o botão **Abrir a versão interativa** (`interativo.html`, cópia de
-`canvas/canvas-interativo.html`, cerca de 1,5 MB) e lista os quadros com prévia, cada um com a própria página estática.
-As páginas estáticas são geradas por `frontend/scripts/build-design-site.mjs`, que executa a lógica de cada quadro uma
-vez e grava HTML comum: abrem rápido e as animações rodam, mas os cliques ficam na versão interativa.
+[`site/index.html`](site/index.html) lista todos os quadros com prévia, e cada quadro tem a própria página. É gerada por
+`frontend/scripts/build-design-site.mjs`, que executa a lógica de cada quadro uma vez e grava o resultado em HTML
+comum. As animações (Capi, logo, entradas) funcionam; os cliques (alternar, pagar, reproduzir) não, porque isso só
+existe no canvas interativo.
 
 Como abrir:
 
