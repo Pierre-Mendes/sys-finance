@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<title>Fundamentos do design system</title>
+<title>Espaço, forma, elevação e ícones</title>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -13,105 +13,90 @@
 body{margin:0}
 </style>
 </helmet>
-<div style="width: 1440px; height: 1400px; box-sizing: border-box; background: #F6F7F9; font-family: Manrope, sans-serif; color: #0B1324; padding: 64px 72px; display: flex; flex-direction: column; gap: 32px">
+<div style="width: 1440px; height: 1100px; box-sizing: border-box; background: #F6F7F9; font-family: Manrope, sans-serif; color: #0B1324; padding: 64px 72px; display: flex; flex-direction: column; gap: 32px">
 <div style="display: flex; flex-direction: column; gap: 8px">
-<div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5B6B85">Fundamentos</div>
-<h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 52px; letter-spacing: -0.02em">Cor, tipo, espaço e forma</h1>
+<div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5B6B85">03 · Fundamentos</div>
+<h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 52px; letter-spacing: -0.02em">Espaço, forma, elevação e ícones</h1>
 </div>
-<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px">
-<sc-for list="{{groups}}" as="g" hint-placeholder-count="4">
-<div style="background: #FFFFFF; border-radius: 20px; padding: 20px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 1px 2px rgba(11,19,36,0.06)">
-<div style="display: flex; flex-direction: column; gap: 2px">
-<div style="font-weight: 800; font-size: 16px">{{g.name}}</div>
-<div style="font-size: 13px; color: #5B6B85">{{g.desc}}</div>
-</div>
-<sc-for list="{{g.swatches}}" as="s" hint-placeholder-count="5">
-<div style="display: flex; align-items: center; gap: 12px">
-<div style="width: 48px; height: 40px; border-radius: 10px; background: {{s.hex}}; box-shadow: inset 0 0 0 1px rgba(11,19,36,0.08); flex-shrink: 0"></div>
-<div style="display: flex; flex-direction: column; min-width: 0">
-<div style="font-weight: 700; font-size: 14px">{{s.name}}</div>
-<div style="font-size: 12px; color: #5B6B85; font-family: ui-monospace, Menlo, monospace">{{s.token}} · {{s.hex}}</div>
-</div>
-</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px">
+<div style="background: #FFFFFF; border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 1px 2px rgba(11,19,36,0.06)">
+<div style="display: flex; align-items: baseline; justify-content: space-between"><div style="font-weight: 800; font-size: 16px">Espaçamento · base 4</div><div style="font-size: 13px; color: #5B6B85">gap-1 a gap-16 do Tailwind</div></div>
+<sc-for list="{{spaces}}" as="sp" hint-placeholder-count="8">
+<div style="display: flex; align-items: center; gap: 12px"><div style="width: 28px; font-size: 12px; color: #5B6B85; font-variant-numeric: tabular-nums; text-align: right">{{sp.v}}</div><div style="height: 10px; width: {{sp.v}}px; background: #F2A541; border-radius: 3px"></div><div style="font-size: 12px; color: #5B6B85; font-family: ui-monospace, Menlo, monospace">{{sp.cls}}</div><div style="font-size: 12.5px; color: #26324A">{{sp.use}}</div></div>
 </sc-for>
-</div>
-</sc-for>
-</div>
-<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px">
-<div style="background: #FFFFFF; border-radius: 20px; padding: 28px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 1px 2px rgba(11,19,36,0.06)">
-<div style="display: flex; justify-content: space-between; align-items: baseline">
-<div style="font-weight: 800; font-size: 16px">Tipografia</div>
-<div style="font-size: 13px; color: #5B6B85">Bricolage Grotesque nos títulos · Manrope no texto · mínimo 12px</div>
-</div>
-<div style="display: flex; align-items: baseline; gap: 24px"><div style="width: 120px; font-size: 12px; color: #5B6B85; font-family: ui-monospace, Menlo, monospace">display 48/56</div><div style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 48px; letter-spacing: -0.02em; line-height: 1.15">Visão geral</div></div>
-<div style="display: flex; align-items: baseline; gap: 24px"><div style="width: 120px; font-size: 12px; color: #5B6B85; font-family: ui-monospace, Menlo, monospace">título 32/40</div><div style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 32px; line-height: 1.25">Cartões de crédito</div></div>
-<div style="display: flex; align-items: baseline; gap: 24px"><div style="width: 120px; font-size: 12px; color: #5B6B85; font-family: ui-monospace, Menlo, monospace">seção 20/28</div><div style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px">Contas a vencer esta semana</div></div>
-<div style="display: flex; align-items: baseline; gap: 24px"><div style="width: 120px; font-size: 12px; color: #5B6B85; font-family: ui-monospace, Menlo, monospace">corpo 16/24</div><div style="font-size: 16px; line-height: 1.5">Defina um orçamento por categoria e acompanhe o mês sem planilha.</div></div>
-<div style="display: flex; align-items: baseline; gap: 24px"><div style="width: 120px; font-size: 12px; color: #5B6B85; font-family: ui-monospace, Menlo, monospace">apoio 14/20</div><div style="font-size: 14px; color: #5B6B85">Atualizado agora há pouco</div></div>
-<div style="display: flex; align-items: baseline; gap: 24px"><div style="width: 120px; font-size: 12px; color: #5B6B85; font-family: ui-monospace, Menlo, monospace">rótulo 12/16</div><div style="font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #5B6B85">Receitas do mês</div></div>
-<div style="display: flex; align-items: baseline; gap: 24px; padding-top: 12px; border-top: 1px solid #EEF1F5"><div style="width: 120px; font-size: 12px; color: #5B6B85; font-family: ui-monospace, Menlo, monospace">valor tabular</div>
-<div style="display: flex; flex-direction: column; align-items: flex-end; font-variant-numeric: tabular-nums; font-weight: 700; font-size: 20px; gap: 2px">
-<div style="color: #0E7A55">+ R$ 8.420,00</div>
-<div style="color: #C2410C">− R$ 1.115,90</div>
-<div style="color: #C2410C">− R$ 99,49</div>
-</div>
-<div style="font-size: 13px; color: #5B6B85; max-width: 260px; line-height: 1.5">Com tabular-nums as vírgulas se alinham. Receita e despesa sempre levam sinal, não só cor.</div>
-</div>
 </div>
 <div style="display: flex; flex-direction: column; gap: 20px">
 <div style="background: #FFFFFF; border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 1px 2px rgba(11,19,36,0.06)">
 <div style="font-weight: 800; font-size: 16px">Raios</div>
 <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px">
-<div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><div style="width: 56px; height: 56px; background: #E8EDFC; border: 2px solid #2346D8; border-radius: 8px"></div><div style="font-size: 12px; font-weight: 700">8</div><div style="font-size: 12px; color: #5B6B85">controles</div></div>
-<div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><div style="width: 56px; height: 56px; background: #E8EDFC; border: 2px solid #2346D8; border-radius: 12px"></div><div style="font-size: 12px; font-weight: 700">12</div><div style="font-size: 12px; color: #5B6B85">itens</div></div>
-<div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><div style="width: 56px; height: 56px; background: #E8EDFC; border: 2px solid #2346D8; border-radius: 20px"></div><div style="font-size: 12px; font-weight: 700">20</div><div style="font-size: 12px; color: #5B6B85">cards</div></div>
-<div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><div style="width: 56px; height: 56px; background: #E8EDFC; border: 2px solid #2346D8; border-radius: 999px"></div><div style="font-size: 12px; font-weight: 700">pílula</div><div style="font-size: 12px; color: #5B6B85">chips</div></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><div style="width: 56px; height: 56px; background: #E8EDFC; border: 2px solid #2346D8; border-radius: 8px"></div><div style="font-size: 12px; font-weight: 700">8 · rounded-lg</div><div style="font-size: 12px; color: #5B6B85">controles</div></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><div style="width: 56px; height: 56px; background: #E8EDFC; border: 2px solid #2346D8; border-radius: 12px"></div><div style="font-size: 12px; font-weight: 700">12 · rounded-xl</div><div style="font-size: 12px; color: #5B6B85">itens</div></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><div style="width: 56px; height: 56px; background: #E8EDFC; border: 2px solid #2346D8; border-radius: 20px"></div><div style="font-size: 12px; font-weight: 700">20 · rounded-2xl</div><div style="font-size: 12px; color: #5B6B85">cards</div></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><div style="width: 56px; height: 56px; background: #E8EDFC; border: 2px solid #2346D8; border-radius: 999px"></div><div style="font-size: 12px; font-weight: 700">rounded-full</div><div style="font-size: 12px; color: #5B6B85">chips, avatar</div></div>
 </div>
 </div>
 <div style="background: #FFFFFF; border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 1px 2px rgba(11,19,36,0.06)">
-<div style="font-weight: 800; font-size: 16px">Elevação</div>
-<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; padding: 8px; background: #F6F7F9; border-radius: 12px">
-<div style="height: 64px; background: #FFFFFF; border-radius: 12px; box-shadow: 0 1px 2px rgba(11,19,36,0.06); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700">card</div>
-<div style="height: 64px; background: #FFFFFF; border-radius: 12px; box-shadow: 0 6px 16px rgba(11,19,36,0.10); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700">menu</div>
-<div style="height: 64px; background: #FFFFFF; border-radius: 12px; box-shadow: 0 20px 48px rgba(11,19,36,0.18); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700">modal</div>
+<div style="display: flex; align-items: baseline; justify-content: space-between"><div style="font-weight: 800; font-size: 16px">Elevação</div><div style="font-size: 13px; color: #5B6B85">no escuro, a superfície clareia em vez de sombrear</div></div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; padding: 10px; background: #F6F7F9; border-radius: 12px">
+<div style="height: 64px; background: #FFFFFF; border-radius: 12px; box-shadow: 0 1px 2px rgba(11,19,36,0.06); display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 12px; font-weight: 700">card<span style="font-weight: 500; color: #5B6B85">shadow-sm</span></div>
+<div style="height: 64px; background: #FFFFFF; border-radius: 12px; box-shadow: 0 6px 16px rgba(11,19,36,0.10); display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 12px; font-weight: 700">menu<span style="font-weight: 500; color: #5B6B85">shadow-lg</span></div>
+<div style="height: 64px; background: #FFFFFF; border-radius: 12px; box-shadow: 0 20px 48px rgba(11,19,36,0.18); display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 12px; font-weight: 700">modal<span style="font-weight: 500; color: #5B6B85">shadow-2xl</span></div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; padding: 10px; background: #0F1930; border-radius: 12px">
+<div style="height: 48px; background: #17223A; border: 1px solid #2A3754; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #EEF1F5">surface</div>
+<div style="height: 48px; background: #1F2C47; border: 1px solid #3A4866; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #EEF1F5">raised</div>
+<div style="height: 48px; background: #1F2C47; border: 1px solid #3A4866; border-radius: 12px; box-shadow: 0 20px 48px rgba(0,0,0,0.45); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #EEF1F5">raised + sombra</div>
 </div>
 </div>
-<div style="background: #FFFFFF; border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 1px 2px rgba(11,19,36,0.06)">
-<div style="font-weight: 800; font-size: 16px">Espaçamento · base 4</div>
-<sc-for list="{{spaces}}" as="sp" hint-placeholder-count="8">
-<div style="display: flex; align-items: center; gap: 12px"><div style="width: 28px; font-size: 12px; color: #5B6B85; font-variant-numeric: tabular-nums; text-align: right">{{sp.v}}</div><div style="height: 10px; width: {{sp.v}}px; background: #F2A541; border-radius: 3px"></div></div>
+</div>
+</div>
+<div style="background: #FFFFFF; border-radius: 20px; padding: 24px 28px; display: grid; grid-template-columns: minmax(0, 1fr) 420px; gap: 32px; box-shadow: 0 1px 2px rgba(11,19,36,0.06)">
+<div style="display: flex; flex-direction: column; gap: 14px">
+<div style="font-weight: 800; font-size: 16px">Ícones</div>
+<div style="display: flex; gap: 28px; align-items: flex-end; flex-wrap: wrap">
+<sc-for list="{{icons}}" as="ic" hint-placeholder-count="6">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 10px">
+<div style="display: flex; align-items: flex-end; gap: 12px; color: #26324A">
+<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ic.d}}"></path></svg>
+<svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ic.d}}"></path></svg>
+<svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ic.d}}"></path></svg>
+</div>
+<div style="font-size: 12px; color: #5B6B85">{{ic.name}}</div>
+</div>
 </sc-for>
 </div>
 </div>
+<div style="font-size: 14px; line-height: 1.6; color: #26324A">Contorno no estilo Heroicons, em SVG inline (sem biblioteca), <b>viewBox 24</b>, traço <b>2</b>, pontas arredondadas e <b>currentColor</b>. Tamanhos 16, 20 e 24 (w-4, w-5, w-6). Ícone ao lado de texto leva aria-hidden; botão só com ícone leva aria-label.</div>
 </div>
 <div style="background: #0B1324; border-radius: 20px; padding: 24px 28px; display: grid; grid-template-columns: 1fr 2fr; gap: 28px; color: #FFFFFF">
 <div style="display: flex; flex-direction: column; gap: 8px">
 <div style="font-weight: 800; font-size: 16px">No código</div>
-<div style="font-size: 14px; line-height: 1.5; color: #C5CCD6">Substitui o bloco @theme de <span style="font-family: ui-monospace, Menlo, monospace; color: #FFFFFF">frontend/src/style.css</span>. O Tailwind 4 gera classes como bg-brand-600, text-ink-500 e rounded-card a partir disso.</div>
+<div style="font-size: 14px; line-height: 1.5; color: #C5CCD6">Trechos de <span style="font-family: ui-monospace, Menlo, monospace; color: #FFFFFF">frontend/src/style.css</span> e <span style="font-family: ui-monospace, Menlo, monospace; color: #FFFFFF">styles/dark.css</span>. Valores conferidos contra design-system/tokens.json.</div>
 </div>
 <pre style="margin: 0; font-family: ui-monospace, Menlo, monospace; font-size: 12.5px; line-height: 1.6; color: #E4E8EF; white-space: pre-wrap">@theme {
-  --font-sans: "Manrope", sans-serif;   --font-display: "Bricolage Grotesque", sans-serif;
-  --color-brand-600: #2346D8;  --color-brand-50: #E8EDFC;  --color-capi-500: #F2A541;
-  --color-ink-900: #0B1324;   --color-ink-500: #5B6B85;  --color-ink-50: #F6F7F9;
-  --color-income: #0E7A55;    --color-expense: #C2410C;  --color-warning: #B45309;
-  --radius-control: 8px;  --radius-item: 12px;  --radius-card: 20px;
-  --ease-out: cubic-bezier(.2,.8,.2,1);  --duration-base: 200ms;
-}</pre>
+  --font-sans: "Manrope Variable", …;  --font-display: "Bricolage Grotesque Variable", …;
+  --color-brand-600: #2346D8;  --color-capi-500: #F2A541;  --color-ink-900: #0B1324;
+  --radius-2xl: 1.25rem;  /* cards */
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.dark { --dk-surface: #17223A;  --dk-raised: #1F2C47;  --dk-text: #EEF1F5;  --dk-income: #8FD9B6; }</pre>
 </div>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1400}}'>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1100}}'>
 class Component extends DCLogic {
   renderVals() {
-    const sw = (name, token, hex) => ({ name, token, hex });
+    const uses = { 4: 'ícone e texto', 8: 'itens de lista', 12: 'campos de um grupo', 16: 'dentro de card', 24: 'padding de card', 32: 'entre seções', 48: 'topo da tela', 64: 'margem de página larga' };
     return {
-      groups: [
-        { name: 'Azul Cofre', desc: 'Marca, ações primárias, links', swatches: [sw('Brand 800', 'brand-800', '#1A34A6'), sw('Brand 600', 'brand-600', '#2346D8'), sw('Brand 400', 'brand-400', '#6F8BF0'), sw('Brand 100', 'brand-100', '#D3DCFA'), sw('Brand 50', 'brand-50', '#E8EDFC')] },
-        { name: 'Âmbar Capi', desc: 'Destaques, conquistas, mascote', swatches: [sw('Capi 700', 'capi-700', '#C97C12'), sw('Capi 500', 'capi-500', '#F2A541'), sw('Capi 100', 'capi-100', '#FDE7C4'), sw('Pelo', 'capi-fur', '#A8724A'), sw('Focinho', 'capi-snout', '#7E5235')] },
-        { name: 'Tinta', desc: 'Texto, superfícies, bordas', swatches: [sw('Ink 900', 'ink-900', '#0B1324'), sw('Ink 700', 'ink-700', '#26324A'), sw('Ink 500', 'ink-500', '#5B6B85'), sw('Ink 200', 'ink-200', '#C5CCD6'), sw('Ink 50', 'ink-50', '#F6F7F9')] },
-        { name: 'Semânticas', desc: 'Sempre com ícone ou sinal junto', swatches: [sw('Receita', 'income', '#0E7A55'), sw('Despesa', 'expense', '#C2410C'), sw('Aviso', 'warning', '#B45309'), sw('Receita fundo', 'income-50', '#E6F4EE'), sw('Despesa fundo', 'expense-50', '#FDEEE6')] }
-      ],
-      spaces: [4, 8, 12, 16, 24, 32, 48, 64].map((v) => ({ v }))
+      spaces: [4, 8, 12, 16, 24, 32, 48, 64].map((v) => ({ v, cls: 'gap-' + v / 4, use: uses[v] })),
+      icons: [
+        { name: 'Painel', d: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
+        { name: 'Contas', d: 'M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z' },
+        { name: 'Extrato', d: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01' },
+        { name: 'Lançamentos', d: 'M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4' },
+        { name: 'Adicionar', d: 'M12 4v16m8-8H4' },
+        { name: 'Confirmar', d: 'M5 13l4 4L19 7' }
+      ]
     };
   }
 }

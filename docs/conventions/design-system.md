@@ -58,6 +58,8 @@ montado em `App.vue`). Use só para conquista real: conta paga, conta atrasada q
 - A variante `dark:` do Tailwind segue essa classe (`@custom-variant` em `style.css`).
 - `styles/dark.css` traduz as classes claras comuns (superfícies, textos, bordas, fundos `*-50`, texto `*-600..900`)
   para a paleta `--dk-*`. Classe nova sem tradução: use `dark:` no componente.
+- Receita, despesa e aviso têm cor própria no escuro (`--dk-income` #8FD9B6, `--dk-expense` #FDBA8C, `--dk-warning` #FCD34D):
+  as claras ficam perto de 3:1 sobre `--dk-surface`. `text-income`, `text-expense` e `text-warning` já trocam sozinhas.
 - Texto escuro fixo em hex (`text-[#7C2D12]`) não muda no escuro: use token (`text-expense-900`).
 - Gráficos: `chartTheme(isDark)` (`presentation/charts/chartOptions.ts`) dá as cores de texto, grade e tooltip;
   as opções são `computed` e se refazem na hora ao trocar o tema.
