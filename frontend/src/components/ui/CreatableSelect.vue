@@ -45,7 +45,7 @@
       >+ {{ createLabel }} "{{ query.trim() }}"</li>
     </ul>
 
-    <p v-if="newName" class="text-[11px] text-emerald-600 mt-1">
+    <p v-if="newName" class="text-xs text-emerald-600 mt-1">
       "{{ newName }}" será criado automaticamente ao salvar.
     </p>
   </div>

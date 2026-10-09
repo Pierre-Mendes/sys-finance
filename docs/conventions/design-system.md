@@ -36,7 +36,7 @@ montado em `App.vue`). Use só para conquista real: conta paga, conta atrasada q
 - `capi-*` (âmbar): destaques e conquistas. `ink-*`: texto e superfícies.
 - `income` / `expense` / `warning` (+ `-50` para fundos): sempre acompanhados de sinal (+/−), seta ou ícone.
 - Texto secundário sobre branco: `text-ink-500` ou `text-gray-500`. **Nunca `text-gray-400` sobre fundo claro**
-  (contraste 2,5:1). Tamanho mínimo de texto: `text-xs` (12px), nada de `text-[10px]`.
+  (contraste 2,5:1). Tamanho mínimo de texto: `text-xs` (12px), nada de `text-[10px]` (o `designRules.test.ts` confere).
 - Sobre fundo escuro (sidebar, login), links em `text-brand-400`: o `brand-600` não tem contraste ali.
 
 ## Tipo, forma e espaço
@@ -50,6 +50,11 @@ montado em `App.vue`). Use só para conquista real: conta paga, conta atrasada q
 - Botões: `GenericButton` com `variant` primary | secondary | ghost | danger, `size` md | sm, `loading`.
 - Menu lateral: dados em `components/layout/navigation.ts` (grupos Dinheiro, Planejamento, Análise, Conta).
   Rota nova entra lá; o teste `navigation.test.ts` falha se uma tela interna ficar fora do menu.
+
+- Texto da interface com maiúscula só na primeira palavra: "Contas bancárias", "Metas e conquistas"
+  (`navigation.test.ts` confere o menu). Botão com verbo: "Salvar conta", não "OK".
+- Números em pt-BR pelos helpers de `core/domain`: `formatBRL`, `formatBRLCompact`, `formatChange`, `formatPercent`,
+  `formatDateBR`. Nada de `toFixed()` direto na tela (sai com ponto decimal).
 
 ## Modo escuro
 

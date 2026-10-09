@@ -102,7 +102,7 @@
 
     <!-- Barra inferior (celular): atalhos do dia a dia + botão de lançamento rápido -->
     <nav class="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-white border-t border-gray-200 shadow-[0_-2px_10px_rgba(0,0,0,0.05)] pb-[env(safe-area-inset-bottom)]" aria-label="Navegação principal">
-      <ul class="grid grid-cols-5 h-16 text-[11px] font-medium text-gray-500">
+      <ul class="grid grid-cols-5 h-16 text-xs font-medium text-gray-500">
         <li>
           <router-link to="/dashboard" class="h-full flex flex-col items-center justify-center gap-1" active-class="text-primary">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
@@ -199,7 +199,7 @@
                                 <p :class="['text-xs mt-1 leading-relaxed', !notif.read_at ? 'text-gray-800' : 'text-gray-500']">{{ notif.message }}</p>
                                 
                                 <div v-if="notif.action_url" class="mt-3">
-                                    <button @click="navigateToAction(notif.action_url, notif.id)" class="w-full text-[11px] font-bold uppercase tracking-wider bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-indigo-700 hover:shadow-lg transition-all flex items-center justify-center gap-2 active:scale-95">
+                                    <button @click="navigateToAction(notif.action_url, notif.id)" class="w-full text-xs font-bold uppercase tracking-wider bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-indigo-700 hover:shadow-lg transition-all flex items-center justify-center gap-2 active:scale-95">
                                         {{ notif.type === 'SLA_WARNING' ? 'Ver contas' : 'Configurar Agora' }}
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                                     </button>
@@ -294,7 +294,7 @@ const deleteAllNotifications = async () => {
         cancelButtonText: 'Cancelar',
         background: '#ffffff',
         customClass: {
-            popup: 'rounded-[2rem]',
+            popup: 'rounded-2xl',
             confirmButton: 'rounded-xl px-6 py-3 font-bold',
             cancelButton: 'rounded-xl px-6 py-3 font-bold'
         }

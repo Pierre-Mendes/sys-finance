@@ -297,12 +297,12 @@ const selectedMember = ref<any>(null)
 const draftPermissions = ref<any>({})
 
 const permissionModules = [
-    { key: 'accounts', label: 'Contas Bancárias' },
+    { key: 'accounts', label: 'Contas bancárias' },
     { key: 'categories', label: 'Categorias' },
     { key: 'transactions', label: 'Lançamentos' },
     { key: 'budgets', label: 'Orçamentos (Mensal)' },
     { key: 'goals', label: 'Metas e Objetivos' },
-    { key: 'credit_cards', label: 'Cartões de Crédito' },
+    { key: 'credit_cards', label: 'Cartões de crédito' },
     { key: 'investments', label: 'Investimentos' },
     { key: 'reports', label: 'Relatórios' }
 ]

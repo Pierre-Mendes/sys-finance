@@ -20,4 +20,10 @@ describe('NAV_GROUPS', () => {
     expect(NAV_GROUPS[0].title).toBe('')
     expect(NAV_GROUPS.slice(1).every((g) => g.title.length > 0)).toBe(true)
   })
+
+  // Interface em pt-BR usa maiúscula só no início ("Contas bancárias", não "Contas Bancárias")
+  it('rótulos com maiúscula só na primeira palavra', () => {
+    const titleCased = items.map((i) => i.label).filter((label) => label.split(/\s+/).slice(1).some((w) => /^\(?[A-ZÀ-Ú]/.test(w)))
+    expect(titleCased).toEqual([])
+  })
 })

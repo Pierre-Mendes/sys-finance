@@ -38,4 +38,18 @@ describe('regras do design system', () => {
       .map(({ path }) => path)
     expect(found).toEqual([])
   })
+
+  it('nenhum texto abaixo de 12px (text-xs é o mínimo)', () => {
+    const found = sources.flatMap(({ path, text }) =>
+      [...text.matchAll(/\btext-\[(\d+(?:\.\d+)?)px\]/g)].filter((m) => Number(m[1]) < 12).map((m) => `${path}: ${m[0]}`),
+    )
+    expect(found).toEqual([])
+  })
+
+  it('percentual na tela passa pelo formatPercent (toFixed usa ponto decimal)', () => {
+    const found = sources
+      .filter(({ text }) => /\.toFixed\(\d\)\s*\}\}\s*%/.test(text))
+      .map(({ path }) => path)
+    expect(found).toEqual([])
+  })
 })

@@ -2,7 +2,7 @@
   <MainLayout>
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
       <div>
-        <h2 class="text-3xl font-black text-gray-900 tracking-tight">Extrato Bancário</h2>
+        <h2 class="text-3xl font-black text-gray-900 tracking-tight">Extrato bancário</h2>
         <p class="text-gray-500 mt-1 font-medium">Timeline detalhada de todas as movimentações da conta.</p>
       </div>
       
@@ -57,8 +57,8 @@
                         <td class="px-8 py-6">
                             <div class="flex flex-col">
                                 <span class="text-gray-900 font-black text-sm">{{ item.title }}</span>
-                                <span v-if="item.status === 'PENDING'" class="text-[9px] font-black text-amber-500 uppercase tracking-tighter">Pendente</span>
-                                <span v-else-if="item.status === 'CANCELED'" class="text-[9px] font-black text-gray-500 uppercase tracking-tighter">Desconsiderada</span>
+                                <span v-if="item.status === 'PENDING'" class="text-xs font-black text-amber-500 uppercase tracking-tighter">Pendente</span>
+                                <span v-else-if="item.status === 'CANCELED'" class="text-xs font-black text-gray-500 uppercase tracking-tighter">Desconsiderada</span>
                             </div>
                         </td>
                         <td class="px-8 py-6">

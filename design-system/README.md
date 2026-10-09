@@ -12,12 +12,12 @@ Identidade visual e base de interface do sysfinance. O guia de como aplicar isto
 | [`tokens.json`](tokens.json) | Cores, fontes, raios, espaçamento e movimento. **Fonte da verdade**: `frontend/src/style.css` e `frontend/src/styles/dark.css` precisam bater com ele (o teste `designTokens.test.ts` confere). |
 | [`brand/`](brand) | Símbolo, logo claro/escuro/monocromático e ícone do app. |
 | [`capi/`](capi) | A mascote nos cinco humores (SVG estático exportado de `CapiMascot.vue`). |
-| [`canvas/`](canvas) | Código-fonte do canvas de design (visão geral, marca, avaliação, cores, tipografia, espaço e forma, componentes, movimento, painel e celular no modo escuro). |
+| [`canvas/`](canvas) | Código-fonte do canvas de design (visão geral, marca, cores, tipografia, espaço e forma, componentes, movimento, painel e celular no modo escuro). |
 | [`site/`](site/index.html) | **Versão estática do canvas**: HTML puro, abre em qualquer navegador sem o claude.ai. Gerada de `canvas/`. |
 
 ## Canvas de design
 
-O canvas interativo (visão geral e princípios, marca, avaliação, cores, tipografia, espaço e forma, componentes clicáveis, movimento, o painel redesenhado e o painel no celular em modo escuro)
+O canvas interativo (visão geral e princípios, marca, cores, tipografia, espaço e forma, componentes clicáveis, movimento, o painel redesenhado e o painel no celular em modo escuro)
 fica no claude.ai: **[https://claude.ai/artifact/EpKQjikiEQyb6b7XGnpEZu](https://claude.ai/artifact/EpKQjikiEQyb6b7XGnpEZu)**.
 
 - É privado por padrão: para outra pessoa abrir, o dono compartilha pelo menu **Share** do próprio canvas.

@@ -2,13 +2,6 @@
   "v": 3,
   "attachments": {},
   "boards": {
-    "Audit.dc.html": {
-      "h": 1320,
-      "title": "Avaliação do design atual",
-      "w": 1440,
-      "x": 1520,
-      "y": 0
-    },
     "Capi.dc.html": {
       "h": 240,
       "title": "Componente: Capi",
@@ -48,7 +41,7 @@
       "y": 0
     },
     "MobileDark.dc.html": {
-      "x": 4880,
+      "x": 3360,
       "y": 0,
       "w": 390,
       "h": 844,
@@ -63,7 +56,7 @@
       "y": 2960
     },
     "Overview.dc.html": {
-      "x": 3360,
+      "x": 1520,
       "y": 0,
       "w": 1440,
       "h": 1100,
@@ -96,7 +89,6 @@
   "order": [
     "Main.dc.html",
     "Overview.dc.html",
-    "Audit.dc.html",
     "Capi.dc.html",
     "Colors.dc.html",
     "Typography.dc.html",
