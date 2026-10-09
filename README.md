@@ -186,4 +186,4 @@ e `cd frontend && npm install && npm run dev` (acesse `http://localhost:5173`).
 
 ---
 
-*Desenvolvido com foco em precisão matemática e design de alta fidelidade. MIT License.*
+*Desenvolvido com foco em precisão matemática e design de alta fidelidade. Todos os direitos reservados.*
