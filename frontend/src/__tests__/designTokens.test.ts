@@ -32,6 +32,11 @@ describe('tokens do design system', () => {
     }
   })
 
+  // Bug: text-income/expense/warning ficavam com a cor clara no escuro (≈3:1 sobre a superfície)
+  it.each(['income', 'expense', 'warning'])('text-%s tem cor própria no modo escuro', (name) => {
+    expect(darkCss).toMatch(new RegExp(`\\.dark \\.text-${name}[,\\s][^{]*\\{\\s*color:\\s*var\\(--dk-${name}\\)`))
+  })
+
   it('fontes e curvas de movimento iguais em style.css', () => {
     expect(declared(themeCss, 'font-sans')).toContain(tokens.font.sans.toUpperCase())
     expect(declared(themeCss, 'font-display')).toContain(tokens.font.display.toUpperCase())

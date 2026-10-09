@@ -18,3 +18,10 @@ export function formatChange(value: number | null | undefined): string {
   if (value === null || value === undefined || !Number.isFinite(value)) return '—'
   return `${value > 0 ? '+' : ''}${value.toLocaleString('pt-BR', { maximumFractionDigits: 1 })}%`
 }
+
+/** Percentual com 2 casas e vírgula ("12,35%"); signed põe "+" nos positivos. NaN/null vira "—". */
+export function formatPercent(value: number | null | undefined, { signed = false } = {}): string {
+  if (value === null || value === undefined || !Number.isFinite(value)) return '—'
+  const text = value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  return `${signed && value > 0 ? '+' : ''}${text}%`
+}

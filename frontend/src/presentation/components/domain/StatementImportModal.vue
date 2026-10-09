@@ -23,7 +23,7 @@
           <div>
             <div class="flex items-center gap-2">
               <h3 class="text-xl font-bold text-gray-800">Conciliação Bancária</h3>
-              <span class="bg-amber-100 text-amber-700 text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-tighter shadow-sm border border-amber-200/50">BETA</span>
+              <span class="bg-amber-100 text-amber-700 text-xs font-black px-2 py-0.5 rounded-full uppercase tracking-tighter shadow-sm border border-amber-200/50">BETA</span>
             </div>
             <p class="text-xs text-gray-500 mt-0.5 uppercase tracking-wider font-semibold">Importação Inteligente (PDF, CSV, OFX)</p>
           </div>
@@ -138,7 +138,7 @@
                 <div class="flex-1 min-w-0">
                     <div class="flex items-center gap-2 mb-2">
                         <input type="date" v-model="tx.date" class="text-xs font-mono bg-gray-50 text-gray-500 px-2 py-1 rounded border-none focus:ring-1 focus:ring-primary/20" />
-                        <span :class="tx.type === 'asset' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'" class="text-[9px] font-black uppercase px-2.5 py-1 rounded-full tracking-tighter shadow-sm">
+                        <span :class="tx.type === 'asset' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'" class="text-xs font-black uppercase px-2.5 py-1 rounded-full tracking-tighter shadow-sm">
                             {{ tx.type === 'asset' ? 'Crédito' : 'Débito' }}
                         </span>
                     </div>
@@ -162,15 +162,15 @@
               <!-- Individual Controls & Advanced Classification -->
               <div class="p-4 bg-gray-50/50 rounded-2xl grid grid-cols-1 md:grid-cols-3 gap-4 border border-gray-100/50">
                   <div class="relative">
-                      <label class="block text-[9px] font-black uppercase text-gray-500 mb-1 ml-1">Conta Financeira</label>
-                      <select v-model="tx.accountId" class="w-full h-9 px-3 bg-white border border-gray-100 rounded-xl text-[11px] focus:ring-2 focus:ring-primary/10 appearance-none font-bold text-gray-700 shadow-sm transition-all shadow-gray-200/20">
+                      <label class="block text-xs font-black uppercase text-gray-500 mb-1 ml-1">Conta Financeira</label>
+                      <select v-model="tx.accountId" class="w-full h-9 px-3 bg-white border border-gray-100 rounded-xl text-xs focus:ring-2 focus:ring-primary/10 appearance-none font-bold text-gray-700 shadow-sm transition-all shadow-gray-200/20">
                         <option value="">Onde foi?</option>
                         <option v-for="acc in accountStore.accounts" :key="acc.id" :value="acc.id">{{ acc.name }}</option>
                       </select>
                   </div>
                   <div class="relative">
-                      <label class="block text-[9px] font-black uppercase text-gray-500 mb-1 ml-1">Tipo de Lançamento</label>
-                      <select v-model="tx.classification" class="w-full h-9 px-3 bg-white border border-gray-100 rounded-xl text-[11px] focus:ring-2 focus:ring-primary/10 appearance-none font-bold text-gray-700 shadow-sm transition-all shadow-gray-200/20">
+                      <label class="block text-xs font-black uppercase text-gray-500 mb-1 ml-1">Tipo de Lançamento</label>
+                      <select v-model="tx.classification" class="w-full h-9 px-3 bg-white border border-gray-100 rounded-xl text-xs focus:ring-2 focus:ring-primary/10 appearance-none font-bold text-gray-700 shadow-sm transition-all shadow-gray-200/20">
                         <option value="standard">Lançamento Geral</option>
                         <option value="transfer">Transferência Bancária</option>
                         <option value="goal">Aporte em Meta</option>
@@ -178,17 +178,17 @@
                       </select>
                   </div>
                   <div class="relative">
-                      <label class="block text-[9px] font-black uppercase text-gray-500 mb-1 ml-1">Categoria / Destino</label>
+                      <label class="block text-xs font-black uppercase text-gray-500 mb-1 ml-1">Categoria / Destino</label>
                       <!-- Conditional Category / Goal Selector -->
-                      <select v-if="tx.classification === 'standard' || tx.classification === 'investment'" v-model="tx.categoryId" class="w-full h-9 px-3 bg-white border border-gray-100 rounded-xl text-[11px] focus:ring-2 focus:ring-primary/10 appearance-none font-bold text-gray-700 shadow-sm transition-all shadow-gray-200/20">
+                      <select v-if="tx.classification === 'standard' || tx.classification === 'investment'" v-model="tx.categoryId" class="w-full h-9 px-3 bg-white border border-gray-100 rounded-xl text-xs focus:ring-2 focus:ring-primary/10 appearance-none font-bold text-gray-700 shadow-sm transition-all shadow-gray-200/20">
                         <option value="">Outros (criada automaticamente)</option>
                         <option v-for="cat in categoryStore.categories.filter(c => (tx.type === 'asset') === (c.type === 'income' || c.type === 'asset'))" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
                       </select>
-                      <select v-else-if="tx.classification === 'transfer'" v-model="tx.targetAccountId" class="w-full h-9 px-3 bg-white border border-gray-100 rounded-xl text-[11px] focus:ring-2 focus:ring-primary/10 appearance-none font-bold text-blue-700 shadow-sm transition-all shadow-gray-200/20">
+                      <select v-else-if="tx.classification === 'transfer'" v-model="tx.targetAccountId" class="w-full h-9 px-3 bg-white border border-gray-100 rounded-xl text-xs focus:ring-2 focus:ring-primary/10 appearance-none font-bold text-blue-700 shadow-sm transition-all shadow-gray-200/20">
                         <option value="">Conta Destino...</option>
                         <option v-for="acc in accountStore.accounts.filter(a => a.id != tx.accountId)" :key="acc.id" :value="acc.id">{{ acc.name }}</option>
                       </select>
-                      <select v-else-if="tx.classification === 'goal'" v-model="tx.goalId" class="w-full h-9 px-3 bg-white border border-gray-100 rounded-xl text-[11px] focus:ring-2 focus:ring-primary/10 appearance-none font-bold text-green-700 shadow-sm transition-all shadow-gray-200/20">
+                      <select v-else-if="tx.classification === 'goal'" v-model="tx.goalId" class="w-full h-9 px-3 bg-white border border-gray-100 rounded-xl text-xs focus:ring-2 focus:ring-primary/10 appearance-none font-bold text-green-700 shadow-sm transition-all shadow-gray-200/20">
                         <option value="">Meta de Destino...</option>
                         <option v-for="g in goalStore.goals" :key="g.id" :value="g.id">{{ g.title }}</option>
                       </select>

@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Tipografia</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&amp;family=Manrope:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1500px; box-sizing: border-box; background: #F6F7F9; font-family: Manrope, sans-serif; color: #0B1324; padding: 64px 72px; display: flex; flex-direction: column; gap: 32px">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5B6B85">02 · Fundamentos</div>
+<h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 52px; letter-spacing: -0.02em">Tipografia</h1>
+<p style="margin: 0; font-size: 17px; line-height: 1.5; color: #26324A; max-width: 860px">Duas famílias, empacotadas com o app (@fontsource, servidas do próprio domínio por causa da CSP). Títulos h1 a h3 já saem em Bricolage; todo o resto é Manrope com números tabulares.</p>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px">
+<div style="background: #FFFFFF; border-radius: 20px; padding: 28px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 1px 2px rgba(11,19,36,0.06)">
+<div style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 96px; line-height: 1; letter-spacing: -0.03em">Aa</div>
+<div style="display: flex; flex-direction: column; gap: 2px"><div style="font-weight: 800; font-size: 18px">Bricolage Grotesque</div><div style="font-size: 14px; color: #5B6B85">Títulos e números de destaque · 600 a 800</div></div>
+<div style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 18px; color: #26324A; letter-spacing: 0.01em">ABCÇDEFGHIJ abcçdefghij áéíóú ãõ</div>
+<div style="font-size: 12.5px; color: #5B6B85; font-family: ui-monospace, Menlo, monospace">font-display · "Bricolage Grotesque Variable"</div>
+</div>
+<div style="background: #FFFFFF; border-radius: 20px; padding: 28px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 1px 2px rgba(11,19,36,0.06)">
+<div style="font-weight: 700; font-size: 96px; line-height: 1; letter-spacing: -0.03em">Aa</div>
+<div style="display: flex; flex-direction: column; gap: 2px"><div style="font-weight: 800; font-size: 18px">Manrope</div><div style="font-size: 14px; color: #5B6B85">Interface e texto · 400 a 800</div></div>
+<div style="font-weight: 500; font-size: 18px; color: #26324A">ABCÇDEFGHIJ abcçdefghij áéíóú ãõ</div>
+<div style="font-size: 12.5px; color: #5B6B85; font-family: ui-monospace, Menlo, monospace">font-sans · "Manrope Variable"</div>
+</div>
+<div style="background: #0B1324; color: #FFFFFF; border-radius: 20px; padding: 28px; display: flex; flex-direction: column; gap: 14px">
+<div style="font-weight: 800; font-size: 64px; line-height: 1.5; letter-spacing: -0.02em; font-variant-numeric: tabular-nums">1.234,56</div>
+<div style="display: flex; flex-direction: column; gap: 2px"><div style="font-weight: 800; font-size: 18px">Manrope tabular</div><div style="font-size: 14px; color: #C5CCD6">Valores, datas e tabelas · ligado no body</div></div>
+<div style="display: flex; flex-direction: column; align-items: flex-end; font-weight: 700; font-size: 18px; font-variant-numeric: tabular-nums; gap: 2px">
+<div style="color: #8FD9B6">+ R$ 8.420,00</div>
+<div style="color: #FDBA8C">− R$ 1.115,90</div>
+<div style="color: #FDBA8C">− R$ 99,49</div>
+</div>
+</div>
+</div>
+<div style="background: #FFFFFF; border-radius: 20px; padding: 24px 28px; display: flex; flex-direction: column; box-shadow: 0 1px 2px rgba(11,19,36,0.06)">
+<div style="display: grid; grid-template-columns: 280px 200px minmax(0, 1fr); gap: 24px; padding-bottom: 10px; border-bottom: 1px solid #EEF1F5; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #5B6B85">
+<div>Classe · tamanho/altura</div><div>Uso</div><div>Amostra</div>
+</div>
+<sc-for list="{{scale}}" as="s" hint-placeholder-count="7">
+<div style="display: grid; grid-template-columns: 280px 200px minmax(0, 1fr); gap: 24px; align-items: center; padding: 14px 0; border-bottom: 1px solid #F6F7F9">
+<div style="font-size: 13px; color: #26324A; font-family: ui-monospace, Menlo, monospace">{{s.cls}}</div>
+<div style="font-size: 14px; color: #5B6B85">{{s.use}}</div>
+<div style="font-family: {{s.family}}; font-size: {{s.size}}px; line-height: {{s.lh}}px; font-weight: {{s.weight}}; letter-spacing: {{s.track}}; text-transform: {{s.transform}}; color: {{s.color}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{s.sample}}</div>
+</div>
+</sc-for>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px">
+<div style="background: #FFFFFF; border-radius: 20px; padding: 24px 28px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 1px 2px rgba(11,19,36,0.06)">
+<div style="display: flex; align-items: baseline; justify-content: space-between"><div style="font-weight: 800; font-size: 16px">Números e datas em pt-BR</div><div style="font-size: 13px; color: #5B6B85">core/domain</div></div>
+<sc-for list="{{formats}}" as="f" hint-placeholder-count="6">
+<div style="display: grid; grid-template-columns: 170px minmax(0, 1fr) 150px; gap: 16px; align-items: baseline">
+<div style="font-size: 14px; color: #5B6B85">{{f.what}}</div>
+<div style="font-weight: 700; font-size: 17px; font-variant-numeric: tabular-nums">{{f.sample}}</div>
+<div style="font-size: 12.5px; color: #5B6B85; font-family: ui-monospace, Menlo, monospace">{{f.fn}}</div>
+</div>
+</sc-for>
+</div>
+<div style="background: #FFFFFF; border-radius: 20px; padding: 24px 28px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 1px 2px rgba(11,19,36,0.06)">
+<div style="font-weight: 800; font-size: 16px">Escrita da interface</div>
+<sc-for list="{{writing}}" as="w" hint-placeholder-count="4">
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; align-items: start">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<div style="font-size: 12px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #0E7A55">Assim</div>
+<div style="font-size: 15px; font-weight: 600">{{w.yes}}</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 4px">
+<div style="font-size: 12px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #C2410C">Não assim</div>
+<div style="font-size: 15px; color: #5B6B85; text-decoration: line-through">{{w.no}}</div>
+</div>
+</div>
+</sc-for>
+</div>
+</div>
+<div style="background: #0B1324; border-radius: 20px; padding: 22px 28px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; color: #FFFFFF">
+<div style="display: flex; flex-direction: column; gap: 6px"><div style="font-weight: 800; font-size: 16px">Mínimo de 12px</div><div style="font-size: 14px; line-height: 1.5; color: #C5CCD6">Nada abaixo de text-xs. Texto de apoio em ink-500, nunca gray-400 (2,5:1 no branco).</div></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><div style="font-weight: 800; font-size: 16px">Linhas que se leem</div><div style="font-size: 14px; line-height: 1.5; color: #C5CCD6">Corpo com altura 1,5 e no máximo 75 caracteres por linha. Rótulo em caixa alta só até 3 palavras.</div></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><div style="font-weight: 800; font-size: 16px">Pesos com função</div><div style="font-size: 14px; line-height: 1.5; color: #C5CCD6">500 rótulos, 600 botões e cabeçalhos de tabela, 700 valores, 800 títulos. Um peso a mais não substitui hierarquia.</div></div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1500}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const D = "'Bricolage Grotesque', sans-serif";
+    const S = 'Manrope, sans-serif';
+    const row = (cls, use, sample, family, size, lh, weight, extra) => Object.assign({ cls, use, sample, family, size, lh, weight, track: 'normal', transform: 'none', color: '#0B1324' }, extra || {});
+    return {
+      scale: [
+        row('text-3xl font-extrabold · 30/36', 'Título da tela (h2)', 'Visão geral', D, 30, 36, 800, { track: '-0.01em' }),
+        row('text-2xl font-bold · 24/32', 'Valor de KPI', 'R$ 12.480,35', S, 24, 32, 700),
+        row('text-xl font-bold · 20/28', 'Título de card (h3)', 'Contas a vencer esta semana', D, 20, 28, 700),
+        row('text-lg font-semibold · 18/28', 'Subtítulo, nome em destaque', 'Cartão principal', S, 18, 28, 600),
+        row('text-base · 16/24', 'Corpo, campos de formulário', 'Defina um orçamento por categoria e acompanhe o mês sem planilha.', S, 16, 24, 400),
+        row('text-sm · 14/20', 'Tabelas, texto de apoio', 'Atualizado agora há pouco · 3 lançamentos', S, 14, 20, 500, { color: '#5B6B85' }),
+        row('text-xs font-semibold uppercase · 12/16', 'Rótulo, cabeçalho de tabela', 'Receitas do mês', S, 12, 16, 700, { track: '0.08em', transform: 'uppercase', color: '#5B6B85' })
+      ],
+      formats: [
+        { what: 'Dinheiro', sample: 'R$ 1.234,56', fn: 'formatBRL' },
+        { what: 'Receita e despesa', sample: '+ R$ 80,00 · − R$ 80,00', fn: 'sinal + cor' },
+        { what: 'Data', sample: '09/10/2026', fn: 'formatDateBR' },
+        { what: 'Hora', sample: '14:30', fn: 'formatTimeBR' },
+        { what: 'Variação', sample: '+12,4%', fn: 'formatChange' },
+        { what: 'Valor compacto', sample: 'R$ 12,5 mil', fn: 'formatBRLCompact' }
+      ],
+      writing: [
+        { yes: 'Contas a vencer', no: 'Contas A Vencer' },
+        { yes: 'Salvar conta', no: 'OK' },
+        { yes: 'Essa data não existe. Confira o dia.', no: 'Erro: data inválida!' },
+        { yes: 'Nada por aqui ainda', no: 'Nenhum registro encontrado' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

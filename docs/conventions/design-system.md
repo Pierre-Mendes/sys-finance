@@ -36,7 +36,7 @@ montado em `App.vue`). Use só para conquista real: conta paga, conta atrasada q
 - `capi-*` (âmbar): destaques e conquistas. `ink-*`: texto e superfícies.
 - `income` / `expense` / `warning` (+ `-50` para fundos): sempre acompanhados de sinal (+/−), seta ou ícone.
 - Texto secundário sobre branco: `text-ink-500` ou `text-gray-500`. **Nunca `text-gray-400` sobre fundo claro**
-  (contraste 2,5:1). Tamanho mínimo de texto: `text-xs` (12px), nada de `text-[10px]`.
+  (contraste 2,5:1). Tamanho mínimo de texto: `text-xs` (12px), nada de `text-[10px]` (o `designRules.test.ts` confere).
 - Sobre fundo escuro (sidebar, login), links em `text-brand-400`: o `brand-600` não tem contraste ali.
 
 ## Tipo, forma e espaço
@@ -51,6 +51,11 @@ montado em `App.vue`). Use só para conquista real: conta paga, conta atrasada q
 - Menu lateral: dados em `components/layout/navigation.ts` (grupos Dinheiro, Planejamento, Análise, Conta).
   Rota nova entra lá; o teste `navigation.test.ts` falha se uma tela interna ficar fora do menu.
 
+- Texto da interface com maiúscula só na primeira palavra: "Contas bancárias", "Metas e conquistas"
+  (`navigation.test.ts` confere o menu). Botão com verbo: "Salvar conta", não "OK".
+- Números em pt-BR pelos helpers de `core/domain`: `formatBRL`, `formatBRLCompact`, `formatChange`, `formatPercent`,
+  `formatDateBR`. Nada de `toFixed()` direto na tela (sai com ponto decimal).
+
 ## Modo escuro
 
 - `useTheme` (`initTheme()` em `main.ts`) guarda Claro/Escuro/Sistema em `localStorage` (`sysfinance:theme`) e
@@ -58,6 +63,8 @@ montado em `App.vue`). Use só para conquista real: conta paga, conta atrasada q
 - A variante `dark:` do Tailwind segue essa classe (`@custom-variant` em `style.css`).
 - `styles/dark.css` traduz as classes claras comuns (superfícies, textos, bordas, fundos `*-50`, texto `*-600..900`)
   para a paleta `--dk-*`. Classe nova sem tradução: use `dark:` no componente.
+- Receita, despesa e aviso têm cor própria no escuro (`--dk-income` #8FD9B6, `--dk-expense` #FDBA8C, `--dk-warning` #FCD34D):
+  as claras ficam perto de 3:1 sobre `--dk-surface`. `text-income`, `text-expense` e `text-warning` já trocam sozinhas.
 - Texto escuro fixo em hex (`text-[#7C2D12]`) não muda no escuro: use token (`text-expense-900`).
 - Gráficos: `chartTheme(isDark)` (`presentation/charts/chartOptions.ts`) dá as cores de texto, grade e tooltip;
   as opções são `computed` e se refazem na hora ao trocar o tema.

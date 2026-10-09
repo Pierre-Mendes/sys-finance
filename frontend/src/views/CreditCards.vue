@@ -344,7 +344,7 @@ const formatDate = (dateStr: string) => {
       <!-- Header -->
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
         <div>
-          <h2 class="text-2xl sm:text-3xl font-semibold text-gray-800">Meus Cartões de Crédito</h2>
+          <h2 class="text-2xl sm:text-3xl font-semibold text-gray-800">Meus cartões de crédito</h2>
           <p class="text-gray-500 mt-1">Gerencie seus plásticos, acompanhe faturas e compras parceladas.</p>
         </div>
         <button @click="showModal = true" class="w-full sm:w-auto bg-primary hover:bg-brand-800 px-5 py-2.5 rounded-lg text-white font-medium shadow transition cursor-pointer flex items-center justify-center gap-2 whitespace-nowrap">
@@ -403,7 +403,7 @@ const formatDate = (dateStr: string) => {
 
                 <!-- Usage bar -->
                 <div class="mt-6">
-                  <div class="flex justify-between text-[11px] mb-1.5 font-bold uppercase tracking-wider opacity-90">
+                  <div class="flex justify-between text-xs mb-1.5 font-bold uppercase tracking-wider opacity-90">
                     <span>R$ {{ Number(card.usedAmount).toFixed(2) }} usado</span>
                     <span>{{ getUsagePercentage(card.usedAmount, card.limitAmount) }}%</span>
                   </div>
@@ -412,7 +412,7 @@ const formatDate = (dateStr: string) => {
                   </div>
                 </div>
 
-                <div v-if="card.openInvoice" class="mt-4 grid grid-cols-2 gap-2 text-[11px] leading-tight">
+                <div v-if="card.openInvoice" class="mt-4 grid grid-cols-2 gap-2 text-xs leading-tight">
                   <div class="bg-black/20 rounded-lg px-2.5 py-1.5">
                     <span class="block opacity-75">Fatura aberta · vence {{ formatDate(card.openInvoice.dueDate).slice(0, 5) }}</span>
                     <span class="block font-bold text-sm">R$ {{ Number(card.openInvoice.total).toFixed(2) }}</span>
@@ -431,9 +431,9 @@ const formatDate = (dateStr: string) => {
 
               <!-- Card footer actions with high contrast -->
               <div class="bg-black/30 px-4 py-3 relative z-10 flex gap-2 backdrop-blur-lg border-t border-white/10">
-                <button @click.stop="openTxModal(card.id)" class="flex-1 text-[11px] bg-white text-gray-900 hover:bg-gray-100 py-2.5 rounded-xl font-bold transition-all shadow-lg uppercase tracking-wider">Nova Compra</button>
-                <button @click.stop="generateBill(card.id)" class="flex-1 text-[11px] bg-primary hover:bg-brand-800 text-white py-2.5 rounded-xl font-bold transition-all shadow-lg uppercase tracking-wider">Gerar Fatura</button>
-                <button @click.stop="showCardDetailModal = true" class="lg:hidden flex-1 text-[11px] bg-white/20 text-white hover:bg-white/30 py-2.5 rounded-xl font-bold transition-all backdrop-blur-md uppercase tracking-wider leading-tight">Compras</button>
+                <button @click.stop="openTxModal(card.id)" class="flex-1 text-xs bg-white text-gray-900 hover:bg-gray-100 py-2.5 rounded-xl font-bold transition-all shadow-lg uppercase tracking-wider">Nova Compra</button>
+                <button @click.stop="generateBill(card.id)" class="flex-1 text-xs bg-primary hover:bg-brand-800 text-white py-2.5 rounded-xl font-bold transition-all shadow-lg uppercase tracking-wider">Gerar Fatura</button>
+                <button @click.stop="showCardDetailModal = true" class="lg:hidden flex-1 text-xs bg-white/20 text-white hover:bg-white/30 py-2.5 rounded-xl font-bold transition-all backdrop-blur-md uppercase tracking-wider leading-tight">Compras</button>
               </div>
             </div>
           </div>
@@ -463,7 +463,7 @@ const formatDate = (dateStr: string) => {
                 <div v-for="tx in recentTransactions" :key="tx.id" class="p-4 flex justify-between items-center hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                   <div class="min-w-0 pr-4">
                     <div class="flex items-center gap-2 mb-0.5">
-                      <span class="text-[9px] font-black text-primary uppercase">{{ formatDate(tx.date) }}</span>
+                      <span class="text-xs font-black text-primary uppercase">{{ formatDate(tx.date) }}</span>
                     </div>
                     <h4 class="font-bold text-gray-900 dark:text-white text-sm truncate">{{ tx.title }}</h4>
                   </div>
@@ -521,7 +521,7 @@ const formatDate = (dateStr: string) => {
 
               <div class="overflow-x-auto">
                 <table class="w-full text-left">
-                  <thead class="bg-gray-50 dark:bg-gray-900 text-gray-500 text-[11px] font-bold uppercase tracking-wider border-b border-gray-100 dark:border-gray-700">
+                  <thead class="bg-gray-50 dark:bg-gray-900 text-gray-500 text-xs font-bold uppercase tracking-wider border-b border-gray-100 dark:border-gray-700">
                     <tr>
                       <th class="px-8 py-5 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group" @click="toggleTxSort('date')">
                         <div class="flex items-center gap-1">

@@ -12,6 +12,10 @@
   --dk-text: #EEF1F5;
   --dk-text-2: #C5CCD6;
   --dk-text-3: #9AA6BA;
+  /* Semânticas no escuro: as claras ficam em ≈3:1 sobre a superfície */
+  --dk-income: #8FD9B6;
+  --dk-expense: #FDBA8C;
+  --dk-warning: #FCD34D;
   color-scheme: dark;
 }
 
@@ -425,11 +429,16 @@
 .dark .bg-capi-100 {
   background-color: color-mix(in oklab, var(--color-capi-500) 22%, var(--dk-surface));
 }
+.dark .text-expense,
 .dark .text-expense-900 {
-  color: #FDBA8C;
+  color: var(--dk-expense);
 }
+.dark .text-income,
 .dark .text-income-900 {
-  color: #8FD9B6;
+  color: var(--dk-income);
+}
+.dark .text-warning {
+  color: var(--dk-warning);
 }
 
 /* Brilhos coloridos claros (shadow-*-100/200) viram sombra neutra no escuro */

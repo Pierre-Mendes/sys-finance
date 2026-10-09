@@ -3,9 +3,9 @@
     <div class="space-y-6">
       
       <!-- BANNER: Em Desenvolvimento -->
-      <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded shadow-sm flex items-start">
+      <div class="bg-capi-100 border border-capi-500/40 p-4 rounded-xl flex items-start" role="status">
         <div class="flex-shrink-0">
-          <svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+          <svg class="h-5 w-5 text-warning" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
             <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
           </svg>
         </div>
@@ -66,7 +66,7 @@
             <p class="text-white/90 text-sm mt-1 flex items-center gap-1 font-bold">
                 <svg v-if="lucroPrejuizoPct >= 0" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
                 <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path></svg>
-                {{ lucroPrejuizoPct >= 0 ? '+' : '' }}{{ lucroPrejuizoPct.toFixed(2) }}%
+                {{ formatPercent(lucroPrejuizoPct, { signed: true }) }}
             </p>
         </div>
       </div>
@@ -138,7 +138,7 @@
                                     {{ getRentabilityInfo(inv).val >= 0 ? '+' : '' }}{{ formatCurrency(getRentabilityInfo(inv).val) }}
                                  </p>
                                  <p :class="getRentabilityInfo(inv).pct >= 0 ? 'text-emerald-500/70' : 'text-red-500/70'" class="text-xs font-semibold">
-                                    {{ getRentabilityInfo(inv).pct >= 0 ? '+' : '' }}{{ getRentabilityInfo(inv).pct.toFixed(2) }}%
+                                    {{ formatPercent(getRentabilityInfo(inv).pct, { signed: true }) }}
                                  </p>
                              </div>
                              <p v-else class="text-gray-500 text-sm">-</p>
@@ -270,6 +270,7 @@ import api from '@/data/api/HttpClient'
 import MainLayout from '../components/layout/MainLayout.vue'
 import { toast } from 'vue3-toastify'
 import Swal from 'sweetalert2'
+import { formatPercent } from '@/core/domain/money'
 
 const investments = ref<any[]>([])
 const loading = ref(true)

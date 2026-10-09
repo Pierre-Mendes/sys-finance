@@ -75,7 +75,8 @@ vai para uma store em `presentation/store`.
    - **erro**: `toast.error(...)` com a mensagem da API;
    - **sucesso**: `toast.success(...)`; para conquista real (conta paga, meta concluída), `useCelebrationStore().celebrate(...)`.
 5. Ações: `<GenericButton>` (`primary` para a ação principal, uma por área; `secondary`, `ghost`, `danger`).
-6. Valores em R$: `formatBRL` (`core/domain/money.ts`); números grandes de destaque podem usar `useCountUp`.
+6. Valores em R$: `formatBRL` (`core/domain/money.ts`); percentuais: `formatPercent`; números grandes de destaque
+   podem usar `useCountUp`. Textos com maiúscula só na primeira palavra ("Contas bancárias").
 
 ### Cores, tipo e forma
 

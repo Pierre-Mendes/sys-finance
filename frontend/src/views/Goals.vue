@@ -150,7 +150,7 @@ const getAccountName = (id: number | null) => {
     <div class="px-4 py-8 max-w-7xl mx-auto">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-10">
         <div>
-          <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">Metas & Conquistas</h2>
+          <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">Metas e conquistas</h2>
           <p class="text-gray-500 mt-2 text-lg">Transforme seus sonhos em planos concretos.</p>
         </div>
         <button @click="openCreate" class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 px-6 py-3 rounded-2xl text-white font-bold shadow-lg shadow-indigo-200 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2 whitespace-nowrap">
@@ -274,7 +274,7 @@ const getAccountName = (id: number | null) => {
                   <option :value="null">Nenhuma (Virtual)</option>
                   <option v-for="acc in accountStore.accounts" :key="acc.id" :value="acc.id">{{ acc.name }}</option>
                 </select>
-                <p class="text-[9px] text-gray-500 mt-1 px-1">Se vinculado, os aportes baixarão o saldo desta conta.</p>
+                <p class="text-xs text-gray-500 mt-1 px-1">Se vinculado, os aportes baixarão o saldo desta conta.</p>
               </div>
               <div>
                 <div class="flex items-center gap-1 mb-2 ml-1">

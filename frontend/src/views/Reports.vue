@@ -134,7 +134,7 @@
             <section class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
               <h3 class="font-bold text-gray-800">Despesas por dia do mês</h3>
               <p class="text-xs text-gray-500 mb-3">Quanto mais escuro, maior o gasto no dia.</p>
-              <div class="grid grid-cols-7 gap-1.5 mb-1.5 text-center text-[11px] font-medium text-gray-500" aria-hidden="true">
+              <div class="grid grid-cols-7 gap-1.5 mb-1.5 text-center text-xs font-medium text-gray-500" aria-hidden="true">
                 <span v-for="(w, i) in ['D', 'S', 'T', 'Q', 'Q', 'S', 'S']" :key="i">{{ w }}</span>
               </div>
               <div class="grid grid-cols-7 gap-1.5" role="list">
@@ -146,7 +146,7 @@
                   {{ d.day }}
                 </div>
               </div>
-              <div class="flex items-center gap-1.5 mt-3 text-[11px] text-gray-500">
+              <div class="flex items-center gap-1.5 mt-3 text-xs text-gray-500">
                 <span>Menos</span>
                 <span v-for="c in HEAT" :key="c" :class="['w-4 h-4 rounded', c]"></span>
                 <span>Mais</span>

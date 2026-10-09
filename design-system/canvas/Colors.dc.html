@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Cores</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&amp;family=Manrope:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1400px; box-sizing: border-box; background: #F6F7F9; font-family: Manrope, sans-serif; color: #0B1324; padding: 64px 72px; display: flex; flex-direction: column; gap: 32px">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5B6B85">01 · Fundamentos</div>
+<h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 52px; letter-spacing: -0.02em">Cores</h1>
+<p style="margin: 0; font-size: 17px; line-height: 1.5; color: #26324A; max-width: 860px">Quatro famílias. As escalas são a matéria-prima; as telas usam os papéis da tabela, que já trazem o par do modo escuro. <b>blue-*</b> e <b>indigo-*</b> do Tailwind apontam para a escala da marca.</p>
+</div>
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px">
+<div style="display: flex; flex-direction: column; gap: 16px">
+<sc-for list="{{scales}}" as="sc" hint-placeholder-count="4">
+<div style="background: #FFFFFF; border-radius: 20px; padding: 20px 22px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 1px 2px rgba(11,19,36,0.06)">
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px">
+<div style="font-weight: 800; font-size: 16px">{{sc.name}}</div>
+<div style="font-size: 13px; color: #5B6B85">{{sc.role}}</div>
+</div>
+<div style="display: flex; gap: 6px">
+<sc-for list="{{sc.steps}}" as="st" hint-placeholder-count="11">
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px">
+<div style="height: 52px; border-radius: 8px; background: {{st.hex}}; box-shadow: inset 0 0 0 1px rgba(11,19,36,0.08)"></div>
+<div style="font-size: 12px; font-weight: 700">{{st.n}}</div>
+<div style="font-size: 11.5px; color: #5B6B85; font-family: ui-monospace, Menlo, monospace">{{st.hex}}</div>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-for>
+</div>
+<div style="background: #FFFFFF; border-radius: 20px; padding: 22px 24px; display: flex; flex-direction: column; gap: 4px; box-shadow: 0 1px 2px rgba(11,19,36,0.06)">
+<div style="display: grid; grid-template-columns: minmax(0, 1.4fr) 132px 132px; gap: 12px; padding-bottom: 10px; border-bottom: 1px solid #EEF1F5; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #5B6B85">
+<div>Papel</div><div>Claro</div><div>Escuro</div>
+</div>
+<sc-for list="{{roles}}" as="r" hint-placeholder-count="12">
+<div style="display: grid; grid-template-columns: minmax(0, 1.4fr) 132px 132px; gap: 12px; align-items: center; padding: 9px 0; border-bottom: 1px solid #F6F7F9">
+<div style="display: flex; flex-direction: column; min-width: 0">
+<div style="font-weight: 700; font-size: 14px">{{r.name}}</div>
+<div style="font-size: 12.5px; color: #5B6B85; font-family: ui-monospace, Menlo, monospace">{{r.token}}</div>
+</div>
+<div style="display: flex; align-items: center; gap: 8px"><div style="width: 26px; height: 26px; border-radius: 8px; background: {{r.light}}; box-shadow: inset 0 0 0 1px rgba(11,19,36,0.12); flex-shrink: 0"></div><div style="font-size: 12px; font-family: ui-monospace, Menlo, monospace; color: #26324A">{{r.light}}</div></div>
+<div style="display: flex; align-items: center; gap: 8px"><div style="width: 26px; height: 26px; border-radius: 8px; background: {{r.dark}}; box-shadow: inset 0 0 0 1px rgba(11,19,36,0.12); flex-shrink: 0"></div><div style="font-size: 12px; font-family: ui-monospace, Menlo, monospace; color: #26324A">{{r.dark}}</div></div>
+</div>
+</sc-for>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: baseline; gap: 16px">
+<div style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 24px">Contraste</div>
+<div style="font-size: 15px; color: #5B6B85">WCAG 2.1: 4,5:1 para texto, 3:1 só para texto a partir de 24px e ícones.</div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px">
+<sc-for list="{{pairs}}" as="p" hint-placeholder-count="10">
+<div style="border-radius: 16px; overflow: hidden; background: #FFFFFF; box-shadow: 0 1px 2px rgba(11,19,36,0.06); display: flex; flex-direction: column">
+<div style="height: 64px; background: {{p.bg}}; color: {{p.fg}}; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; font-variant-numeric: tabular-nums">{{p.sample}}</div>
+<div style="padding: 10px 14px 12px; display: flex; flex-direction: column; gap: 2px">
+<div style="font-size: 13px; font-weight: 700">{{p.label}}</div>
+<div style="display: flex; justify-content: space-between; font-size: 12.5px; color: #5B6B85; font-variant-numeric: tabular-nums"><span>{{p.ratio}} : 1</span><span style="font-weight: 800; color: {{p.gradeColor}}">{{p.grade}}</span></div>
+</div>
+</div>
+</sc-for>
+</div>
+</div>
+<div style="background: #0B1324; border-radius: 20px; padding: 22px 28px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; color: #FFFFFF">
+<div style="display: flex; flex-direction: column; gap: 6px"><div style="font-weight: 800; font-size: 16px">Uma cor, um papel</div><div style="font-size: 14px; line-height: 1.5; color: #C5CCD6">Azul age, âmbar destaca e comemora, verde é receita, laranja-escuro é despesa e destruição. Nenhuma cor é decorativa.</div></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><div style="font-weight: 800; font-size: 16px">Nunca só a cor</div><div style="font-size: 14px; line-height: 1.5; color: #C5CCD6">Receita e despesa levam sinal (+ e −) ou ícone. Status leva texto: Pago, Pendente, Vencido.</div></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><div style="font-weight: 800; font-size: 16px">Hex solto é bug</div><div style="font-size: 14px; line-height: 1.5; color: #C5CCD6">Valores moram em design-system/tokens.json; style.css e dark.css repetem e o teste designTokens confere.</div></div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1400}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const steps = (obj) => Object.keys(obj).map((n) => ({ n, hex: obj[n] }));
+    const grade = (r) => (r >= 7 ? { grade: 'AAA', gradeColor: '#0E7A55' } : r >= 4.5 ? { grade: 'AA', gradeColor: '#0E7A55' } : { grade: 'só 24px+', gradeColor: '#C2410C' });
+    const pair = (label, sample, fg, bg, ratio) => Object.assign({ label, sample, fg, bg, ratio: ratio.toFixed(2).replace('.', ',') }, grade(ratio));
+    return {
+      scales: [
+        { name: 'Azul Cofre · brand', role: 'Marca, ações, links, item ativo', steps: steps({ 50: '#E8EDFC', 100: '#D3DCFA', 200: '#B0C0F6', 300: '#8AA1F2', 400: '#6F8BF0', 500: '#4466E6', 600: '#2346D8', 700: '#1E3BBE', 800: '#1A34A6', 900: '#172B80', 950: '#0F1C52' }) },
+        { name: 'Âmbar Capi · capi', role: 'Destaque, conquista, mascote', steps: steps({ 100: '#FDE7C4', 500: '#F2A541', 700: '#C97C12', pelo: '#A8724A', focinho: '#7E5235', barriga: '#D9A877' }) },
+        { name: 'Tinta · ink', role: 'Texto, superfícies, bordas', steps: steps({ 50: '#F6F7F9', 100: '#EEF1F5', 200: '#C5CCD6', 500: '#5B6B85', 700: '#26324A', 800: '#141E33', 900: '#0B1324' }) },
+        { name: 'Semânticas', role: 'Receita, despesa, aviso', steps: steps({ 'income-50': '#E6F4EE', income: '#0E7A55', 'income-900': '#0B5B40', 'expense-50': '#FDEEE6', expense: '#C2410C', 'expense-900': '#7C2D12', warning: '#B45309' }) }
+      ],
+      roles: [
+        { name: 'Fundo da página', token: 'bg-ink-50 · --dk-sunken', light: '#F6F7F9', dark: '#0F1930' },
+        { name: 'Superfície (card)', token: 'bg-white · --dk-surface', light: '#FFFFFF', dark: '#17223A' },
+        { name: 'Superfície elevada', token: 'menu, modal · --dk-raised', light: '#FFFFFF', dark: '#1F2C47' },
+        { name: 'Borda', token: 'border-ink-100 · --dk-border', light: '#EEF1F5', dark: '#2A3754' },
+        { name: 'Borda de campo', token: 'border-ink-200 · --dk-border-strong', light: '#C5CCD6', dark: '#3A4866' },
+        { name: 'Texto', token: 'text-ink-900 · --dk-text', light: '#0B1324', dark: '#EEF1F5' },
+        { name: 'Texto de apoio', token: 'text-ink-500 · --dk-text-2', light: '#5B6B85', dark: '#C5CCD6' },
+        { name: 'Ação e link', token: 'brand-600 · texto brand-300', light: '#2346D8', dark: '#8AA1F2' },
+        { name: 'Destaque', token: 'capi-500', light: '#F2A541', dark: '#F2A541' },
+        { name: 'Receita', token: 'text-income · --dk-income', light: '#0E7A55', dark: '#8FD9B6' },
+        { name: 'Despesa', token: 'text-expense · --dk-expense', light: '#C2410C', dark: '#FDBA8C' },
+        { name: 'Aviso', token: 'text-warning · --dk-warning', light: '#B45309', dark: '#FCD34D' }
+      ],
+      pairs: [
+        pair('Branco no botão', 'Salvar', '#FFFFFF', '#2346D8', 7.15),
+        pair('Apoio no card', 'Apoio', '#5B6B85', '#FFFFFF', 5.40),
+        pair('Receita no card', '+ R$ 80', '#0E7A55', '#FFFFFF', 5.34),
+        pair('Despesa no card', '− R$ 80', '#C2410C', '#FFFFFF', 5.18),
+        pair('Aviso no card', 'Vence hoje', '#B45309', '#FFFFFF', 5.02),
+        pair('Tinta no âmbar', 'Meta!', '#0B1324', '#F2A541', 9.03),
+        pair('Texto no escuro', 'Saldo', '#EEF1F5', '#17223A', 13.98),
+        pair('Receita no escuro', '+ R$ 80', '#8FD9B6', '#17223A', 9.63),
+        pair('Despesa no escuro', '− R$ 80', '#FDBA8C', '#17223A', 9.48),
+        pair('capi-700 no branco', 'Evite', '#C97C12', '#FFFFFF', 3.29)
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

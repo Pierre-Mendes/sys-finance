@@ -2,19 +2,19 @@
   "v": 3,
   "attachments": {},
   "boards": {
-    "Audit.dc.html": {
-      "h": 1320,
-      "title": "Avaliação do design atual",
-      "w": 1440,
-      "x": 1520,
-      "y": 0
-    },
     "Capi.dc.html": {
       "h": 240,
       "title": "Componente: Capi",
       "w": 240,
       "x": 3040,
       "y": 0
+    },
+    "Colors.dc.html": {
+      "x": 3360,
+      "y": 1440,
+      "w": 1440,
+      "h": 1400,
+      "title": "Cores"
     },
     "Components.dc.html": {
       "h": 1400,
@@ -40,6 +40,13 @@
       "x": 0,
       "y": 0
     },
+    "MobileDark.dc.html": {
+      "x": 3360,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Celular, modo escuro"
+    },
     "Motion.dc.html": {
       "h": 1100,
       "is_interactive": true,
@@ -48,12 +55,26 @@
       "x": 0,
       "y": 2960
     },
+    "Overview.dc.html": {
+      "x": 1520,
+      "y": 0,
+      "w": 1440,
+      "h": 1100,
+      "title": "Visão geral e princípios"
+    },
     "Tokens.dc.html": {
-      "h": 1400,
-      "title": "Fundamentos",
+      "h": 1100,
+      "title": "Espaço, forma, elevação e ícones",
       "w": 1440,
       "x": 0,
       "y": 1440
+    },
+    "Typography.dc.html": {
+      "x": 3360,
+      "y": 2960,
+      "w": 1440,
+      "h": 1500,
+      "title": "Tipografia"
     }
   },
   "createdOnFiles": {
@@ -67,12 +88,15 @@
   "notes": {},
   "order": [
     "Main.dc.html",
-    "Audit.dc.html",
+    "Overview.dc.html",
     "Capi.dc.html",
+    "Colors.dc.html",
+    "Typography.dc.html",
     "Tokens.dc.html",
     "Components.dc.html",
     "Motion.dc.html",
-    "Dashboard.dc.html"
+    "Dashboard.dc.html",
+    "MobileDark.dc.html"
   ],
   "pages": [],
   "title": "sys-finance Design System"

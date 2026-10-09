@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { formatBRLCompact, formatChange } from '../money'
+import { formatBRLCompact, formatChange, formatPercent } from '../money'
 
 describe('money', () => {
   it('formata eixos de forma compacta', () => {
@@ -13,5 +13,14 @@ describe('money', () => {
     expect(formatChange(NaN)).toBe('—')
     expect(formatChange(12.5)).toBe('+12,5%')
     expect(formatChange(-3)).toBe('-3%')
+  })
+
+  // Bug: Investimentos usava toFixed(2) e mostrava "12.35%" (ponto) em vez de "12,35%"
+  it('percentual com vírgula decimal e sinal opcional', () => {
+    expect(formatPercent(12.3456)).toBe('12,35%')
+    expect(formatPercent(-3.1)).toBe('-3,10%')
+    expect(formatPercent(5, { signed: true })).toBe('+5,00%')
+    expect(formatPercent(0, { signed: true })).toBe('0,00%')
+    expect(formatPercent(NaN)).toBe('—')
   })
 })
