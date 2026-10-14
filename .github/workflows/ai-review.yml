@@ -25,7 +25,7 @@ jobs:
 
       - name: PR Agent Action
         if: env.HAS_OPENAI_KEY == 'true'
-        uses: Codium-ai/pr-agent@821c6ad173194d443a3f768b5a1087924025e90f # main
+        uses: Codium-ai/pr-agent@330f0813b5fe0d1f54b794077c2d02aa85a1fb63 # main
         env:
           OPENAI_KEY: ${{ secrets.OPENAI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
